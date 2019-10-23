@@ -1,0 +1,30 @@
+
+@using RealEstateAgency.NotificationSystem.NotifyMessages
+@model RealEstateAgency.NotificationSystem.NotifyMessages.UserNotifyMessage
+
+@{
+    ViewBag.Heading = Model.Type == UserEventType.Snooze ? "Reminder snooze!!!" : "Reminder!!!";
+
+    ViewBag.Preview = "User event";
+}
+
+
+<h4>
+    Hi @Model.Firstname we have new reminder for you.
+</h4>
+
+<h4>
+    Action type : <small style="color: darkgoldenrod">@Model.ActionTypeName</small>
+</h4>
+
+<p>
+    @Model.Description
+    @await Component.InvokeAsync("EmailLinkButton", new { text = "Go to request page", url = Model.RequestUrl })
+</p>
+
+<h5>From solution apps</h5>
+
+@section links
+{
+    <a href="@Model.BaseUrl">App</a>
+}

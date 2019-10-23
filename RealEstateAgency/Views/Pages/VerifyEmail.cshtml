@@ -1,0 +1,112 @@
+﻿
+@{
+    Layout = null;
+}
+
+@model RealEstateAgency.Controllers.Other.PublicController.VerifyEmailDto
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>VerifyEmail</title>
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 16px;
+        }
+        .info, .success, .warning, .error, .validation {
+            border: 0.5px solid;
+            margin: 10px 0px;
+            padding: 15px 10px 15px 50px;
+            background-repeat: no-repeat;
+            background-position: 10px center;
+        }
+        .info {
+            color: #00529B;
+            background-color: #BDE5F8;
+            background-image: url('https://i.imgur.com/ilgqWuX.png');
+        }
+        .success {
+            color: #4F8A10;
+            background-color: #DFF2BF;
+            background-image: url('https://img.icons8.com/material-outlined/24/000000/ok.png');
+        }
+        .warning {
+            color: #9F6000;
+            background-color: #FEEFB3;
+            background-image: url('https://i.imgur.com/Z8q7ww7.png');
+        }
+        .error{
+            color: #D8000C;
+            background-color: #FFBABA;
+            background-image: url('https://img.icons8.com/material-outlined/24/000000/error.png');
+        }
+        .validation{
+            color: #D63301;
+            background-color: #FFCCBA;
+            background-image: url('https://i.imgur.com/GnyDvKN.png');
+        }
+
+        .button {
+            display: inline-block;
+            padding: .75rem 1.25rem;
+            border-radius: 10rem;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 1rem;
+            letter-spacing: .15rem;
+            transition: all .3s;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            margin-top: 20px
+        }
+        .button:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0cf;
+            border-radius: 10rem;
+            z-index: -2;
+        }
+        .button:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background-color: #008fb3;
+            transition: all .3s;
+            border-radius: 10rem;
+            z-index: -1;
+        }
+        .button:hover {
+            color: #fff;
+        }
+        .button:hover:before {
+            width: 100%;
+        }
+
+    </style>
+</head>
+
+<body>
+@if (Model.Ok)
+{
+    <div class="success">@Model.Message</div>
+    <a href="@Model.ReturnUrl" class="button">Go to website</a>
+}
+else
+{
+<div class="error">@Model.Message</div>
+}
+
+
+</body>
+</html>

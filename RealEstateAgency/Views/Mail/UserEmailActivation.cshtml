@@ -1,0 +1,20 @@
+
+@using RealEstateAgency.Dtos.ModelDtos.RBAC
+@model RealEstateAgency.Dtos.ModelDtos.RBAC.UserAccountDto
+
+@{
+    ViewBag.Heading = $"Hello {@Model.FirstName}.";
+
+    ViewBag.Preview = "Thanks for registering for an account on our website! Before we get started, we just need to confirm that this is you. Click below to verify your email address:";
+}
+
+
+<h4>
+    Email: @Model.Email
+</h4>
+<p>
+    @await Component.InvokeAsync("EmailLinkButton", new { text = "Verify Email", url = Model.ActivationLink })
+</p>
+
+<h5>From solution apps</h5>
+
