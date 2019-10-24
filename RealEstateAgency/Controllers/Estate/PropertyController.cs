@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using RealEstateAgency.Implementations.ApiImplementations.PageDtos;
 using RealEstateAgency.Implementations.ApiImplementations.PageDtos.PageFilters;
 using RealEstateAgency.Implementations.Authentication;
+using RealEstateAgency.Implementations.ApiImplementations.Models;
 
 namespace RealEstateAgency.Controllers.Estate
 {
@@ -181,6 +182,7 @@ namespace RealEstateAgency.Controllers.Estate
             await ModelService.UpdateAsync(property, cancellationToken);
             return NoContent();
         }
+
     }
 
 }

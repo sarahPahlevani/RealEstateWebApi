@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace RealEstateAgency.Implementations.ApiImplementations.PageDtos
+namespace RealEstateAgency.Implementations.ApiImplementations.Models
 {
-    public class PriceMinMaxDto 
+    public class PriceMinMax 
     {
 
         public decimal? Min { get; set; }

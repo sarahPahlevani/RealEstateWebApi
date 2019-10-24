@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Threading;
 using RealEstateAgency.Implementations.ApiImplementations.PageDtos;
+using RealEstateAgency.Implementations.ApiImplementations.Models;
 
 namespace RealEstateAgency.Controllers.Estate
 {
@@ -32,12 +33,12 @@ namespace RealEstateAgency.Controllers.Estate
 
 
         [AllowAnonymous]
-        [HttpGet("GetPriceMinMax")]
-        public ActionResult<PriceMinMaxDto> GetPriceMinMax()
+        [HttpGet("[Action]")]
+        public ActionResult<PriceMinMax> GetMinMax()
         {
             var min = ModelService.Queryable.Min(r => r.CalculatedPriceUnit);
             var max = ModelService.Queryable.Max(r => r.CalculatedPriceUnit);
-            return new PriceMinMaxDto
+            return new PriceMinMax
             {
                 Min = min,
                 Max = max,

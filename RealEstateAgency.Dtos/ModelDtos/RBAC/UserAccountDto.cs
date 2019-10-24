@@ -41,6 +41,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.RBAC
         public bool IsAgent { get; set; }
         public string ActivationLink { get; set; }
         public bool HasPublishingAuthorization { get; set; }
+        public string ReferralCode { get; set; }
 
         public override IModelDto<UserAccount> From(UserAccount entity)
         {
@@ -61,6 +62,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.RBAC
             Address01 = entity.Address01;
             Address02 = entity.Address01;
             ZipCode = entity.ZipCode;
+            ReferralCode = entity.ReferralCode;
             return this;
         }
 

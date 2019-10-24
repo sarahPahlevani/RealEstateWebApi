@@ -1,6 +1,7 @@
 ﻿using RealEstateAgency.DAL.DtoContracts;
 using RealEstateAgency.DAL.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace RealEstateAgency.Dtos.ModelDtos.BasicInformation
 {
@@ -12,7 +13,10 @@ namespace RealEstateAgency.Dtos.ModelDtos.BasicInformation
         public string Name { get; set; }
         [Required]
         public bool CanAddProperty { get; set; }
-        
+
+        public int PropertyCount { get; set; }
+
+
 
         public override IModelDto<PropertyType> From(PropertyType entity)
         {

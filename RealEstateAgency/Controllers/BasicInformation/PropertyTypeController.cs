@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RealEstateAgency.Implementations.Extensions;
 using RealEstateAgency.Implementations.Providers;
+using RealEstateAgency.Implementations.ApiImplementations.Models;
 
 namespace RealEstateAgency.Controllers.BasicInformation
 {
@@ -37,8 +38,18 @@ namespace RealEstateAgency.Controllers.BasicInformation
         public override Func<IQueryable<PropertyType>, IQueryable<PropertyTypeDto>> PagingConverter => _converter;
 
         [AllowAnonymous]
-        public override Task<ActionResult<IEnumerable<PropertyTypeDto>>> GetAllAsync(CancellationToken cancellationToken)
-            => base.GetAllAsync(cancellationToken);
+        public override async Task<ActionResult<IEnumerable<PropertyTypeDto>>> GetAllAsync(CancellationToken cancellationToken)
+        //=> base.GetAllAsync(cancellationToken);
+        {
+            return await ModelService.Queryable
+                .Include(r => r.Property)
+                .Select(r => new PropertyTypeDto
+                {
+                    Id = r.Id,
+                    Name = r.Name,
+                    PropertyCount = r.Property.Count(p => p.IsPublished),
+                }).ToListAsync(cancellationToken);
+        }
 
         [AllowAnonymous]
         [HttpGet("[Action]/{language}")]
@@ -54,6 +65,19 @@ namespace RealEstateAgency.Controllers.BasicInformation
             {
                 return await base.GetAllAsync(cancellationToken);
             }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("[Action]")]
+        public async Task<ActionResult<IEnumerable<PropertyTypeCount>>> GetCount(CancellationToken cancellationToken)
+        {
+            return await ModelService.Queryable
+                //.Include(r => r.Property)
+                .Select(r => new PropertyTypeCount
+                {
+                    PropertyType = r,
+                    Count = 1,//r.Property.Where(p => p.IsPublished).Count(),
+                }).ToListAsync(cancellationToken);
         }
 
     }
