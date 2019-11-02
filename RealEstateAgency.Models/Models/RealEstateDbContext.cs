@@ -1216,8 +1216,9 @@ namespace RealEstateAgency.DAL.Models
             {
                 entity.ToTable("SharedProperty", "SharingSystem");
 
+                entity.Property(e => e.RefererUrl).HasMaxLength(256);
+
                 entity.Property(e => e.ReferralCodeAndSharingNetworkId)
-                    .IsRequired()
                     .HasMaxLength(512)
                     .IsUnicode(false);
 
@@ -1230,13 +1231,11 @@ namespace RealEstateAgency.DAL.Models
                 entity.HasOne(d => d.SocialNetwork)
                     .WithMany(p => p.SharedProperty)
                     .HasForeignKey(d => d.SocialNetworkId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SharedProperty_SocialNetwork");
 
                 entity.HasOne(d => d.UserAccount)
                     .WithMany(p => p.SharedProperty)
                     .HasForeignKey(d => d.UserAccountId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_SharedProperty_UserAccount");
             });
 
@@ -1272,6 +1271,10 @@ namespace RealEstateAgency.DAL.Models
                 entity.Property(e => e.UniqueKey)
                     .IsRequired()
                     .HasMaxLength(128)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Url)
+                    .HasMaxLength(50)
                     .IsUnicode(false);
             });
 

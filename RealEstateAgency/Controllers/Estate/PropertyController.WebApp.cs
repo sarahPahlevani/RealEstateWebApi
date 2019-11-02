@@ -21,6 +21,7 @@ namespace RealEstateAgency.Controllers.Estate
             GetWebAppPageAsync([FromBody] PageRequestFilterDto requestDto, CancellationToken cancellationToken)
         {
             var filter = requestDto.Filter.ToObject<PropertyListFilter>();
+            //filter.SearchText = requestDto.Filter.ToString();
             var propertyPage = await new PageResultDto<PropertyWebAppListDto>(
                     filter.Filter(ModelService.Queryable.Where(p => p.IsPublished))
                         .Include(p => p.PropertyPrice)

@@ -18,10 +18,10 @@ namespace RealEstateAgency.Implementations.ApiImplementations.CreationPatterns.E
 
         public IEntityCreateService<TEntity> Create(RealEstateDbContext context)
         {
-            if (!_accessService.CreateAccess)
-                return new EntityCreateServiceAccessDenied<TEntity>();
-            if (IsForbiddenCreate<TEntity>())
-                return new EntityCreateServiceForbidden<TEntity>();
+            //if (!_accessService.CreateAccess)
+            //    return new EntityCreateServiceAccessDenied<TEntity>();
+            //if (IsForbiddenCreate<TEntity>())
+            //    return new EntityCreateServiceForbidden<TEntity>();
             return new EntityCreateServiceNormalStrategy<TEntity>(context);
         }
     }

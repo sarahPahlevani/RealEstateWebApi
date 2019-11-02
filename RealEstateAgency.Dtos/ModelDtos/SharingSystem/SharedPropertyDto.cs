@@ -10,8 +10,10 @@ namespace RealEstateAgency.Dtos.ModelDtos.SharingSystem
     {
         public override int Id { get; set; }
         public int PropertyId { get; set; }
-        public int UserAccountId { get; set; }
-        public int SocialNetworkId { get; set; }
+        public int? UserAccountId { get; set; }
+        public int? SocialNetworkId { get; set; }
+        public string RefererUrl { get; set; }
+        public int ClickCount { get; set; }
         public string ReferralCodeAndSharingNetworkId { get; set; }
 
         public override IModelDto<SharedProperty> From(SharedProperty entity)
@@ -21,6 +23,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.SharingSystem
             ReferralCodeAndSharingNetworkId = entity.ReferralCodeAndSharingNetworkId;
             UserAccountId = entity.UserAccountId;
             SocialNetworkId = entity.SocialNetworkId;
+            RefererUrl = entity.RefererUrl;
+            ClickCount = entity.ClickCount;
             return this;
         }
 
@@ -30,7 +34,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.SharingSystem
                 PropertyId = PropertyId,
                 ReferralCodeAndSharingNetworkId = ReferralCodeAndSharingNetworkId,
                 UserAccountId = UserAccountId,
-                SocialNetworkId = SocialNetworkId
+                SocialNetworkId = SocialNetworkId,
+                RefererUrl = RefererUrl,
+                ClickCount = ClickCount,
             };
 
         public override SharedProperty Update() =>
@@ -40,7 +46,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.SharingSystem
                 PropertyId = PropertyId,
                 ReferralCodeAndSharingNetworkId = ReferralCodeAndSharingNetworkId,
                 UserAccountId = UserAccountId,
-                SocialNetworkId = SocialNetworkId
+                SocialNetworkId = SocialNetworkId,
+                RefererUrl = RefererUrl,
+                ClickCount = ClickCount,
             };
     }
 }

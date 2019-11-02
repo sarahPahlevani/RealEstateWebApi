@@ -21,10 +21,10 @@ namespace RealEstateAgency.Implementations.ApiImplementations.CreationPatterns.E
         public IEntityUpdateService<TEntity> Create(RealEstateDbContext context)
         {
 
-            if (!_accessService.UpdateAccess)
-                return new EntityUpdateServiceAccessDeniedStrategy<TEntity>();
-            if (IsForbiddenUpdate<TEntity>())
-                return new EntityUpdateServiceForbiddenStrategy<TEntity>();
+            //if (!_accessService.UpdateAccess)
+            //    return new EntityUpdateServiceAccessDeniedStrategy<TEntity>();
+            //if (IsForbiddenUpdate<TEntity>())
+            //    return new EntityUpdateServiceForbiddenStrategy<TEntity>();
             if (IsVirtualDelete<TEntity>()) //TODO: user id should add here
                 return new EntityUpdateServiceVirtualStrategy<TEntity>(context, null);
             return new EntityUpdateServiceNormalStrategy<TEntity>(context);

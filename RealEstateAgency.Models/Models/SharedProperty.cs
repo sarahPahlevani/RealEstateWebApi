@@ -12,8 +12,10 @@ namespace RealEstateAgency.DAL.Models
 
         public int Id { get; set; }
         public int PropertyId { get; set; }
-        public int UserAccountId { get; set; }
-        public int SocialNetworkId { get; set; }
+        public int? UserAccountId { get; set; }
+        public int? SocialNetworkId { get; set; }
+        public string RefererUrl { get; set; }
+        public int ClickCount { get; set; }
         public string ReferralCodeAndSharingNetworkId { get; set; }
 
         public virtual Property Property { get; set; }

@@ -12,6 +12,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.SharingSystem
         public string Name { get; set; }
         public byte[] LogoPicture { get; set; }
         public string UniqueKey { get; set; }
+        public string Url { get; set; }
 
         public override IModelDto<SocialNetwork> From(SocialNetwork entity)
         {
@@ -19,6 +20,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.SharingSystem
             Name = entity.Name;
             LogoPicture = entity.LogoPicture;
             UniqueKey = entity.UniqueKey;
+            Url = entity.Url;
             return this;
         }
 
@@ -28,6 +30,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.SharingSystem
                 Name = Name,
                 LogoPicture = LogoPicture,
                 UniqueKey = UniqueKey,
+                Url = Url,
             };
 
         public override SocialNetwork Update() =>
@@ -37,6 +40,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.SharingSystem
                 Name = Name,
                 LogoPicture = LogoPicture,
                 UniqueKey = UniqueKey,
+                Url = Url,
             };
     }
 }

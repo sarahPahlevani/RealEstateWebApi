@@ -14,6 +14,7 @@ namespace RealEstateAgency.DAL.Models
         public string Name { get; set; }
         public byte[] LogoPicture { get; set; }
         public string UniqueKey { get; set; }
+        public string Url { get; set; }
 
         public virtual ICollection<SharedProperty> SharedProperty { get; set; }
     }

@@ -4,6 +4,7 @@ using RealEstateAgency.Implementations.ApiImplementations.Services.Contracts;
 using RealEstateAgency.Controllers.Contracts;
 using RealEstateAgency.DAL.Models;
 using RealEstateAgency.Dtos.ModelDtos.SharingSystem;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RealEstateAgency.Controllers.SharingSystem
 {
@@ -19,7 +20,8 @@ namespace RealEstateAgency.Controllers.SharingSystem
                 Id = i.Id,
                 Name = i.Name,
                 UniqueKey = i.UniqueKey,
-                LogoPicture = i.LogoPicture
+                LogoPicture = i.LogoPicture,
+                Url = i.Url,
             });
     }
 }
