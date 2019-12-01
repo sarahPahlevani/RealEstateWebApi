@@ -2,6 +2,8 @@
 using RealEstateAgency.DAL.DtoContracts;
 using RealEstateAgency.DAL.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RealEstateAgency.Dtos.ModelDtos.Crm
 {
@@ -12,10 +14,24 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
         [Required]
         public int RequestTypeId { get; set; }
 
-        [Required]
-        public int UserAccountIdRequester { get; set; }
+        public RequestType RequestType { get; set; }
 
         public int? WorkflowId { get; set; }
+
+        public Workflow Workflow { get; set; }
+
+        //public IEnumerable<WorkflowStep> WorkflowStep { get; set; }
+        public bool CanAddProperty { get; set; }
+
+        public int? UserAccountIdShared { get; set; }
+
+        public int? UserAccountIdRequester { get; set; }
+
+        public string RequesterFullname { get; set; }
+
+        public string RequesterEmail { get; set; }
+
+        public string RequesterPhone { get; set; }
 
         public string TrackingNumber { get; set; }
 
@@ -25,28 +41,53 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
         [Required]
         public string Description { get; set; }
 
-        public string MarketingAssistantTrackingCode { get; set; }
+        public UserAccount User { get; set; }
+        public int? AgentId { get; set; }
+        public Agent Agent { get; set; }
+
+        
         public DateTime DateCreated { get; set; }
         public bool Deleted { get; set; }
         public DateTime? DeletedDate { get; set; }
         public int? UserAccountIdDeleteBy { get; set; }
-        public int? SharedPropertyClickId { get; set; }
+
+        public int? PropertyId { get; set; }
+
+        public Property Property { get; set; }
+        public IEnumerable<RequestAction> Actions { get; set; }
+        public IEnumerable<RequestState> States { get; set; }
+        public bool IsAssigned { get; set; }
+
+        public bool IsDone { get; set; }
 
         public override IModelDto<Request> From(Request entity)
         {
             Id = entity.Id;
             RequestTypeId = entity.RequestTypeId;
-            UserAccountIdRequester = entity.UserAccountIdRequester;
+            RequestType = entity.RequestType;
+            AgentId = entity.AgentId;
+            Agent = entity.Agent;
             WorkflowId = entity.WorkflowId;
+            Workflow = entity.Workflow;
+            UserAccountIdShared = entity.UserAccountIdShared;
+            UserAccountIdRequester = entity.UserAccountIdRequester;
+            RequesterFullname = RequesterFullname;
+            RequesterEmail = RequesterEmail;
+            RequesterPhone = RequesterPhone;
             TrackingNumber = entity.TrackingNumber;
             Title = entity.Title;
             Description = entity.Description;
-            MarketingAssistantTrackingCode = entity.MarketingAssistantTrackingCode;
+            User = entity.UserAccountIdRequesterNavigation;
+            //MarketingAssistantTrackingCode = entity.MarketingAssistantTrackingCode;
             DateCreated = entity.DateCreated;
             Deleted = entity.Deleted;
             DeletedDate = entity.DeletedDate;
             UserAccountIdDeleteBy = entity.UserAccountIdDeleteBy;
-            SharedPropertyClickId = entity.SharedPropertyClickId;
+            PropertyId = entity.PropertyId;
+            Property = entity.Property.FirstOrDefault(r => r.RequestId == entity.Id);
+            States = entity.RequestState;
+            Actions = entity.RequestAction;
+            //IsDone = entity.IsDone;
             return this;
         }
 
@@ -55,16 +96,21 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
             {
                 RequestTypeId = RequestTypeId,
                 UserAccountIdRequester = UserAccountIdRequester,
+                AgentId = AgentId,
+                RequesterFullname = RequesterFullname,
+                RequesterEmail = RequesterEmail,
+                RequesterPhone = RequesterPhone,
                 WorkflowId = WorkflowId,
                 TrackingNumber = TrackingNumber,
                 Title = Title,
                 Description = Description,
-                MarketingAssistantTrackingCode = MarketingAssistantTrackingCode,
+                //MarketingAssistantTrackingCode = MarketingAssistantTrackingCode,
                 DateCreated = DateCreated,
                 Deleted = Deleted,
                 DeletedDate = DeletedDate,
                 UserAccountIdDeleteBy = UserAccountIdDeleteBy,
-                SharedPropertyClickId = SharedPropertyClickId
+                UserAccountIdShared = UserAccountIdShared,
+                PropertyId = PropertyId,
             };
 
         public override Request Update() =>
@@ -72,17 +118,22 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
             {
                 Id = Id,
                 RequestTypeId = RequestTypeId,
+                AgentId = AgentId,
                 UserAccountIdRequester = UserAccountIdRequester,
+                RequesterFullname = RequesterFullname,
+                RequesterEmail = RequesterEmail,
+                RequesterPhone = RequesterPhone,
                 WorkflowId = WorkflowId,
                 TrackingNumber = TrackingNumber,
                 Title = Title,
                 Description = Description,
-                MarketingAssistantTrackingCode = MarketingAssistantTrackingCode,
+                //MarketingAssistantTrackingCode = MarketingAssistantTrackingCode,
                 DateCreated = DateCreated,
                 Deleted = Deleted,
                 DeletedDate = DeletedDate,
                 UserAccountIdDeleteBy = UserAccountIdDeleteBy,
-                SharedPropertyClickId = SharedPropertyClickId
+                UserAccountIdShared = UserAccountIdShared,
+                PropertyId = PropertyId,
             };
     }
 }

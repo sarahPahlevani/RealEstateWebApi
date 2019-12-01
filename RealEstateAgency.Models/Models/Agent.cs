@@ -7,9 +7,11 @@ namespace RealEstateAgency.DAL.Models
     {
         public Agent()
         {
+            Request = new HashSet<Request>();
             RequestAction = new HashSet<RequestAction>();
             RequestActionFollowUp = new HashSet<RequestActionFollowUp>();
             RequestAgent = new HashSet<RequestAgent>();
+            RequestState = new HashSet<RequestState>();
         }
 
         public int Id { get; set; }
@@ -28,8 +30,10 @@ namespace RealEstateAgency.DAL.Models
         public virtual RealEstate RealEstate { get; set; }
         public virtual UserAccount UserAccount { get; set; }
         public virtual UserAccount UserAccountIdDeleteByNavigation { get; set; }
+        public virtual ICollection<Request> Request { get; set; }
         public virtual ICollection<RequestAction> RequestAction { get; set; }
         public virtual ICollection<RequestActionFollowUp> RequestActionFollowUp { get; set; }
         public virtual ICollection<RequestAgent> RequestAgent { get; set; }
+        public virtual ICollection<RequestState> RequestState { get; set; }
     }
 }

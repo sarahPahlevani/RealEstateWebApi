@@ -1,6 +1,6 @@
 ﻿## for db first migration 
 #### run this command in DAL project
-Scaffold-DbContext -Connection "Server=.;Database=RealEstateDb;Integrated Security=True;Trusted_Connection=True;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -context RealEstateDbContext -Project RealEstateAgency.DAL -force
+Scaffold-DbContext -Connection "Server=.;Database=RealEstateDbLocal;Integrated Security=True;Trusted_Connection=True;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -context RealEstateDbContext -Project RealEstateAgency.DAL -force
 
 #### remove all the datas
 ```sql

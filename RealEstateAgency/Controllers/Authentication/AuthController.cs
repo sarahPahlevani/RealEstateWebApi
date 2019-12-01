@@ -71,8 +71,8 @@ namespace RealEstateAgency.Controllers.Authentication
         [HttpPost("[Action]")]
         public async Task<ActionResult<UserAccountDto>> Register([FromBody] RegisterUserDto registerDto, CancellationToken cancellationToken)
         {
-            if(!await _recaptchaService.Validate(registerDto.RecaptchaToken, cancellationToken))
-                throw new AppException("The recaptcha was failed",true);
+            //if(!await _recaptchaService.Validate(registerDto.RecaptchaToken, cancellationToken))
+            //    throw new AppException("The recaptcha was failed",true);
             var userDto = await _appAuthService.RegisterAsync
                 (registerDto, cancellationToken);
             //TODO: this code commented due to error from google that says tooweekawutontication. less secure apps

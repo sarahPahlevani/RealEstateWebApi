@@ -31,7 +31,7 @@ namespace RealEstateAgency.Implementations.Authentication
             UpdateAccess = access;
             CreateAccess = access;
         }
-
+         
         private bool CheckAndSetAccess<TAccessAttribute>()
         where TAccessAttribute : class, IUserAccessAttribute
         {

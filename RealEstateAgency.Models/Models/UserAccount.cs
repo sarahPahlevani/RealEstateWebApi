@@ -24,7 +24,9 @@ namespace RealEstateAgency.DAL.Models
             PropertyUserAccountIdDeleteByNavigation = new HashSet<Property>();
             PropertyUserAccountIdPublishedNavigation = new HashSet<Property>();
             PropertyUserAccountIdReadyForPublishNavigation = new HashSet<Property>();
-            Request = new HashSet<Request>();
+            RequestUserAccountIdDeleteByNavigation = new HashSet<Request>();
+            RequestUserAccountIdRequesterNavigation = new HashSet<Request>();
+            RequestUserAccountIdSharedNavigation = new HashSet<Request>();
             SharedProperty = new HashSet<SharedProperty>();
             UserAccountGroup = new HashSet<UserAccountGroup>();
             UserAccountWishList = new HashSet<UserAccountWishList>();
@@ -73,7 +75,9 @@ namespace RealEstateAgency.DAL.Models
         public virtual ICollection<Property> PropertyUserAccountIdDeleteByNavigation { get; set; }
         public virtual ICollection<Property> PropertyUserAccountIdPublishedNavigation { get; set; }
         public virtual ICollection<Property> PropertyUserAccountIdReadyForPublishNavigation { get; set; }
-        public virtual ICollection<Request> Request { get; set; }
+        public virtual ICollection<Request> RequestUserAccountIdDeleteByNavigation { get; set; }
+        public virtual ICollection<Request> RequestUserAccountIdRequesterNavigation { get; set; }
+        public virtual ICollection<Request> RequestUserAccountIdSharedNavigation { get; set; }
         public virtual ICollection<SharedProperty> SharedProperty { get; set; }
         public virtual ICollection<UserAccountGroup> UserAccountGroup { get; set; }
         public virtual ICollection<UserAccountWishList> UserAccountWishList { get; set; }

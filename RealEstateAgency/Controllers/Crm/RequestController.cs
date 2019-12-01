@@ -11,6 +11,7 @@ using RealEstateAgency.Implementations.Authentication;
 using RealEstateAgency.NotificationSystem.Signalers;
 using RealEstateAgency.Shared.Services;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,22 +39,78 @@ namespace RealEstateAgency.Controllers.Crm
             _userAccountService = userAccountService;
         }
 
-        public override Func<IQueryable<Request>, IQueryable<RequestDto>> DtoConverter => items => items.Select(i => new RequestDto
-        {
-            Id = i.Id,
-            Description = i.Description,
-            Title = i.Title,
-            WorkflowId = i.WorkflowId,
-            RequestTypeId = i.RequestTypeId,
-            MarketingAssistantTrackingCode = i.MarketingAssistantTrackingCode,
-            TrackingNumber = i.TrackingNumber,
-            UserAccountIdRequester = i.UserAccountIdRequester
-        });
+        public override Func<IQueryable<Request>, IQueryable<RequestDto>> DtoConverter => items => items
+            .Include(i => i.UserAccountIdRequesterNavigation)
+            .Include(i => i.RequestAgent)
+            .Include(i => i.RequestType)
+            .Include("RequestAction.RequestActionFollowUp")
+            .Select(i => new RequestDto
+            {
+                Id = i.Id,
+                Description = i.Description,
+                Title = i.Title,
+                DateCreated = i.DateCreated,
+                RequestTypeId = i.RequestTypeId,
+                RequestType = i.RequestType,
+                WorkflowId = i.WorkflowId,
+                Workflow = i.Workflow != null ? new Workflow
+                {
+                    Id = i.Workflow.Id,
+                    Name = i.Workflow.Name,
+                    RequestTypeId = i.Workflow.RequestTypeId,
+                    RequestType = i.Workflow.RequestType,
+                    Request = i.Workflow.Request,
+                    WorkflowStep = i.Workflow.WorkflowStep,
+                } : null,
+                CanAddProperty = i.RequestType.CanAddProperty,
+                UserAccountIdShared = i.UserAccountIdShared,
+                TrackingNumber = i.TrackingNumber,
+                UserAccountIdRequester = i.UserAccountIdRequester,
+                User = i.UserAccountIdRequesterNavigation,
+                Property = i.Property.FirstOrDefault(p => p.RequestId == i.Id),
+                AgentId = i.AgentId,
+                Agent = i.Agent,
+                Actions = i.RequestAction,
+                States = i.RequestState.Select(r => new RequestState
+                {
+                    Id = r.Id,
+                    RequestId = r.RequestId,
+                    Request = r.Request,
+                    StartStepDate = r.StartStepDate,
+                    FinishedDate = r.FinishedDate,
+                    Description = r.Description,
+                    AgentId = r.AgentId,
+                    Agent = r.Agent,
+                    WorkflowStepId = r.WorkflowStepId,
+                    WorkflowStep = r.WorkflowStep,
+                    IsDone = r.IsDone,
+                }),
+                IsAssigned = i.AgentId.HasValue,
+
+                //Id = i.Id,
+                //Description = i.Description,
+                //Title = i.Title,
+                //DateCreated = i.DateCreated,
+                //AgentId = i.AgentId,
+                //Agent = i.Agent,
+                //WorkflowId = i.WorkflowId,
+                //RequestTypeId = i.RequestTypeId,
+                //RequestType = i.RequestType,
+                ////MarketingAssistantTrackingCode = i.MarketingAssistantTrackingCode,
+                //UserAccountIdShared = i.UserAccountIdShared,
+                //TrackingNumber = i.TrackingNumber,
+                //UserAccountIdRequester = i.UserAccountIdRequester,
+                //PropertyId = i.PropertyId,
+            });
 
         public override Func<IQueryable<Request>, IQueryable<RequestListDto>> PagingConverter
-            => items => items.Include(i => i.UserAccountIdRequesterNavigation)
+            => items => items
+                .Include(i => i.UserAccountIdRequesterNavigation)
+                //.Include(i => i.Workflow).ThenInclude(r => r.WorkflowStep)
                 .Include(i => i.RequestAgent)
+                .Include(i => i.RequestType)
                 .Include("RequestAction.RequestActionFollowUp")
+                //.Include(i => i.RequestState).ThenInclude(r => r.WorkflowStep)
                 .Select(i => new RequestListDto
                 {
                     Id = i.Id,
@@ -61,19 +118,97 @@ namespace RealEstateAgency.Controllers.Crm
                     Title = i.Title,
                     DateCreated = i.DateCreated,
                     RequestTypeId = i.RequestTypeId,
+                    RequestType = i.RequestType,
+                    WorkflowId = i.WorkflowId,
+                    Workflow = i.Workflow != null ? new Workflow
+                    {
+                        Id = i.Workflow.Id,
+                        Name = i.Workflow.Name,
+                        RequestTypeId = i.Workflow.RequestTypeId,
+                        RequestType = i.Workflow.RequestType,
+                        Request = i.Workflow.Request,
+                        WorkflowStep = i.Workflow.WorkflowStep,
+                    } : null,
                     CanAddProperty = i.RequestType.CanAddProperty,
-                    MarketingAssistantTrackingCode = i.MarketingAssistantTrackingCode,
+                    //MarketingAssistantTrackingCode = i.MarketingAssistantTrackingCode,
+                    UserAccountIdShared = i.UserAccountIdShared,
                     TrackingNumber = i.TrackingNumber,
                     UserAccountIdRequester = i.UserAccountIdRequester,
                     User = i.UserAccountIdRequesterNavigation,
                     Property = i.Property.FirstOrDefault(p => p.RequestId == i.Id),
-                    AgentId = i.RequestAgent.Any(r => r.RequestId == i.Id && r.IsActive == true) ?
-                        i.RequestAgent.FirstOrDefault(r => r.RequestId == i.Id && r.IsActive == true)
-                        .AgentId : -1,
-                    Actions = i.RequestAction.ToList(),
-                    States = i.RequestState.ToList(),
-                    IsAssigned = i.RequestAgent.Any(ra => ra.IsActive == true)
+                    AgentId = i.AgentId,
+                    AgentName = $"{i.Agent.UserAccount.FirstName} {i.Agent.UserAccount.LastName}",
+                    Actions = i.RequestAction,
+                    States = i.RequestState.Select(r => new RequestState
+                    {
+                        Id = r.Id,
+                        RequestId = r.RequestId,
+                        Request = r.Request,
+                        StartStepDate = r.StartStepDate,
+                        FinishedDate = r.FinishedDate,
+                        Description = r.Description,
+                        AgentId = r.AgentId,
+                        Agent = r.Agent,
+                        WorkflowStepId = r.WorkflowStepId,
+                        WorkflowStep = r.WorkflowStep,
+                        IsDone = r.IsDone,
+                    }),
+                    IsAssigned = i.AgentId.HasValue,
                 }).OrderBy(i => i.IsAssigned).ThenByDescending(i => i.DateCreated);
+
+        public override async Task<ActionResult<RequestDto>> GetAsync(int id, CancellationToken cancellationToken)
+        {
+            var result = await ModelService.AsQueryable(r => r.Id == id)
+                .Include(i => i.UserAccountIdRequesterNavigation)
+            .Include(i => i.RequestAgent)
+            .Include(i => i.RequestType)
+            .Include("RequestAction.RequestActionFollowUp")
+            .Select(i => new RequestDto
+            {
+                Id = i.Id,
+                Description = i.Description,
+                Title = i.Title,
+                DateCreated = i.DateCreated,
+                RequestTypeId = i.RequestTypeId,
+                RequestType = i.RequestType,
+                WorkflowId = i.WorkflowId,
+                Workflow = i.Workflow != null ? new Workflow
+                {
+                    Id = i.Workflow.Id,
+                    Name = i.Workflow.Name,
+                    RequestTypeId = i.Workflow.RequestTypeId,
+                    RequestType = i.Workflow.RequestType,
+                    Request = i.Workflow.Request,
+                    WorkflowStep = i.Workflow.WorkflowStep,
+                } : null,
+                CanAddProperty = i.RequestType.CanAddProperty,
+                UserAccountIdShared = i.UserAccountIdShared,
+                TrackingNumber = i.TrackingNumber,
+                UserAccountIdRequester = i.UserAccountIdRequester,
+                User = i.UserAccountIdRequesterNavigation,
+                Property = i.Property.FirstOrDefault(p => p.RequestId == i.Id),
+                AgentId = i.AgentId,
+                Agent = i.Agent,
+                Actions = i.RequestAction,
+                States = i.RequestState.Select(r => new RequestState
+                {
+                    Id = r.Id,
+                    RequestId = r.RequestId,
+                    Request = r.Request,
+                    StartStepDate = r.StartStepDate,
+                    FinishedDate = r.FinishedDate,
+                    Description = r.Description,
+                    AgentId = r.AgentId,
+                    Agent = r.Agent,
+                    WorkflowStepId = r.WorkflowStepId,
+                    WorkflowStep = r.WorkflowStep,
+                    IsDone = r.IsDone,
+                }),
+                IsAssigned = i.AgentId.HasValue,
+            }).FirstOrDefaultAsync();
+
+            return result;
+        }
 
         [AllowAnonymous]
         [HttpPost("[Action]")]
@@ -92,7 +227,7 @@ namespace RealEstateAgency.Controllers.Crm
         {
             value.TrackingNumber = _hasher.CalculateTimeHash("TrackingNumber" + Guid.NewGuid());
             value.DateCreated = DateTime.Now;
-            value.UserAccountIdRequester = _userProvider.Id;
+            //value.UserAccountIdRequester = _userProvider.Id;
             var res = await ModelService.CreateByDtoAsync(value, cancellationToken);
             await _signaler.Signal(_userAccountService.GetAll(u => u.AgentUserAccount.Any(a => a.IsResponsible))
                 .Select(u => u.Id).ToList(), nameof(Request), "A new request has arrived");
@@ -103,9 +238,15 @@ namespace RealEstateAgency.Controllers.Crm
             GetPageAsync([FromBody] PageRequestFilterDto requestDto, CancellationToken cancellationToken)
         {
             var result = await GetPageResultAsync(
-                ModelService.AsQueryable(i => i.RequestAgent.Any(ra => ra.AgentId == _userProvider.AgentId && ra.IsActive == true)), requestDto,
+                ModelService.AsQueryable(i => i.AgentId == _userProvider.AgentId),
+                requestDto,
                 requestDto.Filter.ToObject<RequestListFilter>(),
                 cancellationToken);
+            //var result = await GetPageResultAsync(
+            //    ModelService.AsQueryable(i => i.RequestAgent.Any(ra => ra.AgentId == _userProvider.AgentId && ra.IsActive == true)),
+            //    requestDto,
+            //    requestDto.Filter.ToObject<RequestListFilter>(),
+            //    cancellationToken);
             foreach (var item in result.Value.Items) item.User.PasswordHash = null;
 
             return result;
@@ -115,9 +256,9 @@ namespace RealEstateAgency.Controllers.Crm
             CancellationToken cancellationToken)
         {
             var result = await GetPageResultAsync(
-                ModelService.AsQueryable(i => i.RequestAgent.Any()
-                 && i.RequestAgent.FirstOrDefault().AgentId == _userProvider.AgentId
-                 && i.RequestAgent.FirstOrDefault().IsActive == true),
+                ModelService.AsQueryable(i => i.AgentId == _userProvider.AgentId),
+                //&& i.RequestAgent.FirstOrDefault().AgentId == 11/*_userProvider.AgentId*/
+                //&& i.RequestAgent.FirstOrDefault().IsActive == true),
                 new PageRequestDto(pageSize, pageNumber),
                 new NullFilter<Request>(), cancellationToken);
             foreach (var item in result.Value.Items) item.User.PasswordHash = null;
@@ -125,22 +266,23 @@ namespace RealEstateAgency.Controllers.Crm
             return result;
         }
 
+        //[AllowAnonymous]
         [HttpPost("[Action]")]
         public async Task<ActionResult<PageResultDto<RequestListDto>>> GetOpenRequests([FromBody] PageRequestFilterDto requestDto, CancellationToken cancellationToken)
         {
-            if (!_userProvider.IsAgent || _userProvider.IsResponsible is null || _userProvider.IsResponsible == false)
+            if (!_userProvider.IsAgent || _userProvider.IsResponsible.GetValueOrDefault(false) == false)
                 return Forbid();
 
             var result = await GetPageResultAsync(
                 ModelService.Queryable, requestDto,
                 requestDto.Filter.ToObject<RequestListFilter>(),
                 cancellationToken);
-
             foreach (var item in result.Value.Items) item.User.PasswordHash = null;
 
             return result;
         }
 
+        [AllowAnonymous]
         [HttpPost("[Action]")]
         public async Task<ActionResult> ChangeRequestAgent([FromBody] ChangeRequestAgentDto dto, CancellationToken cancellationToken)
         {
@@ -161,14 +303,17 @@ namespace RealEstateAgency.Controllers.Crm
 
                     await RemoveOtherRelations(dto, cancellationToken);
 
-                    await _requestAgentService.CreateAsync(new RequestAgent
-                    {
-                        AgentId = dto.NewAgentId,
-                        FromDate = DateTime.Now,
-                        Description = dto.Description,
-                        IsActive = true,
-                        RequestId = dto.RequestId,
-                    }, cancellationToken);
+                    req.AgentId = dto.NewAgentId;
+                    await ModelService.UpdateAsync(req, cancellationToken);
+
+                    //await _requestAgentService.CreateAsync(new RequestAgent
+                    //{
+                    //    AgentId = dto.NewAgentId,
+                    //    FromDate = DateTime.UtcNow,
+                    //    Description = dto.Description,
+                    //    IsActive = true,
+                    //    RequestId = dto.RequestId,
+                    //}, cancellationToken);
 
                     await _signaler.Signal(
                         _userAccountService.Get(u => u.AgentUserAccount.Any(a => a.Id == dto.NewAgentId)).Id,
@@ -176,7 +321,7 @@ namespace RealEstateAgency.Controllers.Crm
                         "A new request has been assigned to you");
 
                     scope.Complete();
-                    return NoContent();
+                    return Ok();
                 }
                 catch (Exception)
                 {
@@ -194,7 +339,7 @@ namespace RealEstateAgency.Controllers.Crm
             if (agentRequest != null)
             {
                 agentRequest.IsActive = false;
-                agentRequest.ToDate = new DateTime();
+                agentRequest.ToDate = DateTime.UtcNow;
 
                 await _requestAgentService.UpdateAsync(agentRequest
                     , cancellationToken);

@@ -13,10 +13,10 @@ namespace RealEstateAgency.DAL.Models
 
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Icon { get; set; }
         public bool Deleted { get; set; }
         public int? UserAccountIdDeleteBy { get; set; }
         public DateTime? DeletedDate { get; set; }
+        public string Icon { get; set; }
 
         public virtual UserAccount UserAccountIdDeleteByNavigation { get; set; }
         public virtual ICollection<PropertyFeatureTranslate> PropertyFeatureTranslate { get; set; }

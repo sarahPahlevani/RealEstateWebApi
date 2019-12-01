@@ -75,7 +75,7 @@ namespace RealEstateAgency.DAL.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=.;Database=RealEstateDb;Integrated Security=True;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=178.32.186.120,65210;Database=RealEstateDbTest;User Id=sa;Password=abc.1234;MultipleActiveResultSets=true;");
             }
         }
 
@@ -992,7 +992,11 @@ namespace RealEstateAgency.DAL.Models
                     .IsRequired()
                     .HasMaxLength(2048);
 
-                entity.Property(e => e.MarketingAssistantTrackingCode).HasMaxLength(256);
+                entity.Property(e => e.RequesterEmail).HasMaxLength(256);
+
+                entity.Property(e => e.RequesterFullname).HasMaxLength(256);
+
+                entity.Property(e => e.RequesterPhone).HasMaxLength(256);
 
                 entity.Property(e => e.Title)
                     .IsRequired()
@@ -1006,22 +1010,33 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.UserAccountIdRequester).HasColumnName("UserAccountId_Requester");
 
+                entity.Property(e => e.UserAccountIdShared).HasColumnName("UserAccountId_Shared");
+
+                entity.HasOne(d => d.Agent)
+                    .WithMany(p => p.Request)
+                    .HasForeignKey(d => d.AgentId)
+                    .HasConstraintName("FK_Request_Agent");
+
                 entity.HasOne(d => d.RequestType)
                     .WithMany(p => p.Request)
                     .HasForeignKey(d => d.RequestTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Request_RequestType");
 
-                entity.HasOne(d => d.SharedPropertyClick)
-                    .WithMany(p => p.Request)
-                    .HasForeignKey(d => d.SharedPropertyClickId)
-                    .HasConstraintName("FK_Request_SharedPropertyClick");
+                entity.HasOne(d => d.UserAccountIdDeleteByNavigation)
+                    .WithMany(p => p.RequestUserAccountIdDeleteByNavigation)
+                    .HasForeignKey(d => d.UserAccountIdDeleteBy)
+                    .HasConstraintName("FK_Request_UserAccount1");
 
                 entity.HasOne(d => d.UserAccountIdRequesterNavigation)
-                    .WithMany(p => p.Request)
+                    .WithMany(p => p.RequestUserAccountIdRequesterNavigation)
                     .HasForeignKey(d => d.UserAccountIdRequester)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Request_UserAccount");
+
+                entity.HasOne(d => d.UserAccountIdSharedNavigation)
+                    .WithMany(p => p.RequestUserAccountIdSharedNavigation)
+                    .HasForeignKey(d => d.UserAccountIdShared)
+                    .HasConstraintName("FK_Request_UserAccount2");
 
                 entity.HasOne(d => d.Workflow)
                     .WithMany(p => p.Request)
@@ -1168,6 +1183,12 @@ namespace RealEstateAgency.DAL.Models
                 entity.Property(e => e.FinishedDate).HasColumnType("datetime");
 
                 entity.Property(e => e.StartStepDate).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Agent)
+                    .WithMany(p => p.RequestState)
+                    .HasForeignKey(d => d.AgentId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_RequestState_Agent");
 
                 entity.HasOne(d => d.Request)
                     .WithMany(p => p.RequestState)

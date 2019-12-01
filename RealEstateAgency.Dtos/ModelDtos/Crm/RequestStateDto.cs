@@ -14,12 +14,13 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
 
         [Required]
         public int WorkflowStepId { get; set; }
-
+        public WorkflowStep WorkflowStep { get; set; }
         public DateTime? StartStepDate { get; set; }
         public DateTime? FinishedDate { get; set; }
         
         public string Description { get; set; }
         public bool IsDone { get; set; }
+        public int AgentId { get; set; }
 
         public override IModelDto<RequestState> From(RequestState entity)
         {
@@ -28,7 +29,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
             Description = entity.Description;
             IsDone = entity.IsDone;
             WorkflowStepId = entity.WorkflowStepId;
+            WorkflowStep = entity.WorkflowStep;
             StartStepDate = entity.StartStepDate;
+            AgentId = entity.AgentId;
 
             return this;
         }
@@ -42,6 +45,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
                 StartStepDate = StartStepDate,
                 FinishedDate = FinishedDate,
                 WorkflowStepId = WorkflowStepId,
+                AgentId = AgentId,
             };
 
         public override RequestState Update() =>
@@ -54,6 +58,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
                 StartStepDate = StartStepDate,
                 FinishedDate = FinishedDate,
                 WorkflowStepId = WorkflowStepId,
+                AgentId = AgentId,
             };
     }
 }

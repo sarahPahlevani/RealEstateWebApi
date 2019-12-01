@@ -75,12 +75,12 @@ namespace RealEstateAgency.Controllers.Organization
         [HttpGet("[Action]")]
         public async Task<ActionResult<IEnumerable<UserAccountDto>>> GetAgents(CancellationToken cancellationToken)
         {
-            var agents = await ModelService.AsQueryable(a => a.RealEstateId == _userProvider.RealEstateId)
+            var agents = await ModelService.AsQueryable(/*a => a.RealEstateId == _userProvider.RealEstateId*/)
                 .Include(i => i.UserAccount)
                 .Select(i => new UserAccountDto
                 {
                     AgentId = i.Id,
-                    Id = i.Id,
+                    Id = i.UserAccountId,
                     AuthenticationProviderId = i.UserAccount.AuthenticationProviderId,
                     AuthenticationProviderAccessToken = i.UserAccount.AuthenticationProviderAccessToken,
                     UserName = i.UserAccount.UserName,
@@ -226,11 +226,11 @@ namespace RealEstateAgency.Controllers.Organization
         [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         public override async Task<ActionResult> Delete(int id, CancellationToken cancellationToken)
         {
-            var user = await _userAccountService.GetAsync(u => u.AgentUserAccount.Any(a => a.Id == id), cancellationToken);
-            user.Email = _fastHasher.CalculateTimeHash(user.Email);
-            user.UserName = _fastHasher.CalculateTimeHash(user.UserName);
-            user.IsActive = false;
-            await _userAccountService.UpdateAsync(user, cancellationToken);
+            //var user = await _userAccountService.GetAsync(u => u.AgentUserAccount.Any(a => a.Id == id), cancellationToken);
+            //user.Email = _fastHasher.CalculateTimeHash(user.Email);
+            //user.UserName = _fastHasher.CalculateTimeHash(user.UserName);
+            //user.IsActive = false;
+            //await _userAccountService.UpdateAsync(user, cancellationToken);
             return await base.Delete(id, cancellationToken);
         }
 

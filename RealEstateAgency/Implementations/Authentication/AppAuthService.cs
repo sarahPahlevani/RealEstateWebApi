@@ -72,8 +72,7 @@ namespace RealEstateAgency.Implementations.Authentication
             {
                 Subject = GetClaimsIdentity(user, role, groupId),
                 Expires = DateTime.UtcNow.AddDays(_authSetting.ExpireInDays),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key)
-                    , SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var userDto = new UserAccountDto();

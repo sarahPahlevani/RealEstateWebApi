@@ -13,7 +13,7 @@ namespace RealEstateAgency.Hubs
             = new Dictionary<int, HashSet<string>>();
     }
 
-    [Authorize]
+    //[Authorize]
     public class UsersHub : Hub
     {
         public static string Name => nameof(UsersHub);
