@@ -23,6 +23,7 @@ namespace RealEstateAgency.Controllers.Crm
     {
         private readonly IFastHasher _hasher;
         private readonly IUserProvider _userProvider;
+        private readonly IEntityService<RequestState> _requestStateService;
         private readonly IEntityService<RequestAgent> _requestAgentService;
         private readonly IEntityService<UserAccount> _userAccountService;
         private readonly IUpdateSignaler _signaler;
@@ -293,7 +294,7 @@ namespace RealEstateAgency.Controllers.Crm
                     if (!_userProvider.IsAgent || _userProvider.IsResponsible is null)
                         return Forbid("Only agents can access this section");
 
-                    var req = await ModelService.Queryable.Include(i => i.RequestAgent)
+                    var req = await ModelService.Queryable.Include(i => i.RequestAgent).Include(i => i.RequestState)
                         .FirstOrDefaultAsync(r => r.Id == dto.RequestId, cancellationToken);
 
                     if (req is null) return NotFound();
@@ -305,6 +306,18 @@ namespace RealEstateAgency.Controllers.Crm
 
                     req.AgentId = dto.NewAgentId;
                     await ModelService.UpdateAsync(req, cancellationToken);
+
+                    var haveStates = _requestStateService.AsQueryable(r => r.RequestId == req.Id).Any();
+                    if (!haveStates)
+                    {
+                        await _requestStateService.CreateAsync(new RequestState
+                        {
+                            RequestId = req.Id,
+                            StartStepDate = DateTime.UtcNow,
+                            IsDone = false,
+                            AgentId = dto.NewAgentId,
+                        });
+                    }
 
                     //await _requestAgentService.CreateAsync(new RequestAgent
                     //{

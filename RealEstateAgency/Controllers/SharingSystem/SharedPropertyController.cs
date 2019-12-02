@@ -14,6 +14,7 @@ using RealEstateAgency.Implementations.Providers;
 
 namespace RealEstateAgency.Controllers.SharingSystem
 {
+    [AllowAnonymous]
     public class SharedPropertyController : ModelController<SharedProperty, SharedPropertyDto>
     {
 
