@@ -25,17 +25,20 @@ namespace RealEstateAgency.Controllers.Crm
         private readonly IUserProvider _userProvider;
         private readonly IEntityService<RequestState> _requestStateService;
         private readonly IEntityService<RequestAgent> _requestAgentService;
+        private readonly IEntityService<WorkflowStep> _workflowStepService;
         private readonly IEntityService<UserAccount> _userAccountService;
         private readonly IUpdateSignaler _signaler;
 
         public RequestController(IModelService<Request, RequestDto> modelService, IFastHasher hasher
-            , IUserProvider userProvider, IEntityService<RequestAgent> requestAgentService,
-            IUpdateSignaler signaler, IEntityService<UserAccount> userAccountService)
+            , IUserProvider userProvider, IEntityService<RequestState> requestStateService, IEntityService<RequestAgent> requestAgentService,
+            IEntityService<WorkflowStep> workflowStepService, IUpdateSignaler signaler, IEntityService<UserAccount> userAccountService)
             : base(modelService)
         {
             _hasher = hasher;
             _userProvider = userProvider;
+            _requestStateService = requestStateService;
             _requestAgentService = requestAgentService;
+            _workflowStepService = workflowStepService;
             _signaler = signaler;
             _userAccountService = userAccountService;
         }
@@ -224,6 +227,7 @@ namespace RealEstateAgency.Controllers.Crm
             return res;
         }
 
+        [AllowAnonymous]
         public override async Task<ActionResult<RequestDto>> Create(RequestDto value, CancellationToken cancellationToken)
         {
             value.TrackingNumber = _hasher.CalculateTimeHash("TrackingNumber" + Guid.NewGuid());
@@ -267,7 +271,6 @@ namespace RealEstateAgency.Controllers.Crm
             return result;
         }
 
-        //[AllowAnonymous]
         [HttpPost("[Action]")]
         public async Task<ActionResult<PageResultDto<RequestListDto>>> GetOpenRequests([FromBody] PageRequestFilterDto requestDto, CancellationToken cancellationToken)
         {
@@ -283,7 +286,6 @@ namespace RealEstateAgency.Controllers.Crm
             return result;
         }
 
-        [AllowAnonymous]
         [HttpPost("[Action]")]
         public async Task<ActionResult> ChangeRequestAgent([FromBody] ChangeRequestAgentDto dto, CancellationToken cancellationToken)
         {
@@ -291,7 +293,7 @@ namespace RealEstateAgency.Controllers.Crm
             {
                 try
                 {
-                    if (!_userProvider.IsAgent || _userProvider.IsResponsible is null)
+                    if (!_userProvider.IsAgent || !_userProvider.IsResponsible.GetValueOrDefault(false))
                         return Forbid("Only agents can access this section");
 
                     var req = await ModelService.Queryable.Include(i => i.RequestAgent).Include(i => i.RequestState)
@@ -299,7 +301,7 @@ namespace RealEstateAgency.Controllers.Crm
 
                     if (req is null) return NotFound();
 
-                    if (!_userProvider.IsResponsible.Value && req.RequestAgent.All(i => i.AgentId != _userProvider.AgentId))
+                    if (!_userProvider.IsResponsible.GetValueOrDefault(false) && req.RequestAgent.All(i => i.AgentId != _userProvider.AgentId))
                         return Forbid("You cannot change others request");
 
                     await RemoveOtherRelations(dto, cancellationToken);
@@ -310,9 +312,11 @@ namespace RealEstateAgency.Controllers.Crm
                     var haveStates = _requestStateService.AsQueryable(r => r.RequestId == req.Id).Any();
                     if (!haveStates)
                     {
+                        var firstStep = _workflowStepService.AsQueryable(r => r.WorkflowId == req.WorkflowId).OrderBy(r => r.StepNumber).FirstOrDefault().Id;
                         await _requestStateService.CreateAsync(new RequestState
                         {
                             RequestId = req.Id,
+                            WorkflowStepId = firstStep,
                             StartStepDate = DateTime.UtcNow,
                             IsDone = false,
                             AgentId = dto.NewAgentId,

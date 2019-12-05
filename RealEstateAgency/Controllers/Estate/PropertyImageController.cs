@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using RealEstateAgency.Implementations.Providers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RealEstateAgency.Controllers.Estate
 {
@@ -69,9 +70,11 @@ namespace RealEstateAgency.Controllers.Estate
                 ImageExtension = propertyImage.ImageExtension,
                 ImageSize = propertyImage.ImageSize,
                 ImageCaption = propertyImage.ImageCaption,
-                ImageUrl = _pathProvider.GetImageApiPath<PropertyImage>(getFullImage
-                    ? nameof(PropertyImage.ImageContentFull) : nameof(PropertyImage.ImageContentTumblr)
-                    , propertyImage.Id.ToString()),
+                ImagePath = propertyImage.ImagePath,
+                TumbPath = propertyImage.TumbPath,
+                //ImageUrl = _pathProvider.GetImageApiPath<PropertyImage>(getFullImage
+                //    ? nameof(PropertyImage.ImageContentFull) : nameof(PropertyImage.ImageContentTumblr)
+                //    , propertyImage.Id.ToString()),
                 Is360View = propertyImage.Is360View,
                 Priority = propertyImage.Priority
             };
@@ -85,23 +88,37 @@ namespace RealEstateAgency.Controllers.Estate
             return NoContent();
         }
 
+
+        //[AllowAnonymous]
         [HttpPost, DisableRequestSizeLimit]
         public async Task<ActionResult<List<PropertyImageDto>>> Create(CancellationToken cancellationToken)
         {
+            if(Request.Form is null) throw new AppException("form is null");
+
             if (Request.Form.Files.Count == 0) throw new AppException("files are not set");
 
             var files = await GetImagesFromFormData(cancellationToken);
             _entityService.DbContext.AddRange(files);
-            await _entityService.DbContext.SaveChangesAsync(cancellationToken);
             files.ForEach(file =>
             {
-                _uploadHelperService.ImageService.SaveImage(file.ImageContentFull,
-                    _pathProvider.GetImagePhysicalPath<PropertyImage>(nameof(PropertyImage.ImageContentFull),
-                        file.Id.ToString()));
-                _uploadHelperService.ImageService.SaveSmallerImage(file.ImageContentTumblr,
-                    _pathProvider.GetImagePhysicalPath<PropertyImage>(nameof(PropertyImage.ImageContentTumblr), 
-                        file.Id.ToString()));
+                var imagePath = _pathProvider.GetImagePhysicalPath<PropertyImage>(nameof(PropertyImage.ImageContentFull),
+                        file.Id.ToString());
+                var tumbPath = _pathProvider.GetImagePhysicalPath<PropertyImage>(nameof(PropertyImage.ImageContentTumblr),
+                        file.Id.ToString());
+
+                _uploadHelperService.ImageService.SaveImage(file.ImageContentFull, imagePath);
+                _uploadHelperService.ImageService.SaveSmallerImage(file.ImageContentTumblr, tumbPath);
+                file.ImageContentFull = null;
+                file.ImageContentTumblr = null;
+
+                file.ImagePath = _pathProvider.GetImageVirtualPath<PropertyImage>(nameof(PropertyImage.ImageContentFull),
+                        file.Id.ToString());
+                file.TumbPath = _pathProvider.GetImageVirtualPath<PropertyImage>(nameof(PropertyImage.ImageContentTumblr),
+                        file.Id.ToString());
             });
+
+            await _entityService.DbContext.SaveChangesAsync();
+
             return files.Select(f => new PropertyImageDto
             {
                 Id = f.Id,
@@ -110,6 +127,8 @@ namespace RealEstateAgency.Controllers.Estate
                 ImageCaption = f.ImageCaption,
                 ImageSize = f.ImageSize,
                 ImageExtension = f.ImageExtension,
+                ImagePath = f.ImagePath,
+                TumbPath = f.TumbPath,
                 Is360View = f.Is360View,
                 Priority = f.Priority
             }).ToList();

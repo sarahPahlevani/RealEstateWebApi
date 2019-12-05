@@ -33,6 +33,12 @@ namespace RealEstateAgency.Implementations.Providers
 
         public string GetImageApiPath<T>(string property, string key)
             => GetImageApiPath($"{typeof(T).Name}_{property}", key);
+
+        private string GetImageVirtualPath(string category, string key)
+            => $"/images/{_hasher.FileNameHash(category, key)}.jpeg";
+
+        public string GetImageVirtualPath<T>(string property, string key)
+            => GetImageVirtualPath($"{typeof(T).Name}_{property}", key);
     }
 
     public interface IPathProvider
@@ -43,5 +49,7 @@ namespace RealEstateAgency.Implementations.Providers
         string GetImagePhysicalPath<T>(string property, string key);
 
         string GetImageApiPath<T>(string property, string key);
+
+        string GetImageVirtualPath<T>(string property, string key);
     }
 }

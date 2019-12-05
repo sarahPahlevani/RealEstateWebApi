@@ -8,5 +8,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
     {
         public int Id { get; set; }
         public int Order { get; set; }
+
+        public string ImagePath { get; set; }
+
+        public string TumbPath { get; set; }
     }
 }

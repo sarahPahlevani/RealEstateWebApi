@@ -656,6 +656,10 @@ namespace RealEstateAgency.DAL.Models
                     .IsRequired()
                     .HasMaxLength(16);
 
+                entity.Property(e => e.ImagePath).HasMaxLength(1000);
+
+                entity.Property(e => e.TumbPath).HasMaxLength(1000);
+
                 entity.Property(e => e.UploadDate).HasColumnType("datetime");
 
                 entity.Property(e => e.UserAccountIdDeleteBy).HasColumnName("UserAccountId_DeleteBy");

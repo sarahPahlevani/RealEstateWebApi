@@ -32,6 +32,7 @@ namespace RealEstateAgency.DAL.Models
         public DateTime? DeletedDate { get; set; }
         public int? PropertyId { get; set; }
         public bool? IsDone { get; set; }
+        public bool? IsSuccess { get; set; }
 
         public virtual Agent Agent { get; set; }
         public virtual RequestType RequestType { get; set; }

@@ -58,7 +58,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
         public IEnumerable<RequestState> States { get; set; }
         public bool IsAssigned { get; set; }
 
-        public bool IsDone { get; set; }
+        public bool? IsDone { get; set; }
 
         public override IModelDto<Request> From(Request entity)
         {
@@ -87,7 +87,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
             Property = entity.Property.FirstOrDefault(r => r.RequestId == entity.Id);
             States = entity.RequestState;
             Actions = entity.RequestAction;
-            //IsDone = entity.IsDone;
+            IsDone = entity.IsDone;
             return this;
         }
 
@@ -96,7 +96,6 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
             {
                 RequestTypeId = RequestTypeId,
                 UserAccountIdRequester = UserAccountIdRequester,
-                AgentId = AgentId,
                 RequesterFullname = RequesterFullname,
                 RequesterEmail = RequesterEmail,
                 RequesterPhone = RequesterPhone,
@@ -111,6 +110,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
                 UserAccountIdDeleteBy = UserAccountIdDeleteBy,
                 UserAccountIdShared = UserAccountIdShared,
                 PropertyId = PropertyId,
+                AgentId = AgentId,
+                IsDone = IsDone,
             };
 
         public override Request Update() =>
@@ -118,7 +119,6 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
             {
                 Id = Id,
                 RequestTypeId = RequestTypeId,
-                AgentId = AgentId,
                 UserAccountIdRequester = UserAccountIdRequester,
                 RequesterFullname = RequesterFullname,
                 RequesterEmail = RequesterEmail,
@@ -134,6 +134,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
                 UserAccountIdDeleteBy = UserAccountIdDeleteBy,
                 UserAccountIdShared = UserAccountIdShared,
                 PropertyId = PropertyId,
+                AgentId = AgentId,
+                IsDone = IsDone,
             };
     }
 }

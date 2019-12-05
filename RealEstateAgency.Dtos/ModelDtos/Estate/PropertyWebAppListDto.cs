@@ -23,7 +23,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
         public PropertyLocation PropertyLocation { get; set; }
         public PropertyDetail PropertyDetail { get; set; }
         public List<string> ImagesUrl { get; set; }
-        public IEnumerable<PropertyWebAppImageDto> ImagesId { get; set; }
+        public IEnumerable<PropertyWebAppImageDto> Images { get; set; }
         public DateTime? PublishingDate { get; set; }
     }
 }

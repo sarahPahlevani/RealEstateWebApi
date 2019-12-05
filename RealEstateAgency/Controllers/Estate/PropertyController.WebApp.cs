@@ -44,26 +44,28 @@ namespace RealEstateAgency.Controllers.Estate
                             PropertyLocation = p.PropertyLocation,
                             PropertyDetail = p.PropertyDetail,
                             PropertyUniqId = p.PropertyUniqId,
-                            ImagesId = p.PropertyImage.Select(i => new PropertyWebAppImageDto
+                            Images = p.PropertyImage.Select(i => new PropertyWebAppImageDto
                             {
                                 Id = i.Id,
-                                Order = i.Priority
+                                Order = i.Priority,
+                                ImagePath = i.ImagePath,
+                                TumbPath = i.TumbPath,
                             }).ToList(),
                             PublishingDate = p.PublishingDate,
                         }), requestDto)
                 .GetPage(cancellationToken);
 
-            foreach (var dto in propertyPage.Items)
-            {
-                dto.ImagesId = dto.ImagesId.OrderBy(a => a.Order).ToList();
-                dto.ImagesUrl = new List<string>();
-                foreach (var i in dto.ImagesId)
-                {
-                    dto.ImagesUrl.Add(
-                        _pathProvider.GetImageApiPath<PropertyImage>(
-                            nameof(PropertyImage.ImageContentTumblr), i.Id.ToString()));
-                }
-            }
+            //foreach (var dto in propertyPage.Items)
+            //{
+            //    dto.ImagesId = dto.ImagesId.OrderBy(a => a.Order).ToList();
+            //    dto.ImagesUrl = new List<string>();
+            //    foreach (var i in dto.ImagesId)
+            //    {
+            //        dto.ImagesUrl.Add(
+            //            _pathProvider.GetImageApiPath<PropertyImage>(
+            //                nameof(PropertyImage.ImageContentTumblr), i.Id.ToString()));
+            //    }
+            //}
 
             return propertyPage;
         }
@@ -102,10 +104,12 @@ namespace RealEstateAgency.Controllers.Estate
                     AgentId = p.Request.RequestAgent.Any() ?
                         p.Request.RequestAgent.FirstOrDefault().AgentId : 0,
                     PublishingDate = p.PublishingDate,
-                    ImagesId = p.PropertyImage.Select(i => new PropertyWebAppImageDto
+                    Images = p.PropertyImage.Select(i => new PropertyWebAppImageDto
                     {
                         Id = i.Id,
-                        Order = i.Priority
+                        Order = i.Priority,
+                        ImagePath=i.ImagePath,
+                        TumbPath=i.TumbPath,
                     }),
                     AdditionalDetails = p.PropertyAdditionalDetail.Select(a => new PropertyAdditionalDetailDto
                     {
@@ -143,12 +147,13 @@ namespace RealEstateAgency.Controllers.Estate
 
             if (propertyPage is null) return NotFound();
 
-            propertyPage.ImagesId = propertyPage.ImagesId.OrderBy(a => a.Order).ToList();
-            propertyPage.ImagesUrl = new List<string>();
-            foreach (var i in propertyPage.ImagesId)
-                propertyPage.ImagesUrl.Add(
-                    _pathProvider.GetImageApiPath<PropertyImage>(
-                        nameof(PropertyImage.ImageContentFull), i.Id.ToString()));
+            //propertyPage.ImagesId = propertyPage.ImagesId.OrderBy(a => a.Order).ToList();
+            //propertyPage.ImagesUrl = new List<string>();
+            //foreach (var i in propertyPage.ImagesId)
+                //propertyPage.ImagesUrl.Add(i.ImagePath);
+                //propertyPage.ImagesUrl.Add(
+                //    _pathProvider.GetImageApiPath<PropertyImage>(
+                //        nameof(PropertyImage.ImageContentFull), i.Id.ToString()));
             propertyPage.FloorPlans = propertyPage.FloorPlans.ToList();
             foreach (var i in propertyPage.FloorPlans)
                 if (i.ImageSize > 0)
@@ -234,25 +239,27 @@ namespace RealEstateAgency.Controllers.Estate
                             PropertyLocation = p.PropertyLocation,
                             PropertyDetail = p.PropertyDetail,
                             PropertyUniqId = p.PropertyUniqId,
-                            ImagesId = p.PropertyImage.Where(i => !i.Deleted && !i.Is360View)
+                            Images = p.PropertyImage.Where(i => !i.Deleted && !i.Is360View)
                                 .Select(i => new PropertyWebAppImageDto
                                 {
                                     Id = i.Id,
-                                    Order = i.Priority
+                                    Order = i.Priority,
+                                    ImagePath = i.ImagePath,
+                                    TumbPath = i.TumbPath,
                                 }).ToList(),
                             PublishingDate = p.PublishingDate,
                         }), searchDto)
                 .GetPage(cancellationToken);
 
-            foreach (var dto in propertyPage.Items)
-            {
-                dto.ImagesId = dto.ImagesId.OrderBy(a => a.Order).ToList();
-                dto.ImagesUrl = new List<string>();
-                foreach (var i in dto.ImagesId)
-                    dto.ImagesUrl.Add(
-                        _pathProvider.GetImageApiPath<PropertyImage>(
-                            nameof(PropertyImage.ImageContentTumblr), i.Id.ToString()));
-            }
+            //foreach (var dto in propertyPage.Items)
+            //{
+            //    dto.ImagesId = dto.ImagesId.OrderBy(a => a.Order).ToList();
+            //    dto.ImagesUrl = new List<string>();
+            //    foreach (var i in dto.ImagesId)
+            //        dto.ImagesUrl.Add(
+            //            _pathProvider.GetImageApiPath<PropertyImage>(
+            //                nameof(PropertyImage.ImageContentTumblr), i.Id.ToString()));
+            //}
 
             return propertyPage;
         }

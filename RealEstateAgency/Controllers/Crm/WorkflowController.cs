@@ -17,7 +17,8 @@ namespace RealEstateAgency.Controllers.Crm
         => items => items.Select(i => new WorkflowDto
         {
             Id = i.Id,
-            Name = i.Name
+            Name = i.Name,
+            RequestTypeId = i.RequestTypeId,
         });
     }
 }
