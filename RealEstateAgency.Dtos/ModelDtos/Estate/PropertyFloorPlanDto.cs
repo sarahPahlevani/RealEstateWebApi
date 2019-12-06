@@ -28,7 +28,12 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
         public int? ImageSize { get; set; }
         public string ImageContentTumblrUrl { get; set; }
         public string ImageContentFullUrl { get; set; }
-        public byte[] ImageContentTumblr { get; set; }
+
+        public string ImagePath { get; set; }
+        public string TumbPath { get; set; }
+
+        public byte[] ImageFull { get; set; }
+        public byte[] ImageTumb { get; set; }
 
         public override IModelDto<PropertyFloorPlan> From(PropertyFloorPlan entity)
         {
@@ -46,6 +51,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
             UploadDate = entity.UploadDate;
             ImageExtension = entity.ImageExtension;
             ImageSize = entity.ImageSize;
+            ImagePath = entity.ImagePath;
+            TumbPath = entity.TumbPath;
             return this;
         }
 
@@ -65,6 +72,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
                 UploadDate = UploadDate,
                 ImageExtension = ImageExtension,
                 ImageSize = ImageSize,
+                ImagePath = ImagePath,
+                TumbPath = TumbPath,
             };
 
         public override PropertyFloorPlan Update() =>
@@ -84,6 +93,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
                 UploadDate = UploadDate,
                 ImageExtension = ImageExtension,
                 ImageSize = ImageSize,
+                ImagePath = ImagePath,
+                TumbPath = TumbPath,
             };
     }
 }

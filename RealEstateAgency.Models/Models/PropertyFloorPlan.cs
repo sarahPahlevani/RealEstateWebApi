@@ -20,8 +20,10 @@ namespace RealEstateAgency.DAL.Models
         public DateTime? UploadDate { get; set; }
         public string ImageExtension { get; set; }
         public int? ImageSize { get; set; }
-        public byte[] ImageContentFull { get; set; }
-        public byte[] ImageContentTumblr { get; set; }
+        public byte[] ImageContentFull1 { get; set; }
+        public byte[] ImageContentTumblr1 { get; set; }
+        public string ImagePath { get; set; }
+        public string TumbPath { get; set; }
         public bool Deleted { get; set; }
         public DateTime? DeletedDate { get; set; }
 

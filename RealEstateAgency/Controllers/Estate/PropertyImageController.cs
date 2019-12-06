@@ -169,7 +169,7 @@ namespace RealEstateAgency.Controllers.Estate
                 ImageContentFull = await _uploadHelperService
                     .ImageService.GetImageBytes(file.OpenReadStream(), cancellationToken),
                 ImageContentTumblr = await _uploadHelperService
-                .ImageService.GetSmallerImageBytes(file.OpenReadStream(), cancellationToken)
+                    .ImageService.GetSmallerImageBytes(file.OpenReadStream(), cancellationToken)
             };
         }
 

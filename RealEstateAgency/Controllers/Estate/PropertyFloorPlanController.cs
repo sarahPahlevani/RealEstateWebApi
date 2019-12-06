@@ -43,17 +43,19 @@ namespace RealEstateAgency.Controllers.Estate
             ImageCaption = i.ImageCaption,
             UploadDate = i.UploadDate,
             ImageExtension = i.ImageExtension,
-            ImageSize = i.ImageSize
+            ImageSize = i.ImageSize,
+            ImagePath = i.ImagePath,
+            TumbPath = i.TumbPath,
         });
 
         public override async Task<ActionResult<IEnumerable<PropertyFloorPlanDto>>> GetAllAsync(CancellationToken cancellationToken)
         {
             var res = (await ModelService.GetAllDtosAsync(cancellationToken)).ToList();
-            res.ForEach(i =>
-            {
-                i.ImageContentTumblrUrl = _pathProvider.GetImageApiPath<PropertyFloorPlan>(nameof(PropertyFloorPlan.ImageContentTumblr),i.Id.ToString());
-                i.ImageContentTumblr = null;
-            });
+            //res.ForEach(i =>
+            //{
+            //    i.ImageContentTumblrUrl = _pathProvider.GetImageApiPath<PropertyFloorPlan>(nameof(PropertyFloorPlan.ImageContentTumblr),i.Id.ToString());
+            //    i.ImageContentTumblr = null;
+            //});
             return res;
         }
 
@@ -61,10 +63,10 @@ namespace RealEstateAgency.Controllers.Estate
         {
             var floorPlan = await ModelService.GetDtoAsync(id, cancellationToken);
             if (floorPlan is null) return NotFound();
-            floorPlan.ImageContentTumblrUrl = _pathProvider.GetImageApiPath<PropertyFloorPlan>(
-                nameof(PropertyFloorPlan.ImageContentTumblr),
-                floorPlan.Id.ToString()); 
-            floorPlan.ImageContentTumblr = null;
+            //floorPlan.ImageContentTumblrUrl = _pathProvider.GetImageApiPath<PropertyFloorPlan>(
+            //    nameof(PropertyFloorPlan.ImageContentTumblr),
+            //    floorPlan.Id.ToString()); 
+            //floorPlan.ImageContentTumblr = null;
             return floorPlan;
         }
 
@@ -72,32 +74,60 @@ namespace RealEstateAgency.Controllers.Estate
         public async Task<ActionResult<IEnumerable<PropertyFloorPlanDto>>> GetPropertyFloorPlans(int propertyId, CancellationToken cancellationToken)
             => await ModelService.DataConvertQuery(ModelService.AsQueryable(i => i.PropertyId == propertyId)).ToListAsync(cancellationToken);
 
-        [HttpPatch("[Action]"), DisableRequestSizeLimit]
-        public async Task<ActionResult> SetPropertyFloorPlanImage(CancellationToken cancellationToken)
+        [HttpPost("[Action]"), DisableRequestSizeLimit]
+        public async Task<ActionResult<PropertyFloorPlanDto>> SetPropertyFloorPlanImage(CancellationToken cancellationToken)
         {
             var file = Request.Form.Files[0];
+            if (file == null || file.Length <= 0) throw new AppException("file is not set");
+
             var propertyFloorPlanId = int.Parse(Request.Form["propertyFloorPlanId"]);
             var floorPlan = await ModelService.GetAsync(propertyFloorPlanId, cancellationToken);
-            if (file == null || file.Length <= 0) throw new AppException("file is not set");
+            if (floorPlan == null) throw new AppException("not found floor plan");
+
             var fileInfo = _uploadHelperService.FileService.GetFileInfo(file.FileName, file.Length);
 
-            floorPlan.ImageContentFull = await _uploadHelperService
-                .UploadImage(file.OpenReadStream()
-                    ,_pathProvider.GetImagePhysicalPath<PropertyFloorPlan>(nameof(PropertyFloorPlan.ImageContentFull)
-                        ,floorPlan.Id.ToString())
-                    , cancellationToken);
+            var imageFull = await _uploadHelperService
+                    .ImageService.GetImageBytes(file.OpenReadStream(), cancellationToken);
+            var imageTumb = await _uploadHelperService
+                    .ImageService.GetSmallerImageBytes(file.OpenReadStream(), cancellationToken);
 
-            floorPlan.ImageContentTumblr = await _uploadHelperService
-                .UploadSmallerImage(file.OpenReadStream()
-                    , _pathProvider.GetImagePhysicalPath<PropertyFloorPlan>(nameof(PropertyFloorPlan.ImageContentTumblr)
-                        , floorPlan.Id.ToString())
-                    , cancellationToken);
+            var imagePath = _pathProvider.GetImagePhysicalPath<PropertyFloorPlan>(nameof(PropertyFloorPlanDto.ImageFull),
+                        floorPlan.Id.ToString());
+            var tumbPath = _pathProvider.GetImagePhysicalPath<PropertyFloorPlan>(nameof(PropertyFloorPlanDto.ImageTumb),
+                    floorPlan.Id.ToString());
 
-            floorPlan.UploadDate = DateTime.Now;
+            _uploadHelperService.ImageService.SaveImage(imageFull, imagePath);
+            _uploadHelperService.ImageService.SaveSmallerImage(imageTumb, tumbPath);
+
+            floorPlan.ImagePath = _pathProvider.GetImageVirtualPath<PropertyFloorPlan>(nameof(PropertyFloorPlanDto.ImageFull),
+                    floorPlan.Id.ToString());
+            floorPlan.TumbPath = _pathProvider.GetImageVirtualPath<PropertyFloorPlan>(nameof(PropertyFloorPlanDto.ImageTumb),
+                    floorPlan.Id.ToString());
+
+            floorPlan.UploadDate = DateTime.UtcNow;
             floorPlan.ImageExtension = fileInfo.FileExtension;
             floorPlan.ImageSize = fileInfo.FileSize;
             await ModelService.UpdateAsync(floorPlan, cancellationToken);
-            return NoContent();
+
+            return new PropertyFloorPlanDto
+            {
+                Id = floorPlan.Id,
+                PropertyId = floorPlan.PropertyId,
+                FloorName = floorPlan.FloorName,
+                FloorPrice = floorPlan.FloorPrice,
+                PricePostfix = floorPlan.PricePostfix,
+                FloorSize = floorPlan.FloorSize,
+                SizePostfix = floorPlan.SizePostfix,
+                Bedrooms = floorPlan.Bedrooms,
+                Bathrooms = floorPlan.Bathrooms,
+                PlanDescription = floorPlan.PlanDescription,
+                ImageCaption = floorPlan.ImageCaption,
+                UploadDate = floorPlan.UploadDate,
+                ImageExtension = fileInfo.FileExtension,
+                ImageSize = fileInfo.FileSize,
+                ImagePath = floorPlan.ImagePath,
+                TumbPath = floorPlan.TumbPath,
+            };
         }
     }
 }

@@ -108,8 +108,8 @@ namespace RealEstateAgency.Controllers.Estate
                     {
                         Id = i.Id,
                         Order = i.Priority,
-                        ImagePath=i.ImagePath,
-                        TumbPath=i.TumbPath,
+                        ImagePath = i.ImagePath,
+                        TumbPath = i.TumbPath,
                     }),
                     AdditionalDetails = p.PropertyAdditionalDetail.Select(a => new PropertyAdditionalDetailDto
                     {
@@ -141,7 +141,9 @@ namespace RealEstateAgency.Controllers.Estate
                         ImageSize = f.ImageSize,
                         PlanDescription = f.PlanDescription,
                         PricePostfix = f.PricePostfix,
-                        SizePostfix = f.SizePostfix
+                        SizePostfix = f.SizePostfix,
+                        ImagePath = f.ImagePath,
+                        TumbPath = f.TumbPath,
                     })
                 }).FirstOrDefaultAsync(cancellationToken);
 
@@ -154,11 +156,11 @@ namespace RealEstateAgency.Controllers.Estate
                 //propertyPage.ImagesUrl.Add(
                 //    _pathProvider.GetImageApiPath<PropertyImage>(
                 //        nameof(PropertyImage.ImageContentFull), i.Id.ToString()));
-            propertyPage.FloorPlans = propertyPage.FloorPlans.ToList();
-            foreach (var i in propertyPage.FloorPlans)
-                if (i.ImageSize > 0)
-                    i.ImageContentFullUrl = _pathProvider.GetImageApiPath<PropertyImage>(
-                            nameof(PropertyFloorPlan.ImageContentFull), i.Id.ToString());
+            //propertyPage.FloorPlans = propertyPage.FloorPlans.ToList();
+            //foreach (var i in propertyPage.FloorPlans)
+            //    if (i.ImageSize > 0)
+            //        i.ImageContentFullUrl = _pathProvider.GetImageApiPath<PropertyImage>(
+            //                nameof(PropertyFloorPlan.ImageContentFull), i.Id.ToString());
 
             return propertyPage;
         }

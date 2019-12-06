@@ -605,17 +605,21 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.ImageCaption).HasMaxLength(128);
 
-                entity.Property(e => e.ImageContentFull).HasColumnName("ImageContent_Full");
+                entity.Property(e => e.ImageContentFull1).HasColumnName("ImageContent_Full_1");
 
-                entity.Property(e => e.ImageContentTumblr).HasColumnName("ImageContent_Tumblr");
+                entity.Property(e => e.ImageContentTumblr1).HasColumnName("ImageContent_Tumblr_1");
 
                 entity.Property(e => e.ImageExtension).HasMaxLength(16);
+
+                entity.Property(e => e.ImagePath).HasMaxLength(1000);
 
                 entity.Property(e => e.PlanDescription).HasMaxLength(2048);
 
                 entity.Property(e => e.PricePostfix).HasMaxLength(50);
 
                 entity.Property(e => e.SizePostfix).HasMaxLength(50);
+
+                entity.Property(e => e.TumbPath).HasMaxLength(1000);
 
                 entity.Property(e => e.UploadDate).HasColumnType("datetime");
 
