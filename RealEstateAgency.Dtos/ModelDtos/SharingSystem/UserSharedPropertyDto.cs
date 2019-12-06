@@ -13,7 +13,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.SharingSystem
         public string PropertyType { get; set; }
         public string PropertyTitle { get; set; }
         public decimal PropertyPrice { get; set; }
-        public PropertyWebAppImageDto PropertyImageId { get; set; }
+        public PropertyWebAppImageDto PropertyImage { get; set; }
         public string PropertyImageUrl { get; set; }
         public int? UserAccountId { get; set; }
         public int? SocialNetworkId { get; set; }

@@ -37,35 +37,34 @@ namespace RealEstateAgency.Controllers.Estate
             _pathProvider = pathProvider;
         }
 
-        [HttpGet("{imageType}/{propertyId}")]
+        [AllowAnonymous]
+        [HttpGet("{propertyId}")]
         public async Task<ActionResult<IEnumerable<PropertyImageDto>>> GetPropertyImages(int propertyId,
-            ImageType imageType,
             CancellationToken cancellationToken) =>
-            await GetImagesDto(propertyId, cancellationToken, imageType == ImageType.Full);
+            await GetImagesDto(propertyId, cancellationToken);
 
-        [HttpGet("{imageType}/{propertyId}/{id}")]
+        [HttpGet("{propertyId}/{id}")]
         public async Task<ActionResult<PropertyImageDto>> GetPropertyImage(int propertyId,
-            ImageType imageType, int id, CancellationToken cancellationToken) =>
-        ConvertToDto(imageType == ImageType.Full, await _entityService.Queryable
+            int id, CancellationToken cancellationToken) =>
+        ConvertToDto(await _entityService.Queryable
         .FirstOrDefaultAsync(i => i.PropertyId == propertyId && i.Id == id
         , cancellationToken));
 
-        private async Task<List<PropertyImageDto>> GetImagesDto(int propertyId,
-            CancellationToken cancellationToken = default, bool getFullImage = false)
+        private async Task<List<PropertyImageDto>> GetImagesDto(int propertyId, CancellationToken cancellationToken = default)
         {
             var imageModels = await _entityService.AsQueryable(i => i.PropertyId == propertyId)
                 .OrderBy(i => i.Priority)
                 .ToListAsync(cancellationToken);
             var dtos = new List<PropertyImageDto>();
-            imageModels.ForEach(i => dtos.Add(ConvertToDto(getFullImage, i)));
+            imageModels.ForEach(i => dtos.Add(ConvertToDto(i)));
             return dtos;
         }
 
-        private PropertyImageDto ConvertToDto(bool getFullImage, PropertyImage propertyImage) =>
+        private PropertyImageDto ConvertToDto(PropertyImage propertyImage) =>
             new PropertyImageDto
             {
                 Id = propertyImage.Id,
-                PropertyId = propertyImage.Id,
+                PropertyId = propertyImage.PropertyId,
                 UploadDate = propertyImage.UploadDate,
                 ImageExtension = propertyImage.ImageExtension,
                 ImageSize = propertyImage.ImageSize,
@@ -89,52 +88,49 @@ namespace RealEstateAgency.Controllers.Estate
         }
 
 
-        //[AllowAnonymous]
         [HttpPost, DisableRequestSizeLimit]
-        public async Task<ActionResult<List<PropertyImageDto>>> Create(CancellationToken cancellationToken)
+        public async Task<ActionResult<PropertyImageDto>> Create(CancellationToken cancellationToken)
         {
-            if(Request.Form is null) throw new AppException("form is null");
+            if (Request.Form is null) throw new AppException("form is null");
 
-            if (Request.Form.Files.Count == 0) throw new AppException("files are not set");
+            if (Request.Form.Files.Count != 1) throw new AppException("files are not set OR more than one");
 
-            var files = await GetImagesFromFormData(cancellationToken);
-            _entityService.DbContext.AddRange(files);
-            files.ForEach(file =>
-            {
-                var imagePath = _pathProvider.GetImagePhysicalPath<PropertyImage>(nameof(PropertyImage.ImageContentFull),
+            var image = await GetImageFromFormData(cancellationToken);
+
+            var file = _entityService.AsQueryable(r => r.Id == image.Id).FirstOrDefault();
+
+            var imagePath = _pathProvider.GetImagePhysicalPath<PropertyImage>(nameof(PropertyImageDto.ImageContentFull),
                         file.Id.ToString());
-                var tumbPath = _pathProvider.GetImagePhysicalPath<PropertyImage>(nameof(PropertyImage.ImageContentTumblr),
-                        file.Id.ToString());
+            var tumbPath = _pathProvider.GetImagePhysicalPath<PropertyImage>(nameof(PropertyImageDto.ImageContentTumblr),
+                    file.Id.ToString());
 
-                _uploadHelperService.ImageService.SaveImage(file.ImageContentFull, imagePath);
-                _uploadHelperService.ImageService.SaveSmallerImage(file.ImageContentTumblr, tumbPath);
-                file.ImageContentFull = null;
-                file.ImageContentTumblr = null;
+            _uploadHelperService.ImageService.SaveImage(image.ImageContentFull, imagePath);
+            _uploadHelperService.ImageService.SaveSmallerImage(image.ImageContentTumblr, tumbPath);
 
-                file.ImagePath = _pathProvider.GetImageVirtualPath<PropertyImage>(nameof(PropertyImage.ImageContentFull),
-                        file.Id.ToString());
-                file.TumbPath = _pathProvider.GetImageVirtualPath<PropertyImage>(nameof(PropertyImage.ImageContentTumblr),
-                        file.Id.ToString());
-            });
+            file.ImagePath = _pathProvider.GetImageVirtualPath<PropertyImage>(nameof(PropertyImageDto.ImageContentFull),
+                    file.Id.ToString());
+            file.TumbPath = _pathProvider.GetImageVirtualPath<PropertyImage>(nameof(PropertyImageDto.ImageContentTumblr),
+                    file.Id.ToString());
 
+            _entityService.DbContext.Entry(file).State = EntityState.Modified;
             await _entityService.DbContext.SaveChangesAsync();
 
-            return files.Select(f => new PropertyImageDto
+            return new PropertyImageDto
             {
-                Id = f.Id,
-                PropertyId = f.PropertyId,
-                UploadDate = f.UploadDate,
-                ImageCaption = f.ImageCaption,
-                ImageSize = f.ImageSize,
-                ImageExtension = f.ImageExtension,
-                ImagePath = f.ImagePath,
-                TumbPath = f.TumbPath,
-                Is360View = f.Is360View,
-                Priority = f.Priority
-            }).ToList();
+                Id = file.Id,
+                PropertyId = file.PropertyId,
+                UploadDate = file.UploadDate,
+                ImageCaption = file.ImageCaption,
+                ImageSize = file.ImageSize,
+                ImageExtension = file.ImageExtension,
+                ImagePath = file.ImagePath,
+                TumbPath = file.TumbPath,
+                Is360View = file.Is360View,
+                Priority = file.Priority
+            };
         }
 
-        private async Task<List<PropertyImage>> GetImagesFromFormData(CancellationToken cancellationToken)
+        private async Task<PropertyImageDto> GetImageFromFormData(CancellationToken cancellationToken)
         {
             var propertyId = int.Parse(Request.Form["propertyId"]);
             var imageCaption = Request.Form["imageCaption"];
@@ -142,33 +138,87 @@ namespace RealEstateAgency.Controllers.Estate
                             && bool.Parse(Request.Form["is360View"]);
             var priority = string.IsNullOrWhiteSpace(Request.Form["priority"]) ? 0 :
                              int.Parse(Request.Form["priority"]);
-            var imageList = new List<PropertyImage>();
-            foreach (var file in Request.Form.Files)
+
+            var file = Request.Form.Files[0];
+            var fileInfo = _uploadHelperService.FileService.GetFileInfo(file.FileName, file.Length);
+            if (!_uploadHelperService.ImageService.IsValidImageExtension(fileInfo.FileExtension))
+                throw new InvalidOperationException(
+                    $"The extension {fileInfo.FileExtension} is not valid for image");
+
+            var image = new PropertyImage();
+            image.PropertyId = propertyId;
+            image.ImageCaption = imageCaption;
+            image.ImageExtension = fileInfo.FileExtension;
+            image.ImageSize = fileInfo.FileSize;
+            image.Is360View = is360View;
+            image.UploadDate = DateTime.UtcNow;
+            image.Priority = priority;
+            _entityService.DbContext.Add(image);
+            await _entityService.DbContext.SaveChangesAsync();
+
+            return new PropertyImageDto
             {
-                var fileInfo = _uploadHelperService.FileService.GetFileInfo(file.FileName, file.Length);
-
-                if (!_uploadHelperService.ImageService.IsValidImageExtension(fileInfo.FileExtension))
-                    throw new InvalidOperationException(
-                        $"The extension {fileInfo.FileExtension} is not valid for image");
-
-                var dto = new PropertyImage
-                {
-                    PropertyId = propertyId,
-                    ImageCaption = imageCaption,
-                    ImageExtension = fileInfo.FileExtension,
-                    ImageSize = fileInfo.FileSize,
-                    Is360View = is360View,
-                    UploadDate = DateTime.Now,
-                    Priority = priority,
-                    ImageContentFull = await _uploadHelperService
-                        .ImageService.GetImageBytes(file.OpenReadStream(), cancellationToken),
-                    ImageContentTumblr = await _uploadHelperService
-                        .ImageService.GetSmallerImageBytes(file.OpenReadStream(), cancellationToken),
-                };
-                imageList.Add(dto);
-            }
-
-            return imageList;
+                Id = image.Id,
+                PropertyId = image.PropertyId,
+                ImageCaption = image.ImageCaption,
+                ImageExtension = fileInfo.FileExtension,
+                ImageSize = fileInfo.FileSize,
+                Is360View = image.Is360View,
+                UploadDate = image.UploadDate,
+                Priority = image.Priority,
+                ImageContentFull = await _uploadHelperService
+                    .ImageService.GetImageBytes(file.OpenReadStream(), cancellationToken),
+                ImageContentTumblr = await _uploadHelperService
+                .ImageService.GetSmallerImageBytes(file.OpenReadStream(), cancellationToken)
+            };
         }
+
+        //private async Task<List<PropertyImage>> GetImagesFromFormData(CancellationToken cancellationToken)
+        //{
+        //    var propertyId = int.Parse(Request.Form["propertyId"]);
+        //    var imageCaption = Request.Form["imageCaption"];
+        //    var is360View = !string.IsNullOrWhiteSpace(Request.Form["is360View"])
+        //                    && bool.Parse(Request.Form["is360View"]);
+        //    var priority = string.IsNullOrWhiteSpace(Request.Form["priority"]) ? 0 :
+        //                     int.Parse(Request.Form["priority"]);
+        //    var imageList = new List<PropertyImage>();
+        //    foreach (var file in Request.Form.Files)
+        //    {
+        //        var fileInfo = _uploadHelperService.FileService.GetFileInfo(file.FileName, file.Length);
+
+        //        if (!_uploadHelperService.ImageService.IsValidImageExtension(fileInfo.FileExtension))
+        //            throw new InvalidOperationException(
+        //                $"The extension {fileInfo.FileExtension} is not valid for image");
+
+        //        var dto = new PropertyImage
+        //        {
+        //            PropertyId = propertyId,
+        //            ImageCaption = imageCaption,
+        //            ImageExtension = fileInfo.FileExtension,
+        //            ImageSize = fileInfo.FileSize,
+        //            Is360View = is360View,
+        //            UploadDate = DateTime.Now,
+        //            Priority = priority,
+        //            //ImageContentFull = await _uploadHelperService
+        //            //    .ImageService.GetImageBytes(file.OpenReadStream(), cancellationToken),
+        //            //ImageContentTumblr = await _uploadHelperService
+        //            //    .ImageService.GetSmallerImageBytes(file.OpenReadStream(), cancellationToken),
+        //        };
+        //        imageList.Add(dto);
+        //    }
+        //    _entityService.DbContext.AddRange(imageList);
+        //    await _entityService.DbContext.SaveChangesAsync();
+
+        //    foreach (var item in imageList)
+        //    {
+        //        item.ImageContentFull = await _uploadHelperService
+        //                .ImageService.GetImageBytes(file.OpenReadStream(), cancellationToken);
+        //            item.ImageContentTumblr = await _uploadHelperService
+        //                .ImageService.GetSmallerImageBytes(file.OpenReadStream(), cancellationToken);
+        //    }
+
+        //    return imageList;
+        //}
+
     }
 }

@@ -12,8 +12,6 @@ namespace RealEstateAgency.DAL.Models
         public DateTime UploadDate { get; set; }
         public string ImageExtension { get; set; }
         public int ImageSize { get; set; }
-        public byte[] ImageContentFull { get; set; }
-        public byte[] ImageContentTumblr { get; set; }
         public string ImagePath { get; set; }
         public string TumbPath { get; set; }
         public bool Is360View { get; set; }

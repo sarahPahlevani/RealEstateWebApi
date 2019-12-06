@@ -104,13 +104,15 @@ namespace RealEstateAgency.Controllers.Estate
                     Images = p.PropertyImage.Where(i => !i.Deleted),
                 }).FirstOrDefaultAsync(p => p.Id == propertyId, cancellationToken);
             if (propertySummery is null) return NoContent();
-            propertySummery.ImagesUrl = new List<string>();
-            foreach (var propertyImage in propertySummery.Images)
-                propertySummery.ImagesUrl
-                    .Add(_pathProvider.GetImageApiPath<PropertyImage>(
-                        nameof(PropertyImage.ImageContentTumblr),
-                        propertyImage.Id.ToString()));
-            propertySummery.Images = null;
+
+            //propertySummery.ImagesUrl = new List<string>();
+            //foreach (var propertyImage in propertySummery.Images)
+            //    propertySummery.ImagesUrl
+            //        .Add(_pathProvider.GetImageApiPath<PropertyImage>(
+            //            nameof(PropertyImage.ImageContentTumblr),
+            //            propertyImage.Id.ToString()));
+            //propertySummery.Images = null;
+
             return propertySummery;
         }
 

@@ -644,14 +644,6 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.ImageCaption).HasMaxLength(128);
 
-                entity.Property(e => e.ImageContentFull)
-                    .IsRequired()
-                    .HasColumnName("ImageContent_Full");
-
-                entity.Property(e => e.ImageContentTumblr)
-                    .IsRequired()
-                    .HasColumnName("ImageContent_Tumblr");
-
                 entity.Property(e => e.ImageExtension)
                     .IsRequired()
                     .HasMaxLength(16);

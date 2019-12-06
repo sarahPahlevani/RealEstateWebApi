@@ -50,7 +50,7 @@ namespace RealEstateAgency.Controllers.SharingSystem
                             PropertyType = p.Property.PropertyType.Name,
                             PropertyTitle = p.Property.Title,
                             PropertyPrice = p.Property.PropertyPrice.Price,
-                            PropertyImageId = p.Property.PropertyImage.OrderBy(r => r.Priority).Select(r => new PropertyWebAppImageDto { Id = r.Id }).FirstOrDefault(),
+                            PropertyImage = p.Property.PropertyImage.OrderBy(r => r.Priority).Select(r => new PropertyWebAppImageDto { Id = r.Id, ImagePath = r.ImagePath, TumbPath = r.TumbPath }).FirstOrDefault(),
                             UserAccountId = p.UserAccountId,
                             SocialNetworkId = p.SocialNetworkId,
                             SocialNetworkTitle = p.SocialNetwork.Name,
@@ -59,12 +59,6 @@ namespace RealEstateAgency.Controllers.SharingSystem
                             ClickCount = p.ClickCount,
                         }), requestDto)
                 .GetPage(cancellationToken);
-
-            foreach (var item in list.Items)
-            {
-                item.PropertyImageUrl = _pathProvider.GetImageApiPath<PropertyImage>(
-                            nameof(PropertyImage.ImageContentTumblr), item.PropertyImageId.Id.ToString());
-            }
 
             return list;
         }
