@@ -32,6 +32,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
         public string ImagePath { get; set; }
         public string TumbPath { get; set; }
 
+        public bool? Is360View { get; set; }
+
         public byte[] ImageFull { get; set; }
         public byte[] ImageTumb { get; set; }
 
@@ -53,6 +55,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
             ImageSize = entity.ImageSize;
             ImagePath = entity.ImagePath;
             TumbPath = entity.TumbPath;
+            Is360View = entity.Is360View;
             return this;
         }
 
@@ -74,6 +77,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
                 ImageSize = ImageSize,
                 ImagePath = ImagePath,
                 TumbPath = TumbPath,
+                Is360View = Is360View,
             };
 
         public override PropertyFloorPlan Update() =>
@@ -95,6 +99,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
                 ImageSize = ImageSize,
                 ImagePath = ImagePath,
                 TumbPath = TumbPath,
+                Is360View = Is360View,
             };
     }
 }

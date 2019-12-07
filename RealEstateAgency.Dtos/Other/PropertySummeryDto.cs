@@ -16,6 +16,7 @@ namespace RealEstateAgency.Dtos.Other
         public int? CityId { get; set; }
         public int? RegionId { get; set; }
         public decimal Price { get; set; }
+        public decimal CalculatedPriceUnit { get; set; }
         public int CurrencyId { get; set; }
         public int PriceScaleUnitId { get; set; }
         public decimal? Size { get; set; }

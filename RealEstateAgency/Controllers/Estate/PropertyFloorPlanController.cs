@@ -46,6 +46,7 @@ namespace RealEstateAgency.Controllers.Estate
             ImageSize = i.ImageSize,
             ImagePath = i.ImagePath,
             TumbPath = i.TumbPath,
+            Is360View = i.Is360View,
         });
 
         public override async Task<ActionResult<IEnumerable<PropertyFloorPlanDto>>> GetAllAsync(CancellationToken cancellationToken)
@@ -127,6 +128,7 @@ namespace RealEstateAgency.Controllers.Estate
                 ImageSize = fileInfo.FileSize,
                 ImagePath = floorPlan.ImagePath,
                 TumbPath = floorPlan.TumbPath,
+                Is360View = floorPlan.Is360View,
             };
         }
     }

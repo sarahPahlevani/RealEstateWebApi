@@ -7,7 +7,6 @@ namespace RealEstateAgency.DAL.Models
     {
         public int Id { get; set; }
         public int PropertyId { get; set; }
-        public int? UserAccountIdDeleteBy { get; set; }
         public string FloorName { get; set; }
         public int? FloorPrice { get; set; }
         public string PricePostfix { get; set; }
@@ -24,7 +23,9 @@ namespace RealEstateAgency.DAL.Models
         public byte[] ImageContentTumblr1 { get; set; }
         public string ImagePath { get; set; }
         public string TumbPath { get; set; }
+        public bool? Is360View { get; set; }
         public bool Deleted { get; set; }
+        public int? UserAccountIdDeleteBy { get; set; }
         public DateTime? DeletedDate { get; set; }
 
         public virtual Property Property { get; set; }
