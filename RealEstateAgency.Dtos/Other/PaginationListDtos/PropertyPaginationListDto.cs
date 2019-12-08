@@ -16,6 +16,7 @@ namespace RealEstateAgency.Dtos.Other.PaginationListDtos
         public decimal CalculatedPriceUnit { get; set; }
         public string ZipCode { get; set; }
         public int CompletedSections { get; set; }
+        public bool CheckReadyPublish { get; set; }
         public bool ReadyForPublish { get; set; }
         public bool IsPublished { get; set; }
         public DateTime? PublishingDate { get; set; }

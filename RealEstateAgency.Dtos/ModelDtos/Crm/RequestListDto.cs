@@ -14,6 +14,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
         public Workflow Workflow { get; set; }
         public bool CanAddProperty { get; set; }
         public int? UserAccountIdShared { get; set; }
+        public UserAccount UserAccountShared { get; set; }
+        public int? NetworkIdShared { get; set; }
+        public SocialNetwork NetworkShared { get; set; }
         public int? UserAccountIdRequester { get; set; }
         public string RequesterFullname { get; set; }
         public string RequesterEmail { get; set; }
@@ -21,7 +24,6 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
         public string TrackingNumber { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        //public string MarketingAssistantTrackingCode { get; set; }
         public UserAccount User { get; set; }
         public int? AgentId { get; set; }
         public string AgentName { get; set; }

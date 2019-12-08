@@ -57,7 +57,8 @@ namespace RealEstateAgency.Controllers.Estate
                     IsPublished = p.IsPublished,
                     UserAccountPublished = p.UserAccountIdPublishedNavigation,
                     ReadyForPublishDate = p.ReadyForPublishDate,
-                    UserAccountReadyForPublish = p.UserAccountIdReadyForPublishNavigation
+                    UserAccountReadyForPublish = p.UserAccountIdReadyForPublishNavigation,
+                    CheckReadyPublish = !string.IsNullOrEmpty(p.Title) && p.PropertyDetail != null && p.PropertyPrice != null && p.PropertyImage.Any()
                 }).OrderByDescending(i => i.Id);
 
         public override Func<IQueryable<Property>, IQueryable<PropertyDto>> DtoConverter =>
@@ -116,6 +117,21 @@ namespace RealEstateAgency.Controllers.Estate
             //propertySummery.Images = null;
 
             return propertySummery;
+        }
+        
+        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+        [HttpGet("[Action]")]
+        public async Task<ActionResult<CheckReadyToPublish>> CheckReadyToPublish(int propertyId, CancellationToken cancellationToken)
+        {
+            return await ModelService.AsQueryable(r => r.Id == propertyId)
+                .Select(r =>
+                new CheckReadyToPublish
+                {
+                    Title = !string.IsNullOrEmpty(r.Title),
+                    Size = r.PropertyDetail != null,
+                    Price = r.PropertyPrice != null,
+                    Media = r.PropertyImage.Any(),
+                }).FirstOrDefaultAsync(cancellationToken);
         }
 
         [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]

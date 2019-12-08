@@ -992,6 +992,8 @@ namespace RealEstateAgency.DAL.Models
                     .IsRequired()
                     .HasMaxLength(2048);
 
+                entity.Property(e => e.NetworkIdShared).HasColumnName("NetworkId_Shared");
+
                 entity.Property(e => e.RequesterEmail).HasMaxLength(256);
 
                 entity.Property(e => e.RequesterFullname).HasMaxLength(256);
@@ -1016,6 +1018,11 @@ namespace RealEstateAgency.DAL.Models
                     .WithMany(p => p.Request)
                     .HasForeignKey(d => d.AgentId)
                     .HasConstraintName("FK_Request_Agent");
+
+                entity.HasOne(d => d.NetworkIdSharedNavigation)
+                    .WithMany(p => p.Request)
+                    .HasForeignKey(d => d.NetworkIdShared)
+                    .HasConstraintName("FK_Request_SocialNetwork");
 
                 entity.HasOne(d => d.RequestType)
                     .WithMany(p => p.Request)

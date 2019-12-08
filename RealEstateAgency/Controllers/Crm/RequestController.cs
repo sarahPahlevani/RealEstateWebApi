@@ -68,6 +68,7 @@ namespace RealEstateAgency.Controllers.Crm
                 } : null,
                 CanAddProperty = i.RequestType.CanAddProperty,
                 UserAccountIdShared = i.UserAccountIdShared,
+                NetworkIdShared = i.NetworkIdShared,
                 TrackingNumber = i.TrackingNumber,
                 UserAccountIdRequester = i.UserAccountIdRequester,
                 User = i.UserAccountIdRequesterNavigation,
@@ -134,8 +135,10 @@ namespace RealEstateAgency.Controllers.Crm
                         WorkflowStep = i.Workflow.WorkflowStep,
                     } : null,
                     CanAddProperty = i.RequestType.CanAddProperty,
-                    //MarketingAssistantTrackingCode = i.MarketingAssistantTrackingCode,
                     UserAccountIdShared = i.UserAccountIdShared,
+                    UserAccountShared = i.UserAccountIdSharedNavigation,
+                    NetworkIdShared = i.NetworkIdShared,
+                    NetworkShared = i.NetworkIdSharedNavigation,
                     TrackingNumber = i.TrackingNumber,
                     UserAccountIdRequester = i.UserAccountIdRequester,
                     User = i.UserAccountIdRequesterNavigation,
@@ -187,6 +190,9 @@ namespace RealEstateAgency.Controllers.Crm
                 } : null,
                 CanAddProperty = i.RequestType.CanAddProperty,
                 UserAccountIdShared = i.UserAccountIdShared,
+                UserAccountShared = i.UserAccountIdSharedNavigation,
+                NetworkIdShared = i.NetworkIdShared,
+                NetworkShared = i.NetworkIdSharedNavigation,
                 TrackingNumber = i.TrackingNumber,
                 UserAccountIdRequester = i.UserAccountIdRequester,
                 User = i.UserAccountIdRequesterNavigation,
@@ -230,12 +236,19 @@ namespace RealEstateAgency.Controllers.Crm
         [AllowAnonymous]
         public override async Task<ActionResult<RequestDto>> Create(RequestDto value, CancellationToken cancellationToken)
         {
+            var workflow = new RealEstateDbContext().Workflow.FirstOrDefault(r => r.RequestTypeId == value.RequestTypeId);
+            if (workflow is null)
+                throw new Exception("not found workflow of this request");
+            value.IsDone = false;
+            value.WorkflowId = workflow.Id;
             value.TrackingNumber = _hasher.CalculateTimeHash("TrackingNumber" + Guid.NewGuid());
             value.DateCreated = DateTime.Now;
-            //value.UserAccountIdRequester = _userProvider.Id;
+
             var res = await ModelService.CreateByDtoAsync(value, cancellationToken);
+            
             await _signaler.Signal(_userAccountService.GetAll(u => u.AgentUserAccount.Any(a => a.IsResponsible))
                 .Select(u => u.Id).ToList(), nameof(Request), "A new request has arrived");
+            
             return res;
         }
 
@@ -281,7 +294,11 @@ namespace RealEstateAgency.Controllers.Crm
                 ModelService.Queryable, requestDto,
                 requestDto.Filter.ToObject<RequestListFilter>(),
                 cancellationToken);
-            foreach (var item in result.Value.Items) item.User.PasswordHash = null;
+            foreach (var item in result.Value.Items)
+            {
+                if (item.User != null)
+                    item.User.PasswordHash = null;
+            }
 
             return result;
         }
@@ -340,7 +357,7 @@ namespace RealEstateAgency.Controllers.Crm
                     scope.Complete();
                     return Ok();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     scope.Dispose();
                     throw;

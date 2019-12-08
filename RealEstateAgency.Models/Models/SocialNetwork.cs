@@ -7,6 +7,7 @@ namespace RealEstateAgency.DAL.Models
     {
         public SocialNetwork()
         {
+            Request = new HashSet<Request>();
             SharedProperty = new HashSet<SharedProperty>();
         }
 
@@ -16,6 +17,7 @@ namespace RealEstateAgency.DAL.Models
         public string UniqueKey { get; set; }
         public string Url { get; set; }
 
+        public virtual ICollection<Request> Request { get; set; }
         public virtual ICollection<SharedProperty> SharedProperty { get; set; }
     }
 }

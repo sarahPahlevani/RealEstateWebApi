@@ -20,10 +20,15 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
 
         public Workflow Workflow { get; set; }
 
-        //public IEnumerable<WorkflowStep> WorkflowStep { get; set; }
         public bool CanAddProperty { get; set; }
 
         public int? UserAccountIdShared { get; set; }
+
+        public UserAccount UserAccountShared { get; set; }
+
+        public int? NetworkIdShared { get; set; }
+
+        public SocialNetwork NetworkShared { get; set; }
 
         public int? UserAccountIdRequester { get; set; }
 
@@ -70,6 +75,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
             WorkflowId = entity.WorkflowId;
             Workflow = entity.Workflow;
             UserAccountIdShared = entity.UserAccountIdShared;
+            UserAccountShared = entity.UserAccountIdSharedNavigation;
+            NetworkIdShared = entity.NetworkIdShared;
+            NetworkShared = entity.NetworkIdSharedNavigation;
             UserAccountIdRequester = entity.UserAccountIdRequester;
             RequesterFullname = RequesterFullname;
             RequesterEmail = RequesterEmail;
@@ -78,7 +86,6 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
             Title = entity.Title;
             Description = entity.Description;
             User = entity.UserAccountIdRequesterNavigation;
-            //MarketingAssistantTrackingCode = entity.MarketingAssistantTrackingCode;
             DateCreated = entity.DateCreated;
             Deleted = entity.Deleted;
             DeletedDate = entity.DeletedDate;
@@ -95,6 +102,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
             new Request
             {
                 RequestTypeId = RequestTypeId,
+                UserAccountIdShared = UserAccountIdShared,
+                NetworkIdShared = NetworkIdShared,
                 UserAccountIdRequester = UserAccountIdRequester,
                 RequesterFullname = RequesterFullname,
                 RequesterEmail = RequesterEmail,
@@ -103,12 +112,10 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
                 TrackingNumber = TrackingNumber,
                 Title = Title,
                 Description = Description,
-                //MarketingAssistantTrackingCode = MarketingAssistantTrackingCode,
                 DateCreated = DateCreated,
                 Deleted = Deleted,
                 DeletedDate = DeletedDate,
                 UserAccountIdDeleteBy = UserAccountIdDeleteBy,
-                UserAccountIdShared = UserAccountIdShared,
                 PropertyId = PropertyId,
                 AgentId = AgentId,
                 IsDone = IsDone,
@@ -119,6 +126,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
             {
                 Id = Id,
                 RequestTypeId = RequestTypeId,
+                UserAccountIdShared = UserAccountIdShared,
+                NetworkIdShared = NetworkIdShared,
                 UserAccountIdRequester = UserAccountIdRequester,
                 RequesterFullname = RequesterFullname,
                 RequesterEmail = RequesterEmail,
@@ -127,12 +136,10 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
                 TrackingNumber = TrackingNumber,
                 Title = Title,
                 Description = Description,
-                //MarketingAssistantTrackingCode = MarketingAssistantTrackingCode,
                 DateCreated = DateCreated,
                 Deleted = Deleted,
                 DeletedDate = DeletedDate,
                 UserAccountIdDeleteBy = UserAccountIdDeleteBy,
-                UserAccountIdShared = UserAccountIdShared,
                 PropertyId = PropertyId,
                 AgentId = AgentId,
                 IsDone = IsDone,

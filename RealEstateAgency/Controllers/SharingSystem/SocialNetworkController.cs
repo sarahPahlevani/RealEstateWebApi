@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace RealEstateAgency.Controllers.SharingSystem
 {
+    [AllowAnonymous]
     public class SocialNetworkController : ModelController<SocialNetwork, SocialNetworkDto>
     {
         public SocialNetworkController(IModelService<SocialNetwork, SocialNetworkDto> modelService) : base(modelService)

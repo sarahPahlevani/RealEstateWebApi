@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using RealEstateAgency.Implementations.Providers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RealEstateAgency.Controllers.Estate
 {
