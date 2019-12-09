@@ -71,6 +71,9 @@ namespace RealEstateAgency.Controllers.Crm
                 NetworkIdShared = i.NetworkIdShared,
                 TrackingNumber = i.TrackingNumber,
                 UserAccountIdRequester = i.UserAccountIdRequester,
+                RequesterFullname = i.RequesterFullname,
+                RequesterEmail = i.RequesterEmail,
+                RequesterPhone = i.RequesterPhone,
                 User = i.UserAccountIdRequesterNavigation,
                 Property = i.Property.FirstOrDefault(p => p.RequestId == i.Id),
                 AgentId = i.AgentId,
@@ -141,6 +144,9 @@ namespace RealEstateAgency.Controllers.Crm
                     NetworkShared = i.NetworkIdSharedNavigation,
                     TrackingNumber = i.TrackingNumber,
                     UserAccountIdRequester = i.UserAccountIdRequester,
+                    RequesterFullname = i.RequesterFullname,
+                    RequesterEmail = i.RequesterEmail,
+                    RequesterPhone = i.RequesterPhone,
                     User = i.UserAccountIdRequesterNavigation,
                     Property = i.Property.FirstOrDefault(p => p.RequestId == i.Id),
                     AgentId = i.AgentId,
@@ -166,10 +172,10 @@ namespace RealEstateAgency.Controllers.Crm
         public override async Task<ActionResult<RequestDto>> GetAsync(int id, CancellationToken cancellationToken)
         {
             var result = await ModelService.AsQueryable(r => r.Id == id)
-                .Include(i => i.UserAccountIdRequesterNavigation)
+                //.Include(i => i.UserAccountIdRequesterNavigation)
             .Include(i => i.RequestAgent)
             .Include(i => i.RequestType)
-            .Include("RequestAction.RequestActionFollowUp")
+            //.Include("RequestAction.RequestActionFollowUp")
             .Select(i => new RequestDto
             {
                 Id = i.Id,
@@ -196,6 +202,9 @@ namespace RealEstateAgency.Controllers.Crm
                 TrackingNumber = i.TrackingNumber,
                 UserAccountIdRequester = i.UserAccountIdRequester,
                 User = i.UserAccountIdRequesterNavigation,
+                RequesterFullname = i.RequesterFullname,
+                RequesterEmail = i.RequesterEmail,
+                RequesterPhone = i.RequesterPhone,
                 Property = i.Property.FirstOrDefault(p => p.RequestId == i.Id),
                 AgentId = i.AgentId,
                 Agent = i.Agent,
@@ -260,12 +269,11 @@ namespace RealEstateAgency.Controllers.Crm
                 requestDto,
                 requestDto.Filter.ToObject<RequestListFilter>(),
                 cancellationToken);
-            //var result = await GetPageResultAsync(
-            //    ModelService.AsQueryable(i => i.RequestAgent.Any(ra => ra.AgentId == _userProvider.AgentId && ra.IsActive == true)),
-            //    requestDto,
-            //    requestDto.Filter.ToObject<RequestListFilter>(),
-            //    cancellationToken);
-            foreach (var item in result.Value.Items) item.User.PasswordHash = null;
+            foreach (var item in result.Value.Items)
+            {
+                if (item.User != null)
+                    item.User.PasswordHash = null;
+            }
 
             return result;
         }
@@ -275,11 +283,13 @@ namespace RealEstateAgency.Controllers.Crm
         {
             var result = await GetPageResultAsync(
                 ModelService.AsQueryable(i => i.AgentId == _userProvider.AgentId),
-                //&& i.RequestAgent.FirstOrDefault().AgentId == 11/*_userProvider.AgentId*/
-                //&& i.RequestAgent.FirstOrDefault().IsActive == true),
                 new PageRequestDto(pageSize, pageNumber),
                 new NullFilter<Request>(), cancellationToken);
-            foreach (var item in result.Value.Items) item.User.PasswordHash = null;
+            foreach (var item in result.Value.Items)
+            {
+                if (item.User != null)
+                    item.User.PasswordHash = null;
+            }
 
             return result;
         }

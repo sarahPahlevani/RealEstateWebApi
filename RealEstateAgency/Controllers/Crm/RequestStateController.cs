@@ -35,7 +35,7 @@ namespace RealEstateAgency.Controllers.Crm
 
         public override Func<IQueryable<RequestState>, IQueryable<RequestStateListDto>> PagingConverter
             => items => items
-                .Include(i => i.WorkflowStep)
+                //.Include(i => i.WorkflowStep)
                 .Select(i => new RequestStateListDto
                 {
                     Id = i.Id,
@@ -47,6 +47,7 @@ namespace RealEstateAgency.Controllers.Crm
                     FinishedDate = i.FinishedDate,
                     IsDone = i.IsDone,
                     AgentId = i.AgentId,
+                    AgentName = $"{i.Agent.UserAccount.FirstName} {i.Agent.UserAccount.LastName}",
                     Agent = i.Agent,
                 }).OrderBy(i => i.WorkflowStep.StepNumber);
 
@@ -72,7 +73,7 @@ namespace RealEstateAgency.Controllers.Crm
 
             var result = await GetPageResultAsync(
                 ModelService.AsQueryable(i => i.RequestId == requestId),
-                new PageRequestDto(100, 1),
+                new PageRequestDto(100, 0),
                 new NullFilter<RequestState>(), cancellationToken);
 
             return result;

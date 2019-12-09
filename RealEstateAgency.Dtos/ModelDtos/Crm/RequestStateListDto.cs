@@ -16,6 +16,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
         public string Description { get; set; }
         public bool IsDone { get; set; }
         public int AgentId { get; set; }
+        public string AgentName { get; set; }
         public Agent Agent { get; set; }
     }
 }
