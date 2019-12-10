@@ -174,12 +174,12 @@ namespace RealEstateAgency.Controllers.Estate
         public async Task<ActionResult> PublishProperty([FromBody]PropertyPaginationListDto propertyDto,
            CancellationToken cancellationToken)
         {
-            if (_userProvider.HasPublishingAuthorization != true)
-                return Forbid();
+            //if (_userProvider.HasPublishingAuthorization != true)
+            //    return Forbid();
             var property = await ModelService
                 .GetAsync(p => p.Id == propertyDto.Id, cancellationToken);
-            if (!property.ReadyForPublish)
-                throw new AppException("This property is not ready for publish");
+            //if (!property.ReadyForPublish)
+            //    throw new AppException("This property is not ready for publish");
             property.IsPublished = true;
             property.PublishingDate = DateTime.Now;
             property.UserAccountIdPublished = _userProvider.Id;

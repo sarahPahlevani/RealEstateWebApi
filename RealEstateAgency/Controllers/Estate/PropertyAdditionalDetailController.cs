@@ -14,8 +14,12 @@ namespace RealEstateAgency.Controllers.Estate
 {
     public class PropertyAdditionalDetailController : ModelController<PropertyAdditionalDetail, PropertyAdditionalDetailDto>
     {
-        public PropertyAdditionalDetailController(IModelService<PropertyAdditionalDetail, PropertyAdditionalDetailDto> modelService) : base(modelService)
+        private readonly IEntityService<Property> _propertyService;
+
+        public PropertyAdditionalDetailController(IModelService<PropertyAdditionalDetail, PropertyAdditionalDetailDto> modelService
+            , IEntityService<Property> propertyService) : base(modelService)
         {
+            _propertyService = propertyService;
         }
 
         [HttpGet("[Action]/{propertyId}")]
@@ -30,5 +34,36 @@ namespace RealEstateAgency.Controllers.Estate
             Title = i.Title,
             Id = i.Id
         });
+
+        [HttpPost]
+        public override async Task<ActionResult<PropertyAdditionalDetailDto>> Create(PropertyAdditionalDetailDto value, CancellationToken cancellationToken)
+        {
+            var res = await ModelService.CreateByDtoAsync(value, cancellationToken);
+
+            var property = await _propertyService.GetAsync(value.PropertyId, cancellationToken);
+            if (property != null && property.IsPublished)
+            {
+                property.IsPublished = false;
+                await _propertyService.UpdateAsync(property, cancellationToken);
+            }
+
+            return res;
+        }
+
+        [HttpPut]
+        public override async Task<ActionResult> UpdateAsync(PropertyAdditionalDetailDto value, CancellationToken cancellationToken)
+        {
+            await ModelService.UpdateByDtoAsync(value, cancellationToken);
+
+            var property = await _propertyService.GetAsync(value.PropertyId, cancellationToken);
+            if (property != null && property.IsPublished)
+            {
+                property.IsPublished = false;
+                await _propertyService.UpdateAsync(property, cancellationToken);
+            }
+
+            return NoContent();
+        }
+
     }
 }

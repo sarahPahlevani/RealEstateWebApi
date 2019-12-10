@@ -20,14 +20,17 @@ namespace RealEstateAgency.Controllers.Estate
         private readonly IUploadHelperService _uploadHelperService;
         private readonly IEntityService<PropertyAttachment> _entityService;
         private readonly IDownloadHelperService _downloadHelperService;
+        private readonly IEntityService<Property> _propertyService;
 
         public PropertyAttachmentController(IUploadHelperService uploadHelperService
             , IEntityService<PropertyAttachment> entityService
-            , IDownloadHelperService downloadHelperService)
+            , IDownloadHelperService downloadHelperService
+            , IEntityService<Property> propertyService)
         {
             _uploadHelperService = uploadHelperService;
             _entityService = entityService;
             _downloadHelperService = downloadHelperService;
+            _propertyService = propertyService;
         }
 
         [HttpGet("{propertyId}")]
@@ -70,6 +73,14 @@ namespace RealEstateAgency.Controllers.Estate
             var files = await GetAttachmentsFromFormData(cancellationToken);
             _entityService.DbContext.AddRange(files);
             await _entityService.DbContext.SaveChangesAsync(cancellationToken);
+
+            //var property = await _propertyService.GetAsync(file.PropertyId, cancellationToken);
+            //if (property != null && property.IsPublished)
+            //{
+            //    property.IsPublished = false;
+            //    await _propertyService.UpdateAsync(property, cancellationToken);
+            //}
+
             return files.Select(f => new PropertyAttachmentDto
             {
                 Id = f.Id,

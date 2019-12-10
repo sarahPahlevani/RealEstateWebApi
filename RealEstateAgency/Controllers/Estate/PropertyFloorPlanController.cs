@@ -20,12 +20,14 @@ namespace RealEstateAgency.Controllers.Estate
     {
         private readonly IUploadHelperService _uploadHelperService;
         private readonly IPathProvider _pathProvider;
+        private readonly IEntityService<Property> _propertyService;
 
         public PropertyFloorPlanController(IModelService<PropertyFloorPlan, PropertyFloorPlanDto> modelService,
-            IUploadHelperService uploadHelperService,IPathProvider pathProvider) : base(modelService)
+            IUploadHelperService uploadHelperService,IPathProvider pathProvider, IEntityService<Property> propertyService) : base(modelService)
         {
             _uploadHelperService = uploadHelperService;
             _pathProvider = pathProvider;
+            _propertyService = propertyService;
         }
 
         public override Func<IQueryable<PropertyFloorPlan>, IQueryable<PropertyFloorPlanDto>> DtoConverter
@@ -49,6 +51,36 @@ namespace RealEstateAgency.Controllers.Estate
             TumbPath = i.TumbPath,
             Is360View = i.Is360View,
         });
+
+        [HttpPost]
+        public override async Task<ActionResult<PropertyFloorPlanDto>> Create(PropertyFloorPlanDto value, CancellationToken cancellationToken)
+        {
+            var res = await ModelService.CreateByDtoAsync(value, cancellationToken);
+
+            var property = await _propertyService.GetAsync(value.PropertyId, cancellationToken);
+            if (property != null && property.IsPublished)
+            {
+                property.IsPublished = false;
+                await _propertyService.UpdateAsync(property, cancellationToken);
+            }
+
+            return res;
+        }
+
+        [HttpPut]
+        public override async Task<ActionResult> UpdateAsync(PropertyFloorPlanDto value, CancellationToken cancellationToken)
+        {
+            await ModelService.UpdateByDtoAsync(value, cancellationToken);
+
+            var property = await _propertyService.GetAsync(value.PropertyId, cancellationToken);
+            if (property != null && property.IsPublished)
+            {
+                property.IsPublished = false;
+                await _propertyService.UpdateAsync(property, cancellationToken);
+            }
+
+            return NoContent();
+        }
 
         public override async Task<ActionResult<IEnumerable<PropertyFloorPlanDto>>> GetAllAsync(CancellationToken cancellationToken)
         {

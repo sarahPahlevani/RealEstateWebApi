@@ -251,7 +251,7 @@ namespace RealEstateAgency.Controllers.Crm
             value.IsDone = false;
             value.WorkflowId = workflow.Id;
             value.TrackingNumber = _hasher.CalculateTimeHash("TrackingNumber" + Guid.NewGuid());
-            value.DateCreated = DateTime.Now;
+            value.DateCreated = DateTime.UtcNow;
 
             var res = await ModelService.CreateByDtoAsync(value, cancellationToken);
             

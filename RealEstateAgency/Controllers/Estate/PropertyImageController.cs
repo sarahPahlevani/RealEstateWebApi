@@ -21,6 +21,7 @@ namespace RealEstateAgency.Controllers.Estate
         private readonly IEntityService<PropertyImage> _entityService;
         private readonly IUploadHelperService _uploadHelperService;
         private readonly IPathProvider _pathProvider;
+        private readonly IEntityService<Property> _propertyService;
 
         public enum ImageType
         {
@@ -30,11 +31,13 @@ namespace RealEstateAgency.Controllers.Estate
 
         public PropertyImageController(IEntityService<PropertyImage> entityService
             , IUploadHelperService uploadHelperService
-            , IPathProvider pathProvider)
+            , IPathProvider pathProvider
+            , IEntityService<Property> propertyService)
         {
             _entityService = entityService;
             _uploadHelperService = uploadHelperService;
             _pathProvider = pathProvider;
+            _propertyService = propertyService;
         }
 
         [AllowAnonymous]
@@ -114,6 +117,13 @@ namespace RealEstateAgency.Controllers.Estate
 
             _entityService.DbContext.Entry(file).State = EntityState.Modified;
             await _entityService.DbContext.SaveChangesAsync();
+
+            var property = await _propertyService.GetAsync(file.PropertyId, cancellationToken);
+            if (property != null && property.IsPublished)
+            {
+                property.IsPublished = false;
+                await _propertyService.UpdateAsync(property, cancellationToken);
+            }
 
             return new PropertyImageDto
             {
