@@ -17,6 +17,7 @@ using RealEstateAgency.Implementations.Providers;
 using RealEstateAgency.Shared.Exceptions;
 using RealEstateAgency.Shared.Statics;
 using UserGroup = RealEstateAgency.Dtos.Other.UserGroup.UserGroup;
+using RealEstateAgency.Shared.Services;
 
 namespace RealEstateAgency.Controllers.RBAC
 {
@@ -29,13 +30,14 @@ namespace RealEstateAgency.Controllers.RBAC
     {
         private readonly IUserProvider _userProvider;
         private readonly IPathProvider _pathProvider;
+        private readonly IFastHasher _fastHasher;
 
         public UserAccountController(IModelService<UserAccount, UserAccountDto> modelService,
-            IUserProvider userProvider, IUserGroupProvider groupProvider
-            , IPathProvider pathProvider) : base(modelService)
+            IUserProvider userProvider, IUserGroupProvider groupProvider, IFastHasher fastHasher, IPathProvider pathProvider) : base(modelService)
         {
             _userProvider = userProvider;
             _pathProvider = pathProvider;
+            _fastHasher = fastHasher;
             var administratorGroupId = groupProvider[UserGroup.Administrator].Id;
             modelService.SetBaseFilter(i => i.Where(u => u.UserAccountGroup.FirstOrDefault(g => g.UserAccountId == u.Id).UserGroupId
                                                          != administratorGroupId));
@@ -141,5 +143,24 @@ namespace RealEstateAgency.Controllers.RBAC
             user.UserPictureTumblr = _pathProvider.GetImageApiPath<UserAccount>(nameof(UserAccount.UserPictureTumblr), user.Id.ToString());
             return user;
         }
+
+
+        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        public override async Task<ActionResult> Delete(int id, CancellationToken cancellationToken)
+        {
+            var user = await ModelService.GetAsync(u => u.Id == id, cancellationToken);
+            if(user is null)
+                return NoContent();
+
+            user.Email = _fastHasher.CalculateTimeHash(user.Email);
+            user.UserName = _fastHasher.CalculateTimeHash(user.UserName);
+            user.IsActive = false;
+            await ModelService.UpdateAsync(user, cancellationToken);
+            
+            return NoContent();
+
+            //return await base.Delete(id, cancellationToken);
+        }
+
     }
 }

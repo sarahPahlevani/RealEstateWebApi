@@ -33,5 +33,6 @@ namespace RealEstateAgency.Dtos.ModelDtos.Organization
         public string Address02 { get; set; }
         public string ZipCode { get; set; }
         public bool UpdatePassword { get; set; }
+
     }
 }

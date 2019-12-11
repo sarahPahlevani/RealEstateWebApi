@@ -17,7 +17,7 @@ using RealEstateAgency.Implementations.ApiImplementations.PageDtos.PageFilters;
 using RealEstateAgency.Implementations.Authentication;
 using RealEstateAgency.Implementations.Providers;
 using RealEstateAgency.Shared.Exceptions;
-using RealEstateAgency.Shared.Services;
+using RealEstateAgency.Shared.Services;//
 
 namespace RealEstateAgency.Controllers.Organization
 {
@@ -194,6 +194,54 @@ namespace RealEstateAgency.Controllers.Organization
             await ModelService.UpdateAsync(agent, cancellationToken);
 
             return NoContent();
+        }
+
+        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        [HttpGet("[Action]/{userId}")]
+        public async Task<ActionResult<AgentAccountDto>> GetAgentByUserId(int userId, CancellationToken cancellationToken)
+        {
+            var item = await new RealEstateDbContext().Agent.Where(r => r.UserAccountId == userId)
+                .Select(i => new AgentAccountDto
+                {
+                    Description = i.Description,
+                    Email = i.UserAccount.Email,
+                    AgentId = i.Id,
+                    UserName = i.UserAccount.UserName,
+                    HasPublishingAuthorization = i.HasPublishingAuthorization,
+                    Phone01 = i.UserAccount.Phone01,
+                    IsResponsible = i.IsResponsible,
+                    Address01 = i.UserAccount.Address01,
+                    LastName = i.UserAccount.LastName,
+                    ZipCode = i.UserAccount.ZipCode,
+                    FirstName = i.UserAccount.FirstName,
+                    Phone02 = i.UserAccount.Phone02,
+                    Address02 = i.UserAccount.Address02,
+                    MiddleName = i.UserAccount.MiddleName,
+                    UserId = i.UserAccountId
+                }).FirstOrDefaultAsync(cancellationToken);
+
+            //var user = await ModelService.AsQueryable(i => i.UserAccountId == userId)
+            //    .Select(i => new AgentAccountDto
+            //    {
+            //        Description = i.Description,
+            //        Email = i.UserAccount.Email,
+            //        AgentId = i.Id,
+            //        UserName = i.UserAccount.UserName,
+            //        HasPublishingAuthorization = i.HasPublishingAuthorization,
+            //        Phone01 = i.UserAccount.Phone01,
+            //        IsResponsible = i.IsResponsible,
+            //        Address01 = i.UserAccount.Address01,
+            //        LastName = i.UserAccount.LastName,
+            //        ZipCode = i.UserAccount.ZipCode,
+            //        FirstName = i.UserAccount.FirstName,
+            //        Phone02 = i.UserAccount.Phone02,
+            //        Address02 = i.UserAccount.Address02,
+            //        MiddleName = i.UserAccount.MiddleName,
+            //        UserId = i.UserAccountId
+            //    }).FirstOrDefaultAsync(cancellationToken);
+
+            if (item is null) return NotFound();
+            return item;
         }
 
         [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
