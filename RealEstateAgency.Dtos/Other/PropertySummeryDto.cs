@@ -13,8 +13,11 @@ namespace RealEstateAgency.Dtos.Other
         public int PropertyTypeId { get; set; }
         public int PropertyLabelId { get; set; }
         public int PropertyStatusId { get; set; }
-        public int? CityId { get; set; }
-        public int? RegionId { get; set; }
+        public string Country { get; set; }
+        public string Region { get; set; }
+        public string City { get; set; }
+        //public int? CityId { get; set; }
+        //public int? RegionId { get; set; }
         public decimal Price { get; set; }
         public decimal CalculatedPriceUnit { get; set; }
         public int CurrencyId { get; set; }

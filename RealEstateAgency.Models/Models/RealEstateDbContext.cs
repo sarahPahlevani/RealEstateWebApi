@@ -749,22 +749,34 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.AddressLine2).HasMaxLength(256);
 
+                entity.Property(e => e.City).HasMaxLength(256);
+
+                entity.Property(e => e.CityId1).HasColumnName("CityId_1");
+
+                entity.Property(e => e.Country).HasMaxLength(256);
+
+                entity.Property(e => e.CountryId1).HasColumnName("CountryId_1");
+
                 entity.Property(e => e.GoogleMapsLatitude).HasColumnType("decimal(12, 9)");
 
                 entity.Property(e => e.GoogleMapsLongitude).HasColumnType("decimal(12, 9)");
+
+                entity.Property(e => e.Region).HasMaxLength(256);
+
+                entity.Property(e => e.RegionId1).HasColumnName("RegionId_1");
 
                 entity.Property(e => e.ZipCode)
                     .HasMaxLength(11)
                     .IsUnicode(false);
 
-                entity.HasOne(d => d.City)
+                entity.HasOne(d => d.CityId1Navigation)
                     .WithMany(p => p.PropertyLocation)
-                    .HasForeignKey(d => d.CityId)
+                    .HasForeignKey(d => d.CityId1)
                     .HasConstraintName("FK_PropertyLocation_City");
 
-                entity.HasOne(d => d.Country)
+                entity.HasOne(d => d.CountryId1Navigation)
                     .WithMany(p => p.PropertyLocation)
-                    .HasForeignKey(d => d.CountryId)
+                    .HasForeignKey(d => d.CountryId1)
                     .HasConstraintName("FK_PropertyLocation_Country");
 
                 entity.HasOne(d => d.IdNavigation)
@@ -773,9 +785,9 @@ namespace RealEstateAgency.DAL.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_PropertyLocation_Property");
 
-                entity.HasOne(d => d.Region)
+                entity.HasOne(d => d.RegionId1Navigation)
                     .WithMany(p => p.PropertyLocation)
-                    .HasForeignKey(d => d.RegionId)
+                    .HasForeignKey(d => d.RegionId1)
                     .HasConstraintName("FK_PropertyLocation_Region");
             });
 

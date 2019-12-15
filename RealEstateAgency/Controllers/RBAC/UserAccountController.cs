@@ -39,7 +39,7 @@ namespace RealEstateAgency.Controllers.RBAC
             _pathProvider = pathProvider;
             _fastHasher = fastHasher;
             var administratorGroupId = groupProvider[UserGroup.Administrator].Id;
-            modelService.SetBaseFilter(i => i.Where(u => u.UserAccountGroup.FirstOrDefault(g => g.UserAccountId == u.Id).UserGroupId
+            modelService.SetBaseFilter(i => i.Where(u => u.IsActive == true && u.UserAccountGroup.FirstOrDefault(g => g.UserAccountId == u.Id).UserGroupId
                                                          != administratorGroupId));
         }
 
@@ -161,6 +161,36 @@ namespace RealEstateAgency.Controllers.RBAC
 
             //return await base.Delete(id, cancellationToken);
         }
+
+        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        public override async Task<ActionResult> UpdateAsync(UserAccountDto value, CancellationToken cancellationToken)
+        {
+            var user = await ModelService.GetAsync(u => u.Id == value.Id, cancellationToken);
+            if (user is null)
+                return NoContent();
+
+            //user.Email = _fastHasher.CalculateTimeHash(user.Email);
+            //user.UserName = _fastHasher.CalculateTimeHash(user.UserName);
+            //user.IsActive = false;
+
+            user.FirstName = value.FirstName;
+            user.LastName = value.LastName;
+            user.MiddleName = value.MiddleName;
+            user.UserName = value.UserName;
+            user.Email = value.Email;
+            user.Phone01 = value.Phone01;
+            user.Phone02 = value.Phone02;
+            user.Address01 = value.Address01;
+            user.Address02 = value.Address02;
+            user.ZipCode = value.ZipCode;
+
+            await ModelService.UpdateAsync(user, cancellationToken);
+
+            return NoContent();
+
+            //return await base.Delete(id, cancellationToken);
+        }
+
 
     }
 }

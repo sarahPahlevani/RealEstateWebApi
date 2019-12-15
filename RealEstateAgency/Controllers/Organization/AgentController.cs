@@ -46,7 +46,7 @@ namespace RealEstateAgency.Controllers.Organization
             _userProvider = userProvider;
             _passwordService = passwordService;
             _pathProvider = pathProvider;
-            modelService.SetBaseFilter(filter => filter.Where(a => a.RealEstateId == _userProvider.RealEstateId));
+            modelService.SetBaseFilter(filter => filter.Where(a => a.RealEstateId == _userProvider.RealEstateId && !a.Deleted && a.UserAccount.IsActive != false));
         }
 
         public override Func<IQueryable<Agent>, IQueryable<AgentDto>> DtoConverter
@@ -121,8 +121,7 @@ namespace RealEstateAgency.Controllers.Organization
             var passwordHash = _passwordService.HashUserPassword(dto.Email, dto.Password);
             var user = await _userAccountService.CreateAsync(new UserAccount
             {
-                ActivationKey = _fastHasher.CalculateHash(dto.FirstName + dto.LastName
-                                                                        + dto.Email + dto.UserName),
+                ActivationKey = _fastHasher.CalculateHash(dto.FirstName + dto.LastName + dto.Email + dto.UserName),
                 Email = dto.Email,
                 UserName = dto.UserName,
                 FirstName = dto.FirstName,

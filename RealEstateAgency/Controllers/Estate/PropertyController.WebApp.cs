@@ -337,11 +337,11 @@ namespace RealEstateAgency.Controllers.Estate
             if (queryDto.FloorsTo != null)
                 properties = properties.Where(i => i.PropertyFloorPlan.Count <= queryDto.FloorsTo);
 
-            if (queryDto.CityId != null)
-                properties = properties.Where(i => i.PropertyLocation.CityId == queryDto.GaragesSizeFrom);
+            //if (queryDto.CityId != null)
+            //    properties = properties.Where(i => i.PropertyLocation.CityId == queryDto.GaragesSizeFrom);
 
-            if (queryDto.CityId != null)
-                properties = properties.Where(i => i.PropertyLocation.CityId == queryDto.GaragesSizeFrom);
+            //if (queryDto.CityId != null)
+            //    properties = properties.Where(i => i.PropertyLocation.CityId == queryDto.GaragesSizeFrom);
 
             if (!string.IsNullOrWhiteSpace(queryDto.Search))
                 properties = properties.Where(p => p.Title.Contains(queryDto.Search) ||
