@@ -8,7 +8,6 @@ namespace RealEstateAgency.DAL.Models
         public Region()
         {
             City = new HashSet<City>();
-            PropertyLocation = new HashSet<PropertyLocation>();
             RegionTranslate = new HashSet<RegionTranslate>();
         }
 
@@ -18,7 +17,6 @@ namespace RealEstateAgency.DAL.Models
 
         public virtual Country Country { get; set; }
         public virtual ICollection<City> City { get; set; }
-        public virtual ICollection<PropertyLocation> PropertyLocation { get; set; }
         public virtual ICollection<RegionTranslate> RegionTranslate { get; set; }
     }
 }

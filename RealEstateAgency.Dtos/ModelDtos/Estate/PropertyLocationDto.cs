@@ -20,8 +20,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
         public string AddressLine1 { get; set; }
 
         public string AddressLine2 { get; set; }
-        public decimal? GoogleMapsLatitude { get; set; }
-        public decimal? GoogleMapsLongitude { get; set; }
+        public string GoogleMapsLatitude { get; set; }
+        public string GoogleMapsLongitude { get; set; }
 
         public override IModelDto<PropertyLocation> From(PropertyLocation entity)
         {

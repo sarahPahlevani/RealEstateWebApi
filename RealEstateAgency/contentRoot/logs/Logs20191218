@@ -1,9 +1,7 @@
-2019-12-03 00:45:04.726 +03:30 [ERR] Something went wrong: System.InvalidOperationException: Source sequence doesn't contain any elements.
-   at System.Linq.AsyncEnumerable.First_[TSource](IAsyncEnumerable`1 source, CancellationToken cancellationToken)
-   at Microsoft.EntityFrameworkCore.Query.Internal.AsyncLinqOperatorProvider.TaskResultAsyncEnumerable`1.Enumerator.MoveNext(CancellationToken cancellationToken)
-   at Microsoft.EntityFrameworkCore.Query.Internal.AsyncLinqOperatorProvider.ExceptionInterceptor`1.EnumeratorExceptionInterceptor.MoveNext(CancellationToken cancellationToken)
-   at Microsoft.EntityFrameworkCore.Query.Internal.QueryCompiler.ExecuteSingletonAsyncQuery[TResult](QueryContext queryContext, Func`2 compiledQuery, IDiagnosticsLogger`1 logger, Type contextType)
-   at RealEstateAgency.Controllers.RBAC.UserAccountController.Profile(CancellationToken cancellationToken) in E:\Projects\SolutionsApps\HomeAndShare\WebApi\RealEstateAgency\Controllers\RBAC\UserAccountController.cs:line 120
+2019-12-18 19:30:19.693 +03:30 [ERR] Something went wrong: System.ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+   at System.Collections.Generic.List`1.get_Item(Int32 index)
+   at RealEstateAgency.Controllers.Estate.PropertyFloorPlanController.SetPropertyFloorPlanImage(CancellationToken cancellationToken) in E:\Projects\SolutionsApps\HomeAndShare\WebApi\RealEstateAgency\Controllers\Estate\PropertyFloorPlanController.cs:line 114
    at lambda_method(Closure , Object )
    at Microsoft.Extensions.Internal.ObjectMethodExecutorAwaitable.Awaiter.GetResult()
    at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)

@@ -73,11 +73,10 @@ namespace RealEstateAgency.Controllers.Authentication
         {
             //if(!await _recaptchaService.Validate(registerDto.RecaptchaToken, cancellationToken))
             //    throw new AppException("The recaptcha was failed",true);
-            var userDto = await _appAuthService.RegisterAsync
-                (registerDto, cancellationToken);
+            var userDto = await _appAuthService.RegisterAsync(registerDto, cancellationToken);
             //TODO: this code commented due to error from google that says tooweekawutontication. less secure apps
             await _mailer.SendAsync(new UserEmailActivationEmail(userDto,
-                $"{_appSetting.ApiBaseUrl}api/public/VerifyEmail/", _appSetting.AdminEmailAddress));
+                $"{_appSetting.ApiBaseUrl}/api/public/VerifyEmail/", _appSetting.AdminEmailAddress));
             return userDto;
         }
 

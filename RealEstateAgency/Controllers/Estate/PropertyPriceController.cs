@@ -68,13 +68,13 @@ namespace RealEstateAgency.Controllers.Estate
             return NoContent();
         }
 
-
         [AllowAnonymous]
         [HttpGet("[Action]")]
         public ActionResult<PriceMinMax> GetMinMax()
         {
-            var min = ModelService.Queryable.Min(r => r.CalculatedPriceUnit);
-            var max = ModelService.Queryable.Max(r => r.CalculatedPriceUnit);
+            var min = ModelService.Queryable.Min(r => (decimal?)r.CalculatedPriceUnit).GetValueOrDefault(0);
+            var max = ModelService.Queryable.Max(r => (decimal?)r.CalculatedPriceUnit).GetValueOrDefault(0);
+
             return new PriceMinMax
             {
                 Min = min,

@@ -47,6 +47,7 @@ namespace RealEstateAgency.Controllers.Estate
                     VideoUrl = p.VideoUrl,
                     CompletedSections = 1,
                     Price = p.PropertyPrice != null ? p.PropertyPrice.Price : 0,
+                    PriceSymbol = p.PropertyPrice != null ? p.PropertyPrice.Currency.Symbol : "",
                     CalculatedPriceUnit = p.PropertyPrice != null ? p.PropertyPrice.CalculatedPriceUnit : 0,
                     PropertyLabelName = p.PropertyLabel.Name,
                     PropertyStatusName = p.PropertyStatus.Name,

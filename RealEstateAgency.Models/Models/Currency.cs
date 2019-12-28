@@ -17,6 +17,7 @@ namespace RealEstateAgency.DAL.Models
         public string Code { get; set; }
         public string Symbol { get; set; }
         public bool IsDefault { get; set; }
+        public bool IsActive { get; set; }
 
         public virtual ICollection<Country> Country { get; set; }
         public virtual ICollection<PropertyPrice> PropertyPrice { get; set; }

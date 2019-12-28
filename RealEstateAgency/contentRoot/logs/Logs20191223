@@ -1,4 +1,4 @@
-2019-12-07 04:25:28.132 +03:30 [ERR] Coravel task exception: System.Data.SqlClient.SqlException (0x80131904): A transport-level error has occurred when receiving results from the server. (provider: Session Provider, error: 19 - Physical connection is not usable)
+2019-12-23 18:10:02.243 +03:30 [ERR] Coravel task exception: System.Data.SqlClient.SqlException (0x80131904): Timeout expired.  The timeout period elapsed prior to completion of the operation or the server is not responding. ---> System.ComponentModel.Win32Exception (258): The wait operation timed out
    at System.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__122_0(Task`1 result)
    at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
    at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
@@ -12,10 +12,10 @@
    at Microsoft.EntityFrameworkCore.Query.Internal.AsyncLinqOperatorProvider.ExceptionInterceptor`1.EnumeratorExceptionInterceptor.MoveNext(CancellationToken cancellationToken)
    at System.Linq.AsyncEnumerable.Aggregate_[TSource,TAccumulate,TResult](IAsyncEnumerable`1 source, TAccumulate seed, Func`3 accumulator, Func`2 resultSelector, CancellationToken cancellationToken) in D:\a\1\s\Ix.NET\Source\System.Interactive.Async\Aggregate.cs:line 120
    at RealEstateAgency.TaskScheduler.NotifierJob.ProvideUserEvents() in E:\Projects\SolutionsApps\HomeAndShare\WebApi\RealEstateAgency\TaskScheduler\NotifierJob.cs:line 39
-   at RealEstateAgency.TaskScheduler.NotifierJob.Invoke() in E:\Projects\SolutionsApps\HomeAndShare\WebApi\RealEstateAgency\TaskScheduler\NotifierJob.cs:line 72
+   at RealEstateAgency.TaskScheduler.NotifierJob.Invoke() in E:\Projects\SolutionsApps\HomeAndShare\WebApi\RealEstateAgency\TaskScheduler\NotifierJob.cs:line 73
    at Coravel.Scheduling.Schedule.Event.ScheduledEvent.InvokeScheduledEvent()
    at Coravel.Scheduling.Schedule.Scheduler.<>c__DisplayClass22_0.<<InvokeEvent>g__Invoke|0>d.MoveNext()
 --- End of stack trace from previous location where exception was thrown ---
    at Coravel.Scheduling.Schedule.Scheduler.InvokeEvent(ScheduledEvent scheduledEvent)
-ClientConnectionId:871d9aba-64fa-4988-8072-0f82777c8b52
-Error Number:-1,State:0,Class:20
+ClientConnectionId:62da625b-fcc8-4d20-94fc-6161689d3552
+Error Number:-2,State:0,Class:11

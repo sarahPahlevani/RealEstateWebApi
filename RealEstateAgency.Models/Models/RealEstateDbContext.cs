@@ -75,7 +75,7 @@ namespace RealEstateAgency.DAL.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=178.32.186.120,65210;Database=RealEstateDbTest;User Id=sa;Password=abc.1234;MultipleActiveResultSets=true;");
+                optionsBuilder.UseSqlServer("Server=178.32.186.120,65210;Database=RealEstateDb;User Id=sa;Password=alt.321;MultipleActiveResultSets=true;");
             }
         }
 
@@ -751,44 +751,23 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.City).HasMaxLength(256);
 
-                entity.Property(e => e.CityId1).HasColumnName("CityId_1");
-
                 entity.Property(e => e.Country).HasMaxLength(256);
 
-                entity.Property(e => e.CountryId1).HasColumnName("CountryId_1");
+                entity.Property(e => e.GoogleMapsLatitude).HasMaxLength(50);
 
-                entity.Property(e => e.GoogleMapsLatitude).HasColumnType("decimal(12, 9)");
-
-                entity.Property(e => e.GoogleMapsLongitude).HasColumnType("decimal(12, 9)");
+                entity.Property(e => e.GoogleMapsLongitude).HasMaxLength(50);
 
                 entity.Property(e => e.Region).HasMaxLength(256);
-
-                entity.Property(e => e.RegionId1).HasColumnName("RegionId_1");
 
                 entity.Property(e => e.ZipCode)
                     .HasMaxLength(11)
                     .IsUnicode(false);
-
-                entity.HasOne(d => d.CityId1Navigation)
-                    .WithMany(p => p.PropertyLocation)
-                    .HasForeignKey(d => d.CityId1)
-                    .HasConstraintName("FK_PropertyLocation_City");
-
-                entity.HasOne(d => d.CountryId1Navigation)
-                    .WithMany(p => p.PropertyLocation)
-                    .HasForeignKey(d => d.CountryId1)
-                    .HasConstraintName("FK_PropertyLocation_Country");
 
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.PropertyLocation)
                     .HasForeignKey<PropertyLocation>(d => d.Id)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_PropertyLocation_Property");
-
-                entity.HasOne(d => d.RegionId1Navigation)
-                    .WithMany(p => p.PropertyLocation)
-                    .HasForeignKey(d => d.RegionId1)
-                    .HasConstraintName("FK_PropertyLocation_Region");
             });
 
             modelBuilder.Entity<PropertyPrice>(entity =>

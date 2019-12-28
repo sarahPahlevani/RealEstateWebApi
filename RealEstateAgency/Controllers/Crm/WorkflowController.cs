@@ -4,9 +4,11 @@ using RealEstateAgency.DAL.Models;
 using RealEstateAgency.Dtos.ModelDtos.Crm;
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RealEstateAgency.Controllers.Crm
 {
+    [AllowAnonymous]
     public class WorkflowController : ModelController<Workflow, WorkflowDto>
     {
         public WorkflowController(IModelService<Workflow, WorkflowDto> modelService) : base(modelService)

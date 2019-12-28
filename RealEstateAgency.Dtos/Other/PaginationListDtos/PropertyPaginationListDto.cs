@@ -13,6 +13,7 @@ namespace RealEstateAgency.Dtos.Other.PaginationListDtos
         public string Title { get; set; }
         public string VideoUrl { get; set; }
         public decimal Price { get; set; }
+        public string PriceSymbol { get; set; }
         public decimal CalculatedPriceUnit { get; set; }
         public string ZipCode { get; set; }
         public int CompletedSections { get; set; }

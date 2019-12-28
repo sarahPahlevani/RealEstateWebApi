@@ -63,6 +63,18 @@ namespace RealEstateAgency.Controllers.Estate
             return dtos;
         }
 
+        [AllowAnonymous]
+        [HttpGet("[Action]/{propertyId}")]
+        public async Task<List<PropertyImageDto>> Get360Images(int propertyId, CancellationToken cancellationToken = default)
+        {
+            var imageModels = await _entityService.AsQueryable(i => i.PropertyId == propertyId && !i.Deleted && i.Is360View)
+                .OrderBy(i => i.Priority)
+                .ToListAsync(cancellationToken);
+            var dtos = new List<PropertyImageDto>();
+            imageModels.ForEach(i => dtos.Add(ConvertToDto(i)));
+            return dtos;
+        }
+
         private PropertyImageDto ConvertToDto(PropertyImage propertyImage) =>
             new PropertyImageDto
             {

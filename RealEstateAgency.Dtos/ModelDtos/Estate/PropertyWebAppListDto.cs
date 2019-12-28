@@ -17,6 +17,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
         public string Title { get; set; }
         public string VideoUrl { get; set; }
         public PropertyPrice Price { get; set; }
+        public string PriceSymbol { get; set; }
         public string ZipCode { get; set; }
         public string Description { get; set; }
         public string PropertyUniqId { get; set; }

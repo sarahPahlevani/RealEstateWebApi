@@ -39,12 +39,13 @@ namespace RealEstateAgency.Controllers.Estate
                             Title = p.Title,
                             ZipCode = p.Title,
                             Price = p.PropertyPrice,
+                            PriceSymbol = p.PropertyPrice.Currency.Symbol,
                             VideoUrl = p.VideoUrl,
                             Description = p.Description,
                             PropertyLocation = p.PropertyLocation,
                             PropertyDetail = p.PropertyDetail,
                             PropertyUniqId = p.PropertyUniqId,
-                            Images = p.PropertyImage.Select(i => new PropertyWebAppImageDto
+                            Images = p.PropertyImage.Where(i => !i.Deleted && !i.Is360View).Select(i => new PropertyWebAppImageDto
                             {
                                 Id = i.Id,
                                 Order = i.Priority,
@@ -96,6 +97,7 @@ namespace RealEstateAgency.Controllers.Estate
                     Title = p.Title,
                     ZipCode = p.Title,
                     Price = p.PropertyPrice,
+                    PriceSymbol = p.PropertyPrice.Currency.Symbol,
                     VideoUrl = p.VideoUrl,
                     Description = p.Description,
                     PropertyLocation = p.PropertyLocation,
@@ -104,7 +106,7 @@ namespace RealEstateAgency.Controllers.Estate
                     AgentId = p.Request.RequestAgent.Any() ?
                         p.Request.RequestAgent.FirstOrDefault().AgentId : 0,
                     PublishingDate = p.PublishingDate,
-                    Images = p.PropertyImage.Select(i => new PropertyWebAppImageDto
+                    Images = p.PropertyImage.Where(i => !i.Deleted && !i.Is360View).Select(i => new PropertyWebAppImageDto
                     {
                         Id = i.Id,
                         Order = i.Priority,
@@ -236,6 +238,7 @@ namespace RealEstateAgency.Controllers.Estate
                             Title = p.Title,
                             ZipCode = p.Title,
                             Price = p.PropertyPrice,
+                            PriceSymbol = p.PropertyPrice.Currency.Symbol,
                             VideoUrl = p.VideoUrl,
                             Description = p.Description,
                             PropertyLocation = p.PropertyLocation,

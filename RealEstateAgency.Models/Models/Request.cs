@@ -21,7 +21,6 @@ namespace RealEstateAgency.DAL.Models
         public string RequesterEmail { get; set; }
         public string RequesterPhone { get; set; }
         public int? UserAccountIdShared { get; set; }
-        public int? NetworkIdShared { get; set; }
         public int? AgentId { get; set; }
         public int? WorkflowId { get; set; }
         public string TrackingNumber { get; set; }
@@ -34,6 +33,7 @@ namespace RealEstateAgency.DAL.Models
         public int? PropertyId { get; set; }
         public bool? IsDone { get; set; }
         public bool? IsSuccess { get; set; }
+        public int? NetworkIdShared { get; set; }
 
         public virtual Agent Agent { get; set; }
         public virtual SocialNetwork NetworkIdSharedNavigation { get; set; }

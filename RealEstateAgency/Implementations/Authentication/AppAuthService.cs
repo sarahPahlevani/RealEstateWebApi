@@ -86,7 +86,7 @@ namespace RealEstateAgency.Implementations.Authentication
             registerAgentDto.Email = registerAgentDto.Email.ToLower().Trim();
             registerAgentDto.Username = registerAgentDto.Username.ToLower().Trim();
 
-            var estate = await CheckIfEstateExist(registerAgentDto.RealEstateName, cancellationToken);
+            var estate = await CheckIfEstateExistById(registerAgentDto.RealEstateId, cancellationToken);
             await CheckIfUserIsValid(registerAgentDto.Email, registerAgentDto.Username, cancellationToken);
             var activationKey = _hasher.CalculateHash(registerAgentDto.Firstname
                                                       + registerAgentDto.Lastname
@@ -111,6 +111,8 @@ namespace RealEstateAgency.Implementations.Authentication
             registerDto.Username = registerDto.Username.ToLower().Trim();
 
             var estate = await _estateEntityService.Queryable.FirstAsync(cancellationToken);
+
+            await CheckIfUserIsValid(registerDto.Email, registerDto.Username, cancellationToken);
 
             var activationKey = _hasher.CalculateHash(registerDto.Firstname
                                                       + registerDto.Lastname
@@ -182,6 +184,13 @@ namespace RealEstateAgency.Implementations.Authentication
         private async Task<RealEstate> CheckIfEstateExist(string estateName, CancellationToken cancellationToken)
         {
             var estate = await _estateEntityService.GetAsync(e => e.Name == estateName, cancellationToken);
+            if (estate is null) throw new AppException("Estate is not valid");
+            return estate;
+        }
+
+        private async Task<RealEstate> CheckIfEstateExistById(int id, CancellationToken cancellationToken)
+        {
+            var estate = await _estateEntityService.GetAsync(e => e.Id == id, cancellationToken);
             if (estate is null) throw new AppException("Estate is not valid");
             return estate;
         }
