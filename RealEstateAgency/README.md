@@ -2,6 +2,13 @@
 #### run this command in DAL project
 Scaffold-DbContext -Connection "Server=.;Database=RealEstateDbLocal;Integrated Security=True;Trusted_Connection=True;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -context RealEstateDbContext -Project RealEstateAgency.DAL -force
 
+#### sql server db
+Scaffold-DbContext -Connection "Server=178.32.186.120,65210;Database=RealEstateDb;User Id=sa;Password=alt.321;Integrated Security=True;Trusted_Connection=True;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -context RealEstateDbContext -Project RealEstateAgency.DAL -force
+
+#### sql server test db
+Scaffold-DbContext -Connection "Server=178.32.186.120,65210;Database=RealEstateDbTest;User Id=sa;Password=alt.321;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -context RealEstateDbContext -Project RealEstateAgency.DAL -force
+
+
 #### remove all the datas
 ```sql
 
