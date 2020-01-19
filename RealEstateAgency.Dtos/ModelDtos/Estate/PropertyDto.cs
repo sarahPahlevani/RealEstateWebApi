@@ -39,6 +39,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
         public int? UserAccountIdReadyForPublish { get; set; }
         public int? UserAccountIdPublished { get; set; }
         public DateTime? ReadyForPublishDate { get; set; }
+        public byte? Commission { get; set; }
 
         public override IModelDto<Property> From(Property entity)
         {
@@ -60,6 +61,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
             ReadyForPublishDate = entity.ReadyForPublishDate;
             ExtraInformation = entity.ExtraInformation;
             DraftInformation = entity.DraftInformation;
+            Commission = entity.Commission;
             return this;
         }
 
@@ -69,7 +71,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
                 PropertyTypeId = PropertyTypeId,
                 PropertyLabelId = PropertyLabelId,
                 PropertyStatusId = PropertyStatusId,
-                Title = string.IsNullOrWhiteSpace(Title)? "" : Title,
+                Title = string.IsNullOrWhiteSpace(Title) ? "" : Title,
                 PropertyUniqId = PropertyUniqId,
                 Description = Description,
                 VideoUrl = VideoUrl,
@@ -82,7 +84,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
                 UserAccountIdPublished = UserAccountIdPublished,
                 ReadyForPublishDate = ReadyForPublishDate,
                 ExtraInformation = ExtraInformation,
-                DraftInformation = DraftInformation
+                DraftInformation = DraftInformation,
+                Commission = Commission,
             };
 
         public override Property Update() =>
@@ -105,7 +108,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
                 UserAccountIdPublished = UserAccountIdPublished,
                 ReadyForPublishDate = ReadyForPublishDate,
                 ExtraInformation = ExtraInformation,
-                DraftInformation = DraftInformation
+                DraftInformation = DraftInformation,
+                Commission = Commission,
             };
     }
 }

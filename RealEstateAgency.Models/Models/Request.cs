@@ -32,6 +32,7 @@ namespace RealEstateAgency.DAL.Models
         public bool Deleted { get; set; }
         public DateTime? DeletedDate { get; set; }
         public int? PropertyId { get; set; }
+        public byte? Commission { get; set; }
         public bool? IsDone { get; set; }
         public bool? IsSuccess { get; set; }
 

@@ -24,5 +24,6 @@ namespace RealEstateAgency.Dtos.Other.PaginationListDtos
         public UserAccount UserAccountReadyForPublish { get; set; }
         public UserAccount UserAccountPublished { get; set; }
         public DateTime? ReadyForPublishDate { get; set; }
+        public byte? Commission { get; set; }
     }
 }

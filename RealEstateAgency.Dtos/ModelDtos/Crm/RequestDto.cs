@@ -58,6 +58,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
 
         public int? PropertyId { get; set; }
 
+        public byte? Commission { get; set; }
+
         public Property Property { get; set; }
         public IEnumerable<RequestAction> Actions { get; set; }
         public IEnumerable<RequestState> States { get; set; }

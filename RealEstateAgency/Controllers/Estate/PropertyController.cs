@@ -59,7 +59,8 @@ namespace RealEstateAgency.Controllers.Estate
                     UserAccountPublished = p.UserAccountIdPublishedNavigation,
                     ReadyForPublishDate = p.ReadyForPublishDate,
                     UserAccountReadyForPublish = p.UserAccountIdReadyForPublishNavigation,
-                    CheckReadyPublish = !string.IsNullOrEmpty(p.Title) && p.PropertyDetail != null && p.PropertyPrice != null && p.PropertyImage.Any()
+                    CheckReadyPublish = !string.IsNullOrEmpty(p.Title) && p.PropertyDetail != null && p.PropertyPrice != null && p.PropertyImage.Any(),
+                    Commission=p.Commission,
                 }).OrderByDescending(i => i.Id);
 
         public override Func<IQueryable<Property>, IQueryable<PropertyDto>> DtoConverter =>
@@ -73,6 +74,7 @@ namespace RealEstateAgency.Controllers.Estate
                 PropertyUniqId = i.PropertyUniqId,
                 Description = i.Description,
                 VideoUrl = i.VideoUrl,
+                Commission = i.Commission,
             });
 
         [HttpGet("[Action]/{propertyId}")]

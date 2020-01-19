@@ -33,5 +33,6 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
         public bool IsAssigned { get; set; }
         public DateTime DateCreated { get; set; }
         public bool IsDone { get; set; }
+        public byte? Commission { get; set; }
     }
 }

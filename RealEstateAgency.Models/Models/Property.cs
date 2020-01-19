@@ -39,6 +39,7 @@ namespace RealEstateAgency.DAL.Models
         public int? UserAccountIdReadyForPublish { get; set; }
         public int? UserAccountIdPublished { get; set; }
         public DateTime? ReadyForPublishDate { get; set; }
+        public byte? Commission { get; set; }
 
         public virtual PropertyLabel PropertyLabel { get; set; }
         public virtual PropertyStatus PropertyStatus { get; set; }
