@@ -27,9 +27,12 @@ namespace RealEstateAgency.DAL.Models
         public string MetadataJson { get; set; }
         public string DateFormat { get; set; }
         public int CurrencyId { get; set; }
+        public bool? Deleted { get; set; }
+        public int? UserAccountIdDeleteBy { get; set; }
 
         public virtual Currency Currency { get; set; }
         public virtual Language LanguageIdDefaultNavigation { get; set; }
+        public virtual UserAccount UserAccountIdDeleteByNavigation { get; set; }
         public virtual ICollection<Agent> Agent { get; set; }
         public virtual ICollection<MarketingAssistant> MarketingAssistant { get; set; }
     }

@@ -213,7 +213,7 @@ namespace RealEstateAgency.Implementations.Authentication
                     account.RegistrationDate.ToString(CultureInfo.InvariantCulture))
             });
             if (role == UserGroups.Agent
-                || role == UserGroups.Administrator
+                //|| role == UserGroups.Administrator
                 || role == UserGroups.RealEstateAdministrator)
             {
                 var agent = GetAgent(account.Id);
@@ -230,6 +230,7 @@ namespace RealEstateAgency.Implementations.Authentication
                 claims.AddClaim(new Claim(CustomClaimTypes.RealEstateId,
                     agent.RealEstateId.ToString()));
             }
+
             return claims;
         }
 

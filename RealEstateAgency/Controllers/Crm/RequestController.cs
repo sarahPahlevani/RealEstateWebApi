@@ -95,6 +95,7 @@ namespace RealEstateAgency.Controllers.Crm
                 }),
                 IsAssigned = i.AgentId.HasValue,
                 Commission = i.Commission,
+                IsDone = i.IsDone,
                 //Id = i.Id,
                 //Description = i.Description,
                 //Title = i.Title,
@@ -168,6 +169,7 @@ namespace RealEstateAgency.Controllers.Crm
                     }),
                     IsAssigned = i.AgentId.HasValue,
                     Commission = i.Commission,
+                    IsDone = i.IsDone,
                 }).OrderBy(i => i.IsAssigned).ThenByDescending(i => i.DateCreated);
 
         public override async Task<ActionResult<RequestDto>> GetAsync(int id, CancellationToken cancellationToken)
@@ -226,6 +228,7 @@ namespace RealEstateAgency.Controllers.Crm
                 }),
                 IsAssigned = i.AgentId.HasValue,
                 Commission = i.Commission,
+                IsDone = i.IsDone,
             }).FirstOrDefaultAsync();
 
             return result;

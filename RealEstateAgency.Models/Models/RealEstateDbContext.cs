@@ -75,7 +75,7 @@ namespace RealEstateAgency.DAL.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("178.32.186.120,65210;Database=RealEstateDbTest;User Id=sa;Password=alt.321;");
+                optionsBuilder.UseSqlServer("Server=178.32.186.120,65210;Database=RealEstateDb;User Id=sa;Password=alt.321;");
             }
         }
 
@@ -918,6 +918,8 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.Phone03).HasMaxLength(20);
 
+                entity.Property(e => e.UserAccountIdDeleteBy).HasColumnName("UserAccountId_DeleteBy");
+
                 entity.Property(e => e.WebsiteUrl).HasMaxLength(256);
 
                 entity.Property(e => e.ZipCode).HasMaxLength(20);
@@ -933,6 +935,11 @@ namespace RealEstateAgency.DAL.Models
                     .HasForeignKey(d => d.LanguageIdDefault)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_RealEstate_Language");
+
+                entity.HasOne(d => d.UserAccountIdDeleteByNavigation)
+                    .WithMany(p => p.RealEstate)
+                    .HasForeignKey(d => d.UserAccountIdDeleteBy)
+                    .HasConstraintName("FK_RealEstate_UserAccount");
             });
 
             modelBuilder.Entity<Region>(entity =>

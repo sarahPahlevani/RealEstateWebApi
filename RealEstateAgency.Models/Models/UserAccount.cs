@@ -24,6 +24,7 @@ namespace RealEstateAgency.DAL.Models
             PropertyUserAccountIdDeleteByNavigation = new HashSet<Property>();
             PropertyUserAccountIdPublishedNavigation = new HashSet<Property>();
             PropertyUserAccountIdReadyForPublishNavigation = new HashSet<Property>();
+            RealEstate = new HashSet<RealEstate>();
             RequestUserAccountIdDeleteByNavigation = new HashSet<Request>();
             RequestUserAccountIdRequesterNavigation = new HashSet<Request>();
             RequestUserAccountIdSharedNavigation = new HashSet<Request>();
@@ -75,6 +76,7 @@ namespace RealEstateAgency.DAL.Models
         public virtual ICollection<Property> PropertyUserAccountIdDeleteByNavigation { get; set; }
         public virtual ICollection<Property> PropertyUserAccountIdPublishedNavigation { get; set; }
         public virtual ICollection<Property> PropertyUserAccountIdReadyForPublishNavigation { get; set; }
+        public virtual ICollection<RealEstate> RealEstate { get; set; }
         public virtual ICollection<Request> RequestUserAccountIdDeleteByNavigation { get; set; }
         public virtual ICollection<Request> RequestUserAccountIdRequesterNavigation { get; set; }
         public virtual ICollection<Request> RequestUserAccountIdSharedNavigation { get; set; }

@@ -29,6 +29,8 @@ namespace RealEstateAgency.Controllers.Organization
             WebsiteUrl = i.WebsiteUrl,
             MetadataJson = i.MetadataJson,
             Id = i.Id,
+            Deleted = i.Deleted,
+            UserAccountId_DeleteBy = i.UserAccountIdDeleteBy,
         });
     }
 }

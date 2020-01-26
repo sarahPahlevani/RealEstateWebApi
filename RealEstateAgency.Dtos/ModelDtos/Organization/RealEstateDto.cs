@@ -21,6 +21,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.Organization
         public string MetadataJson { get; set; }
         public string DateFormat { get; set; }
         public int CurrencyId { get; set; }
+        public bool? Deleted { get; set; }
+        public int? UserAccountId_DeleteBy { get; set; }
+
 
         public override IModelDto<RealEstate> From(RealEstate entity)
         {
@@ -39,6 +42,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Organization
             MetadataJson = entity.MetadataJson;
             DateFormat = entity.DateFormat;
             CurrencyId = entity.CurrencyId;
+            Deleted = entity.Deleted;
+            UserAccountId_DeleteBy = entity.UserAccountIdDeleteBy;
             return this;
         }
 
@@ -58,7 +63,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.Organization
                 WebsiteUrl = WebsiteUrl,
                 MetadataJson = MetadataJson,
                 CurrencyId = CurrencyId,
-                DateFormat = DateFormat
+                DateFormat = DateFormat,
+                Deleted = Deleted,
+                UserAccountIdDeleteBy = UserAccountId_DeleteBy,
             };
 
         public override RealEstate Update() =>
@@ -78,7 +85,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.Organization
                 WebsiteUrl = WebsiteUrl,
                 MetadataJson = MetadataJson,
                 CurrencyId = CurrencyId,
-                DateFormat = DateFormat
+                DateFormat = DateFormat,
+                Deleted = Deleted,
+                UserAccountIdDeleteBy = UserAccountId_DeleteBy,
             };
     }
 }
