@@ -60,7 +60,7 @@ namespace RealEstateAgency.Controllers.Estate
                     ReadyForPublishDate = p.ReadyForPublishDate,
                     UserAccountReadyForPublish = p.UserAccountIdReadyForPublishNavigation,
                     CheckReadyPublish = !string.IsNullOrEmpty(p.Title) && p.PropertyDetail != null && p.PropertyPrice != null && p.PropertyImage.Any(),
-                    Commission=p.Commission,
+                    Commission = p.Commission,
                 }).OrderByDescending(i => i.Id);
 
         public override Func<IQueryable<Property>, IQueryable<PropertyDto>> DtoConverter =>

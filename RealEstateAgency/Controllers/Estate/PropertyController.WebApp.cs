@@ -106,6 +106,7 @@ namespace RealEstateAgency.Controllers.Estate
                     AgentId = p.Request.RequestAgent.Any() ?
                         p.Request.RequestAgent.FirstOrDefault().AgentId : 0,
                     PublishingDate = p.PublishingDate,
+                    Commission = p.Commission,
                     Images = p.PropertyImage.Where(i => !i.Deleted && !i.Is360View).Select(i => new PropertyWebAppImageDto
                     {
                         Id = i.Id,
@@ -244,6 +245,7 @@ namespace RealEstateAgency.Controllers.Estate
                             PropertyLocation = p.PropertyLocation,
                             PropertyDetail = p.PropertyDetail,
                             PropertyUniqId = p.PropertyUniqId,
+                            Commission = p.Commission,
                             Images = p.PropertyImage.Where(i => !i.Deleted && !i.Is360View)
                                 .Select(i => new PropertyWebAppImageDto
                                 {

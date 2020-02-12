@@ -75,7 +75,7 @@ namespace RealEstateAgency.DAL.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=178.32.186.120,65210;Database=RealEstateDb;User Id=sa;Password=alt.321;");
+                optionsBuilder.UseSqlServer("Server=51.178.232.234,65210;Database=RealEstateDbTest;User Id=sa;Password=alt.321;");
             }
         }
 

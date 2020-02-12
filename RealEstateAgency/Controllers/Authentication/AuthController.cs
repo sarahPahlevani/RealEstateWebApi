@@ -51,6 +51,13 @@ namespace RealEstateAgency.Controllers.Authentication
 
         [AllowAnonymous]
         [HttpPost("[Action]")]
+        public string test()
+        {
+            return "test";
+        }
+
+        [AllowAnonymous]
+        [HttpPost("[Action]")]
         public async Task<ActionResult<UserAccountDto>> Login([FromBody] LoginDto loginDto, CancellationToken cancellationToken)
         {
             var userDto = await _appAuthService.AuthenticateAsync

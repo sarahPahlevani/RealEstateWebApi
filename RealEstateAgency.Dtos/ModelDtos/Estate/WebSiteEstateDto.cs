@@ -26,6 +26,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
         public List<string> ImagesUrl { get; set; }
         public int AgentId { get; set; }
         public DateTime? PublishingDate { get; set; }
+        public byte? Commission { get; set; }
 
         public IEnumerable<PropertyWebAppImageDto> Images { get; set; }
         public IEnumerable<PropertyAdditionalDetailDto> AdditionalDetails { get; set; }
