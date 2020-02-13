@@ -167,6 +167,20 @@ namespace RealEstateAgency.Implementations.Authentication
             }
         }
 
+        public async Task<UserAccount> UpdatePasswordAsync(int userId, string newPassword)
+        {
+            return await UpdatePassword(userId, newPassword);
+        }
+
+        private async Task<UserAccount> UpdatePassword(int userId, string newPassword)
+        {
+            var userAccount = _entityService.DbContext.UserAccount.Where(t => t.Id == userId).FirstOrDefault();
+            userAccount.PasswordHash = _passwordService.HashUserPassword(userAccount.Email, newPassword);
+            await _entityService.UpdateAsync(userAccount);
+            await _entityService.DbContext.SaveChangesAsync();
+            return userAccount;
+        }
+
         public async Task CheckIfUserIsValid(string email, string username, CancellationToken cancellationToken)
         {
             email = email.ToLower().Trim();

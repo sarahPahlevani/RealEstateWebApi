@@ -19,6 +19,8 @@ using RealEstateAgency.Implementations.Authentication.Contracts;
 using RealEstateAgency.Implementations.Services;
 using RealEstateAgency.Mailables;
 using RealEstateAgency.Shared.BaseModels;
+using static RealEstateAgency.Controllers.Other.PublicController;
+using System;
 
 namespace RealEstateAgency.Controllers.Authentication
 {
@@ -31,9 +33,10 @@ namespace RealEstateAgency.Controllers.Authentication
         private readonly IUserProvider _userProvider;
         private readonly IMailer _mailer;
         private readonly IUserGroupProvider _groupProvider;
-        private readonly AppSetting _appSetting;
+        private readonly AppSetting _appSetting; 
+        private readonly IEntityService<UserAccount> _userService;
 
-        public AuthController(IAppAuthService appAuthService
+        public AuthController(IAppAuthService appAuthService, IEntityService<UserAccount> userService
             , IModelService<UserAccount, UserAccountDto> userAccount
             , IUserProvider userProvider,IMailer mailer,IOptions<AppSetting> appSetting
             , IUserGroupProvider groupProvider, IEntityService<RealEstate> estateService
@@ -47,6 +50,7 @@ namespace RealEstateAgency.Controllers.Authentication
             _estateService = estateService;
             _recaptchaService = recaptchaService;
             _appSetting = appSetting.Value;
+            _userService = userService;
         }
 
         [AllowAnonymous]
@@ -154,6 +158,58 @@ namespace RealEstateAgency.Controllers.Authentication
                 Phone03 = estate.Phone01,
                 WebsiteUrl = estate.WebsiteUrl
             };
+        }
+
+
+        [AllowAnonymous]
+        [HttpPost("[Action]")]
+        public async Task<ActionResult<string>> RequestResetPassword(LoginDto login, CancellationToken cancellationToken)
+        {
+            var userAccountitem = _userAccount.Get(t => t.Email == login.UsernameOrEmail && t.IsActive == true);
+            if (userAccountitem == null)
+            {
+                throw new AppException("User not found.", true);
+            }
+            string resetPasswordKey = Guid.NewGuid().ToString("d");
+            userAccountitem.ResetPasswordKey = resetPasswordKey;
+            _userAccount.Update(userAccountitem);
+
+            await _mailer.SendAsync(new UserResetPasswordEmail(userAccountitem,
+                $"{_appSetting.ApiBaseUrl}api/public/ResetPassword/", _appSetting.AdminEmailAddress));
+
+            return resetPasswordKey;
+        }
+
+
+
+        [HttpPost("[Action]")]
+        [AllowAnonymous]
+        public async Task<ContentResult> ResetPassword([FromForm]string password, [FromForm]string resetKeyPassword)
+        {
+
+            var user = await _userService.GetAsync(u => u.ResetPasswordKey == resetKeyPassword);
+
+            if (user is null) return await RenderResetPasswordResult(new ResetPasswordDto
+            {
+                Message = "This key does not exist",
+            });
+
+            user.ResetPasswordKey = "";
+            await _userService.UpdateAsync(user);
+            await _appAuthService.UpdatePasswordAsync(user.Id, password);
+
+
+            return await RenderResetPasswordResult(new ResetPasswordDto
+            {
+                Message = "Your password changed successfully.",
+                ReturnUrl = _appSetting.WebAppBaseUrl,
+                Ok = true
+            });
+        }
+        private async Task<ContentResult> RenderResetPasswordResult(ResetPasswordDto dto)
+        {
+            var res = await _mailer.RenderAsync(new UserREsetPasswordPage(dto));
+            return Content(res, "text/html");
         }
     }
 }

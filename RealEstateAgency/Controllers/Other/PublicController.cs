@@ -48,6 +48,14 @@ namespace RealEstateAgency.Controllers.Other
             public string ReturnUrl { get; set; }
         }
 
+        public class ResetPasswordDto
+        {
+            public string Message { get; set; }
+            public bool Ok { get; set; } = false;
+            public string ReturnUrl { get; set; }
+            public string ResetKeyPassword { get; set; }
+        }
+
         [HttpGet("[Action]/{activationCode}")]
         public async Task<ContentResult> VerifyEmail(string activationCode, CancellationToken cancellationToken)
         {
