@@ -83,9 +83,42 @@ namespace RealEstateAgency.Controllers.Other
             });
         }
 
+        [HttpGet("[Action]/{resetPasswordKey}")]
+        public async Task<ContentResult> ResetPassword(string resetPasswordKey, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrWhiteSpace(resetPasswordKey) || resetPasswordKey.Length < 5)
+                return await RenderResetPasswordResult(new ResetPasswordDto
+                {
+                    Message = "This key is not valid"
+                });
+            var user = await _userService.GetAsync(u => u.ResetPasswordKey == resetPasswordKey, cancellationToken);
+
+            if (user is null) return await RenderResetPasswordResult(new ResetPasswordDto
+            {
+                Message = "This key does not exist",
+            });
+
+            //user.ResetPasswordKey = "";
+            //await _userService.UpdateAsync(user, cancellationToken);
+
+            return await RenderResetPasswordResult(new ResetPasswordDto
+            {
+                Message = "please type your new password.",
+                ReturnUrl = _appSetting.WebAppBaseUrl,
+                Ok = true,
+                ResetKeyPassword = resetPasswordKey
+            });
+        }
+
         private async Task<ContentResult> RenderVerifyEmailResult(VerifyEmailDto dto)
         {
             var res = await _mailer.RenderAsync(new VerifyEmailPage(dto));
+            return Content(res, "text/html");
+        }
+
+        private async Task<ContentResult> RenderResetPasswordResult(ResetPasswordDto dto)
+        {
+            var res = await _mailer.RenderAsync(new UserREsetPasswordPage(dto));
             return Content(res, "text/html");
         }
     }
