@@ -35,6 +35,7 @@ namespace RealEstateAgency.DAL.Models
         public byte? Commission { get; set; }
         public bool? IsDone { get; set; }
         public bool? IsSuccess { get; set; }
+        public string MarketingAssistantTrackingCode { get; set; }
 
         public virtual Agent Agent { get; set; }
         public virtual SocialNetwork NetworkIdSharedNavigation { get; set; }

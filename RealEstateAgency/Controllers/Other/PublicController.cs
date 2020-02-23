@@ -13,6 +13,7 @@ using RealEstateAgency.Controllers.Contracts;
 using RealEstateAgency.DAL.Models;
 using RealEstateAgency.Mailables;
 using RealEstateAgency.Shared.BaseModels;
+using RealEstateAgency.Shared.Exceptions;
 
 namespace RealEstateAgency.Controllers.Other
 {
@@ -120,6 +121,26 @@ namespace RealEstateAgency.Controllers.Other
         {
             var res = await _mailer.RenderAsync(new UserREsetPasswordPage(dto));
             return Content(res, "text/html");
+        }
+
+        [HttpPost("[Action]")]
+        public async Task<ActionResult<Subscribes>> Subscribe(Subscribes dto)
+        {
+            var item = _entityService.DbContext.Subscribes.Where(t => t.Email == dto.Email.ToLower()).FirstOrDefault();
+            if (item == null)
+            {
+                dto.Email = dto.Email.ToLower();
+                dto.InsertDateTime = DateTime.Now;
+                _entityService.DbContext.Subscribes.Add(dto);
+                await _entityService.DbContext.SaveChangesAsync();
+                return dto;
+            }
+            else
+            {
+                new AppException("This email has already been subscribed.");
+                return item;
+            }
+
         }
     }
 }
