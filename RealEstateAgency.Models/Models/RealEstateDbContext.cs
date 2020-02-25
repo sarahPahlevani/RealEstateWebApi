@@ -62,6 +62,7 @@ namespace RealEstateAgency.DAL.Models
         public virtual DbSet<SharedProperty> SharedProperty { get; set; }
         public virtual DbSet<SharedPropertyClick> SharedPropertyClick { get; set; }
         public virtual DbSet<SocialNetwork> SocialNetwork { get; set; }
+        public virtual DbSet<Subscribes> Subscribes { get; set; }
         public virtual DbSet<UserAccount> UserAccount { get; set; }
         public virtual DbSet<UserAccountGroup> UserAccountGroup { get; set; }
         public virtual DbSet<UserAccountWishList> UserAccountWishList { get; set; }
@@ -990,6 +991,8 @@ namespace RealEstateAgency.DAL.Models
                     .IsRequired()
                     .HasMaxLength(2048);
 
+                entity.Property(e => e.MarketingAssistantTrackingCode).HasMaxLength(50);
+
                 entity.Property(e => e.NetworkIdShared).HasColumnName("NetworkId_Shared");
 
                 entity.Property(e => e.RequesterEmail).HasMaxLength(256);
@@ -1302,6 +1305,15 @@ namespace RealEstateAgency.DAL.Models
                 entity.Property(e => e.Url)
                     .HasMaxLength(50)
                     .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<Subscribes>(entity =>
+            {
+                entity.ToTable("Subscribes", "RBAC");
+
+                entity.Property(e => e.Email).HasMaxLength(250);
+
+                entity.Property(e => e.InsertDateTime).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<UserAccount>(entity =>
