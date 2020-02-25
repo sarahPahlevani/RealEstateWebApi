@@ -8,6 +8,9 @@ namespace RealEstateAgency.DAL.Models
     [ModifyAccess(UserGroups.Administrator,UserGroups.RealEstateAdministrator)]
     public partial class ActionType : IEntity, ITranslatable<ActionType>, ICacheResult
     {
+
+
+
         public ActionType Translate(int languageId)
         {
             return new ActionType

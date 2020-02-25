@@ -8,6 +8,7 @@ namespace RealEstateAgency.DAL.Models
         public UserGroup()
         {
             UserAccountGroup = new HashSet<UserAccountGroup>();
+            UserGroupPermission = new HashSet<UserGroupPermission>();
             UserGroupTranslate = new HashSet<UserGroupTranslate>();
         }
 
@@ -16,6 +17,7 @@ namespace RealEstateAgency.DAL.Models
         public string StaticCode { get; set; }
 
         public virtual ICollection<UserAccountGroup> UserAccountGroup { get; set; }
+        public virtual ICollection<UserGroupPermission> UserGroupPermission { get; set; }
         public virtual ICollection<UserGroupTranslate> UserGroupTranslate { get; set; }
     }
 }
