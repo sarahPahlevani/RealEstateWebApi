@@ -11,6 +11,7 @@ namespace RealEstateAgency.DAL.Models
             CityTranslate = new HashSet<CityTranslate>();
             CountryTranslate = new HashSet<CountryTranslate>();
             ImportantPlaceTypeTranslate = new HashSet<ImportantPlaceTypeTranslate>();
+            MenuTranslate = new HashSet<MenuTranslate>();
             PriceScaleUnitTranslate = new HashSet<PriceScaleUnitTranslate>();
             PropertyFeatureTranslate = new HashSet<PropertyFeatureTranslate>();
             PropertyLabelTranslate = new HashSet<PropertyLabelTranslate>();
@@ -27,10 +28,12 @@ namespace RealEstateAgency.DAL.Models
         public string Type { get; set; }
         public bool IsDefault { get; set; }
 
+        public virtual ContentPageTranslate ContentPageTranslate { get; set; }
         public virtual ICollection<ActionTypeTranslate> ActionTypeTranslate { get; set; }
         public virtual ICollection<CityTranslate> CityTranslate { get; set; }
         public virtual ICollection<CountryTranslate> CountryTranslate { get; set; }
         public virtual ICollection<ImportantPlaceTypeTranslate> ImportantPlaceTypeTranslate { get; set; }
+        public virtual ICollection<MenuTranslate> MenuTranslate { get; set; }
         public virtual ICollection<PriceScaleUnitTranslate> PriceScaleUnitTranslate { get; set; }
         public virtual ICollection<PropertyFeatureTranslate> PropertyFeatureTranslate { get; set; }
         public virtual ICollection<PropertyLabelTranslate> PropertyLabelTranslate { get; set; }

@@ -21,6 +21,8 @@ namespace RealEstateAgency.DAL.Models
         public virtual DbSet<AuthenticationProvider> AuthenticationProvider { get; set; }
         public virtual DbSet<City> City { get; set; }
         public virtual DbSet<CityTranslate> CityTranslate { get; set; }
+        public virtual DbSet<ContentPage> ContentPage { get; set; }
+        public virtual DbSet<ContentPageTranslate> ContentPageTranslate { get; set; }
         public virtual DbSet<Country> Country { get; set; }
         public virtual DbSet<CountryTranslate> CountryTranslate { get; set; }
         public virtual DbSet<Currency> Currency { get; set; }
@@ -29,6 +31,7 @@ namespace RealEstateAgency.DAL.Models
         public virtual DbSet<Language> Language { get; set; }
         public virtual DbSet<MarketingAssistant> MarketingAssistant { get; set; }
         public virtual DbSet<Menu> Menu { get; set; }
+        public virtual DbSet<MenuTranslate> MenuTranslate { get; set; }
         public virtual DbSet<PriceScaleUnit> PriceScaleUnit { get; set; }
         public virtual DbSet<PriceScaleUnitTranslate> PriceScaleUnitTranslate { get; set; }
         public virtual DbSet<Property> Property { get; set; }
@@ -192,6 +195,47 @@ namespace RealEstateAgency.DAL.Models
                     .HasForeignKey(d => d.LanguageId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CityTranslate_Language");
+            });
+
+            modelBuilder.Entity<ContentPage>(entity =>
+            {
+                entity.ToTable("ContentPage", "RBAC");
+
+                entity.Property(e => e.ContentFooter).HasMaxLength(1000);
+
+                entity.Property(e => e.ContentHeader).HasMaxLength(1000);
+
+                entity.HasOne(d => d.Menu)
+                    .WithMany(p => p.ContentPage)
+                    .HasForeignKey(d => d.MenuId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ContentPage_Menu");
+            });
+
+            modelBuilder.Entity<ContentPageTranslate>(entity =>
+            {
+                entity.HasKey(e => e.LanguageId);
+
+                entity.ToTable("ContentPageTranslate", "RBAC");
+
+                entity.Property(e => e.LanguageId).ValueGeneratedNever();
+
+                entity.Property(e => e.ContentFooter).HasMaxLength(1000);
+
+                entity.Property(e => e.ContentHeader).HasMaxLength(1000);
+
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+
+                entity.HasOne(d => d.ComtentPage)
+                    .WithMany(p => p.ContentPageTranslate)
+                    .HasForeignKey(d => d.ComtentPageId)
+                    .HasConstraintName("FK_ContentPageTranslate_ContentPage");
+
+                entity.HasOne(d => d.Language)
+                    .WithOne(p => p.ContentPageTranslate)
+                    .HasForeignKey<ContentPageTranslate>(d => d.LanguageId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ContentPageTranslate_Language");
             });
 
             modelBuilder.Entity<Country>(entity =>
@@ -362,6 +406,27 @@ namespace RealEstateAgency.DAL.Models
                     .WithMany(p => p.InverseParent)
                     .HasForeignKey(d => d.ParentId)
                     .HasConstraintName("FK_Menu_Menu");
+            });
+
+            modelBuilder.Entity<MenuTranslate>(entity =>
+            {
+                entity.ToTable("MenuTranslate", "RBAC");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.HasOne(d => d.Language)
+                    .WithMany(p => p.MenuTranslate)
+                    .HasForeignKey(d => d.LanguageId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_MenuTranslate_Language");
+
+                entity.HasOne(d => d.Menu)
+                    .WithMany(p => p.MenuTranslate)
+                    .HasForeignKey(d => d.MenuId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_MenuTranslate_Menu");
             });
 
             modelBuilder.Entity<PriceScaleUnit>(entity =>
