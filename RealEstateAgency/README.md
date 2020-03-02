@@ -3,10 +3,10 @@
 Scaffold-DbContext -Connection "Server=.;Database=RealEstateDbLocal;Integrated Security=True;Trusted_Connection=True;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -context RealEstateDbContext -Project RealEstateAgency.DAL -force
 
 #### sql server db
-Scaffold-DbContext -Connection "Server=51.178.232.234,65210;Database=RealEstateDb;User Id=sa;Password=alt.321;Integrated Security=True;Trusted_Connection=True;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -context RealEstateDbContext -Project RealEstateAgency.DAL -force
+Scaffold-DbContext -Connection "Server=176.9.235.212,2134;Database=RealEstateDb;User Id=sa;Password=FarJef123!@#;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -context RealEstateDbContext -Project RealEstateAgency.DAL -force
 
 #### sql server test db
-Scaffold-DbContext -Connection "Server=51.178.232.234,65210;Database=RealEstateDbTest;User Id=sa;Password=alt.321;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -context RealEstateDbContext -Project RealEstateAgency.DAL -force
+Scaffold-DbContext -Connection "Server=176.9.235.212,2134;Database=RealEstateDbTest;User Id=sa;Password=FarJef123!@#;" -Provider Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -context RealEstateDbContext -Project RealEstateAgency.DAL -force
 
 
 #### remove all the datas
