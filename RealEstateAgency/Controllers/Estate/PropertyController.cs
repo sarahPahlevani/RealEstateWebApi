@@ -1,12 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using RealEstateAgency.Implementations.ApiImplementations.Services.Contracts;
 using RealEstateAgency.Controllers.Contracts;
 using RealEstateAgency.DAL.Models;
+using RealEstateAgency.Dtos.ModelDtos.Crm;
 using RealEstateAgency.Dtos.ModelDtos.Estate;
 using RealEstateAgency.Dtos.Other;
 using RealEstateAgency.Dtos.Other.PaginationListDtos;
+using RealEstateAgency.Implementations.ApiImplementations.Models;
+using RealEstateAgency.Implementations.ApiImplementations.PageDtos;
+using RealEstateAgency.Implementations.ApiImplementations.PageDtos.PageFilters;
+using RealEstateAgency.Implementations.ApiImplementations.Services.Contracts;
+using RealEstateAgency.Implementations.Authentication;
 using RealEstateAgency.Implementations.Providers;
 using RealEstateAgency.Shared.Exceptions;
 using RealEstateAgency.Shared.Statics;
@@ -15,10 +20,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using RealEstateAgency.Implementations.ApiImplementations.PageDtos;
-using RealEstateAgency.Implementations.ApiImplementations.PageDtos.PageFilters;
-using RealEstateAgency.Implementations.Authentication;
-using RealEstateAgency.Implementations.ApiImplementations.Models;
 
 namespace RealEstateAgency.Controllers.Estate
 {
@@ -124,7 +125,7 @@ namespace RealEstateAgency.Controllers.Estate
 
             return propertySummery;
         }
-        
+
         [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
         public async Task<ActionResult<CheckReadyToPublish>> CheckReadyToPublish(int propertyId, CancellationToken cancellationToken)
@@ -209,6 +210,7 @@ namespace RealEstateAgency.Controllers.Estate
             return NoContent();
         }
 
-    }
 
+
+    }
 }

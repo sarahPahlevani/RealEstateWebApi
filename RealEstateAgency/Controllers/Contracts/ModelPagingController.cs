@@ -36,10 +36,10 @@ namespace RealEstateAgency.Controllers.Contracts
             , CancellationToken cancellationToken) =>
             await GetPageResultAsync(ModelService.Queryable, requestDto, new NullFilter<TEntity>(), cancellationToken);
 
-        protected async Task<ActionResult<PageResultDto<TPaginationDto>>> GetPageResultAsync<TPageFilter>(IQueryable<TEntity> itemsQuery,
-            PageRequestDto requestDto, TPageFilter pageFilter, CancellationToken cancellationToken)
-        where TPageFilter : class, IPageFilter<TEntity>, new()
-            => await new PageResultDto<TPaginationDto>(PagingConverter(pageFilter.Filter(itemsQuery)), requestDto)
-                .GetPage(cancellationToken);
+        protected async Task<ActionResult<PageResultDto<TPaginationDto>>> GetPageResultAsync<TPageFilter>(IQueryable<TEntity> itemsQuery, PageRequestDto requestDto, TPageFilter pageFilter, CancellationToken cancellationToken)
+            where TPageFilter :
+            class, IPageFilter<TEntity>, new() =>
+            await new PageResultDto<TPaginationDto>(PagingConverter(pageFilter.Filter(itemsQuery)), requestDto
+                ).GetPage(cancellationToken);
     }
 }

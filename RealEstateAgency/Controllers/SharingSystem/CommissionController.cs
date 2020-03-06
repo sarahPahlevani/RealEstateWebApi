@@ -24,5 +24,8 @@ namespace RealEstateAgency.Controllers.SharingSystem
                 LogoPicture = i.LogoPicture,
                 Url = i.Url,
             });
+
+
+   
     }
 }
