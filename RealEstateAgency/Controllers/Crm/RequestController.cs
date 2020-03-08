@@ -339,6 +339,8 @@ namespace RealEstateAgency.Controllers.Crm
         //        }).ToListAsync();
         //    return result;
         //}
+
+
         [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         [HttpPost("[Action]")]
         public async Task<ActionResult<List<CommissionDto>>> NewGetUserCommission()
@@ -354,11 +356,11 @@ namespace RealEstateAgency.Controllers.Crm
             //ModelService.AsQueryable(t => t.RequestAgent).Select(t => t.Property);
 
             List<CommissionDto> list = new List<CommissionDto>();
-            list = (from r in ModelService.DbContext.Request
+            list = await (from r in ModelService.DbContext.Request
                     join p in ModelService.DbContext.Property on r.PropertyId equals p.Id
                     join u in ModelService.DbContext.UserAccount on r.UserAccountIdShared equals u.Id
                     join pp in ModelService.DbContext.PropertyPrice on p.Id equals pp.Id
-                    
+
                     where r.UserAccountIdShared != null && r.IsDone == true && r.IsSuccess == true
                     //&& r.UserAccountIdShared == _userProvider.Id
                     select new CommissionDto
@@ -372,10 +374,12 @@ namespace RealEstateAgency.Controllers.Crm
                         RequesterFullname = r.RequesterFullname,
                         UserName = u.UserName,
                         CurrencySymbol = pp.Currency.Symbol
-                    }).ToList();
-    
+                    }).ToListAsync();
+
             return list;
         }
+
+
 
         [HttpPost("[Action]")]
         public async Task<ActionResult> ChangeRequestAgent([FromBody] ChangeRequestAgentDto dto, CancellationToken cancellationToken)
