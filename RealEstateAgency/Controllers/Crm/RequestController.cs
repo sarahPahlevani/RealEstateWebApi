@@ -304,8 +304,9 @@ namespace RealEstateAgency.Controllers.Crm
         [HttpPost("[Action]")]
         public async Task<ActionResult<PageResultDto<RequestListDto>>> GetOpenRequests([FromBody] PageRequestFilterDto requestDto, CancellationToken cancellationToken)
         {
-            if (!_userProvider.IsAgent || _userProvider.IsResponsible.GetValueOrDefault(false) == false)
-                return Forbid();
+            if (_userProvider.Role != UserGroups.Administrator)
+                if (!_userProvider.IsAgent || _userProvider.IsResponsible.GetValueOrDefault(false) == false)
+                    return Forbid();
 
             var result = await GetPageResultAsync(ModelService.Queryable, requestDto, requestDto.Filter.ToObject<RequestListFilter>(), cancellationToken);
             foreach (var item in result.Value.Items)
