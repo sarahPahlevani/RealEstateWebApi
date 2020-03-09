@@ -19,11 +19,14 @@ namespace RealEstateAgency.Controllers.Crm
     {
 
         private readonly IEntityService<Request> _requestService;
+        private readonly IEntityService<RequestState> _requestStateService;
         private readonly IEntityService<WorkflowStep> _workflowStepService;
 
-        public RequestStateController(IModelService<RequestState, RequestStateDto> modelService, IEntityService<Request> requestService, IEntityService<WorkflowStep> workflowStepService) : base(modelService)
+        public RequestStateController(IModelService<RequestState, RequestStateDto> modelService, IEntityService<Request> requestService,
+            IEntityService<RequestState> requestStateService, IEntityService<WorkflowStep> workflowStepService) : base(modelService)
         {
             _requestService = requestService;
+            _requestStateService = requestStateService;
             _workflowStepService = workflowStepService;
         }
 
@@ -95,15 +98,15 @@ namespace RealEstateAgency.Controllers.Crm
                 try
                 {
 
-                    var req = await _requestService.GetAsync(value.RequestId);
+                    var req = _requestService.Get(value.RequestId);
                     if (req is null)
                         throw new Exception("not found request");
 
-                    var wsLatest = req.RequestState.OrderByDescending(r => r.Id).FirstOrDefault();
-                    if (req is null)
+                    var wsLatest = _requestStateService.AsQueryable(r => r.RequestId == value.RequestId).OrderByDescending(r => r.Id).FirstOrDefault();
+                    if (wsLatest is null)
                         throw new Exception("not found latest state");
 
-                    var ws = await _workflowStepService.GetAsync(value.WorkflowStepId);
+                    var ws = _workflowStepService.Get(value.WorkflowStepId);
                     if (ws is null)
                         throw new Exception("not found workflowId");
 
