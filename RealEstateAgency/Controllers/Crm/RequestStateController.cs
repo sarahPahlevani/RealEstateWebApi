@@ -102,7 +102,7 @@ namespace RealEstateAgency.Controllers.Crm
                     if (req is null)
                         throw new Exception("not found request");
 
-                    var wsLatest = _requestStateService.AsQueryable(r => r.RequestId == value.RequestId).OrderByDescending(r => r.Id).FirstOrDefault();
+                    var wsLatest = _requestStateService.AsQueryable(r => r.RequestId == value.RequestId).Include("WorkflowStep").OrderByDescending(r => r.Id).FirstOrDefault();
                     if (wsLatest is null)
                         throw new Exception("not found latest state");
 
@@ -119,7 +119,7 @@ namespace RealEstateAgency.Controllers.Crm
                         req.IsSuccess = true;
                     }
 
-                    var newReq = _requestService.UpdateAsync(req);
+                    var newReq = _requestService.Update(req);
 
                     var res = await ModelService.CreateByDtoAsync(value, cancellationToken);
 
