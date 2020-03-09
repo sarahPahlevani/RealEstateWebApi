@@ -17,30 +17,36 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
         [Required]
         public int StepNumber { get; set; }
 
+        [Required]
+        public bool IsFinish { get; set; }
+
         public override IModelDto<WorkflowStep> From(WorkflowStep entity)
         {
             Id = entity.Id;
             WorkflowId = entity.WorkflowId;
             Name = entity.Name;
             StepNumber = entity.StepNumber;
+            IsFinish = entity.IsFinish;
             return this;
         }
 
         public override WorkflowStep Create() =>
             new WorkflowStep
             {
+                WorkflowId = WorkflowId,
                 Name = Name,
                 StepNumber = StepNumber,
-                WorkflowId = WorkflowId
+                IsFinish = false,
             };
 
         public override WorkflowStep Update() =>
             new WorkflowStep
             {
                 Id = Id,
+                WorkflowId = WorkflowId,
                 Name = Name,
                 StepNumber = StepNumber,
-                WorkflowId = WorkflowId
+                IsFinish = IsFinish,
             };
     }
 }

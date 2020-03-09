@@ -32,7 +32,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
         public IEnumerable<RequestState> States { get; set; }
         public bool IsAssigned { get; set; }
         public DateTime DateCreated { get; set; }
-        public bool? IsDone { get; set; }
+        public bool IsDone { get; set; }
+        public bool IsSuccess { get; set; }
         public byte? Commission { get; set; }
     }
 }

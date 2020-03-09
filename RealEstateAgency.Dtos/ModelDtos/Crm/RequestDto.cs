@@ -65,7 +65,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
         public IEnumerable<RequestState> States { get; set; }
         public bool IsAssigned { get; set; }
 
-        public bool? IsDone { get; set; }
+        public bool IsDone { get; set; }
+
+        public bool IsSuccess { get; set; }
 
         public override IModelDto<Request> From(Request entity)
         {
@@ -97,6 +99,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
             States = entity.RequestState;
             Actions = entity.RequestAction;
             IsDone = entity.IsDone;
+            IsSuccess = entity.IsSuccess;
             return this;
         }
 
@@ -121,6 +124,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
                 PropertyId = PropertyId,
                 AgentId = AgentId,
                 IsDone = IsDone,
+                IsSuccess = IsSuccess,
             };
 
         public override Request Update() =>
@@ -145,6 +149,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
                 PropertyId = PropertyId,
                 AgentId = AgentId,
                 IsDone = IsDone,
+                IsSuccess = IsSuccess,
             };
     }
 }

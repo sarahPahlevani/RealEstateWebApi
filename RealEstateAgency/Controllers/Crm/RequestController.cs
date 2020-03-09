@@ -98,6 +98,7 @@ namespace RealEstateAgency.Controllers.Crm
                 IsAssigned = i.AgentId.HasValue,
                 Commission = i.Commission,
                 IsDone = i.IsDone,
+                IsSuccess = i.IsSuccess,
                 //Id = i.Id,
                 //Description = i.Description,
                 //Title = i.Title,
@@ -172,6 +173,7 @@ namespace RealEstateAgency.Controllers.Crm
                     IsAssigned = i.AgentId.HasValue,
                     Commission = i.Commission,
                     IsDone = i.IsDone,
+                    IsSuccess = i.IsSuccess,
                 }).OrderBy(i => i.IsAssigned).ThenByDescending(i => i.DateCreated);
 
         public override async Task<ActionResult<RequestDto>> GetAsync(int id, CancellationToken cancellationToken)
@@ -231,6 +233,7 @@ namespace RealEstateAgency.Controllers.Crm
                 IsAssigned = i.AgentId.HasValue,
                 Commission = i.Commission,
                 IsDone = i.IsDone,
+                IsSuccess = i.IsSuccess,
             }).FirstOrDefaultAsync();
 
             return result;
@@ -256,6 +259,7 @@ namespace RealEstateAgency.Controllers.Crm
             if (workflow is null)
                 throw new Exception("not found workflow of this request");
             value.IsDone = false;
+            value.IsSuccess = false;
             value.WorkflowId = workflow.Id;
             value.TrackingNumber = _hasher.CalculateTimeHash("TrackingNumber" + Guid.NewGuid());
             value.DateCreated = DateTime.UtcNow;

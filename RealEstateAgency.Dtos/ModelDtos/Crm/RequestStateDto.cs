@@ -20,6 +20,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
         
         public string Description { get; set; }
         public bool IsDone { get; set; }
+        public bool IsSuccess { get; set; }
         public int AgentId { get; set; }
 
         public override IModelDto<RequestState> From(RequestState entity)

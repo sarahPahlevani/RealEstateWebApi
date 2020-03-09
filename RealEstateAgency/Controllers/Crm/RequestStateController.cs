@@ -11,13 +11,20 @@ using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using RealEstateAgency.Implementations.ApiImplementations.PageDtos.PageFilters;
 using Microsoft.EntityFrameworkCore;
+using System.Transactions;
 
 namespace RealEstateAgency.Controllers.Crm
 {
     public class RequestStateController : ModelPagingController<RequestState, RequestStateDto, RequestStateListDto>
     {
-        public RequestStateController(IModelService<RequestState, RequestStateDto> modelService) : base(modelService)
+
+        private readonly IEntityService<Request> _requestService;
+        private readonly IEntityService<WorkflowStep> _workflowStepService;
+
+        public RequestStateController(IModelService<RequestState, RequestStateDto> modelService, IEntityService<Request> requestService, IEntityService<WorkflowStep> workflowStepService) : base(modelService)
         {
+            _requestService = requestService;
+            _workflowStepService = workflowStepService;
         }
 
         public override Func<IQueryable<RequestState>, IQueryable<RequestStateDto>> DtoConverter
@@ -79,5 +86,50 @@ namespace RealEstateAgency.Controllers.Crm
             return result;
         }
 
+
+
+        public override async Task<ActionResult<RequestStateDto>> Create(RequestStateDto value, CancellationToken cancellationToken)
+        {
+            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            {
+                try
+                {
+
+                    var req = await _requestService.GetAsync(value.RequestId);
+                    if (req is null)
+                        throw new Exception("not found request");
+
+                    var wsLatest = req.RequestState.OrderByDescending(r => r.Id).FirstOrDefault();
+                    if (req is null)
+                        throw new Exception("not found latest state");
+
+                    var ws = await _workflowStepService.GetAsync(value.WorkflowStepId);
+                    if (ws is null)
+                        throw new Exception("not found workflowId");
+
+                    if (!wsLatest.WorkflowStep.IsFinish)
+                        req.IsDone = value.IsDone;
+
+                    if (ws.IsFinish)
+                    {
+                        req.IsDone = true;
+                        req.IsSuccess = true;
+                    }
+
+                    var newReq = _requestService.UpdateAsync(req);
+
+                    var res = await ModelService.CreateByDtoAsync(value, cancellationToken);
+
+                    scope.Complete();
+                    return res;
+                }
+                catch (Exception ex)
+                {
+                    scope.Dispose();
+                    throw new Exception(ex.Message);
+                }
+
+            }
+        }
     }
 }
