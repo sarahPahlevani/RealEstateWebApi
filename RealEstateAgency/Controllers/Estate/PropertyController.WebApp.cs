@@ -129,7 +129,7 @@ namespace RealEstateAgency.Controllers.Estate
                         UploadDate = a.UploadDate
                     }),
                     FeatureIds = p.PropertyInvolveFeature.Select(f => f.PropertyFeatureId),
-                    FloorPlans = p.PropertyFloorPlan.Select(f => new PropertyFloorPlanDto
+                    FloorPlans = p.PropertyFloorPlan.Where(f => !f.Deleted).Select(f => new PropertyFloorPlanDto
                     {
                         Id = f.Id,
                         Bathrooms = f.Bathrooms,
