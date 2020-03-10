@@ -265,6 +265,14 @@ namespace RealEstateAgency.Controllers.Crm
             value.TrackingNumber = _hasher.CalculateTimeHash("TrackingNumber" + Guid.NewGuid());
             value.DateCreated = DateTime.UtcNow;
 
+            if (value.PropertyId.HasValue)
+            {
+                var property = new RealEstateDbContext().Property.FirstOrDefault(r => r.Id == value.PropertyId.Value);
+                if (property is null)
+                    throw new Exception("not found property of this request");
+                value.Commission = property.Commission;
+            }
+
             var res = await ModelService.CreateByDtoAsync(value, cancellationToken);
 
             await _signaler.Signal(_userAccountService.GetAll(u => u.AgentUserAccount.Any(a => a.IsResponsible))
