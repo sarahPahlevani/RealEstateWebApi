@@ -60,7 +60,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
 
         public byte? Commission { get; set; }
 
-        public Property Property { get; set; }
+        //public Property Property { get; set; }
+        public string PropertyTitle { get; set; }
         public IEnumerable<RequestAction> Actions { get; set; }
         public IEnumerable<RequestState> States { get; set; }
         public bool IsAssigned { get; set; }
@@ -95,7 +96,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
             DeletedDate = entity.DeletedDate;
             UserAccountIdDeleteBy = entity.UserAccountIdDeleteBy;
             PropertyId = entity.PropertyId;
-            Property = entity.Property.FirstOrDefault(r => r.RequestId == entity.Id);
+            PropertyTitle = entity.PropertyNavigation != null ? entity.PropertyNavigation.Title : "";
             States = entity.RequestState;
             Actions = entity.RequestAction;
             IsDone = entity.IsDone;

@@ -77,7 +77,8 @@ namespace RealEstateAgency.Controllers.Crm
                 RequesterEmail = i.RequesterEmail,
                 RequesterPhone = i.RequesterPhone,
                 User = i.UserAccountIdRequesterNavigation,
-                Property = i.Property.FirstOrDefault(p => p.RequestId == i.Id),
+                PropertyId = i.PropertyId,
+                PropertyTitle = i.PropertyNavigation != null ? i.PropertyNavigation.Title : "",
                 AgentId = i.AgentId,
                 Agent = i.Agent,
                 Actions = i.RequestAction,
@@ -118,11 +119,9 @@ namespace RealEstateAgency.Controllers.Crm
         public override Func<IQueryable<Request>, IQueryable<RequestListDto>> PagingConverter
             => items => items
                 .Include(i => i.UserAccountIdRequesterNavigation)
-                //.Include(i => i.Workflow).ThenInclude(r => r.WorkflowStep)
                 .Include(i => i.RequestAgent)
                 .Include(i => i.RequestType)
                 .Include("RequestAction.RequestActionFollowUp")
-                //.Include(i => i.RequestState).ThenInclude(r => r.WorkflowStep)
                 .Select(i => new RequestListDto
                 {
                     Id = i.Id,
@@ -152,7 +151,8 @@ namespace RealEstateAgency.Controllers.Crm
                     RequesterEmail = i.RequesterEmail,
                     RequesterPhone = i.RequesterPhone,
                     User = i.UserAccountIdRequesterNavigation,
-                    Property = i.Property.FirstOrDefault(p => p.RequestId == i.Id),
+                    PropertyId = i.PropertyId,
+                    PropertyTitle = i.PropertyNavigation != null ? i.PropertyNavigation.Title : "",
                     AgentId = i.AgentId,
                     AgentName = $"{i.Agent.UserAccount.FirstName} {i.Agent.UserAccount.LastName}",
                     Actions = i.RequestAction,
@@ -212,7 +212,8 @@ namespace RealEstateAgency.Controllers.Crm
                 RequesterFullname = i.RequesterFullname,
                 RequesterEmail = i.RequesterEmail,
                 RequesterPhone = i.RequesterPhone,
-                Property = i.Property.FirstOrDefault(p => p.RequestId == i.Id),
+                PropertyId = i.PropertyId,
+                PropertyTitle = i.PropertyNavigation != null ? i.PropertyNavigation.Title : "",
                 AgentId = i.AgentId,
                 Agent = i.Agent,
                 Actions = i.RequestAction,

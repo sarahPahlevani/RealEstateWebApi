@@ -1110,6 +1110,11 @@ namespace RealEstateAgency.DAL.Models
                     .HasForeignKey(d => d.NetworkIdShared)
                     .HasConstraintName("FK_Request_SocialNetwork");
 
+                entity.HasOne(d => d.PropertyNavigation)
+                    .WithMany(p => p.RequestNavigation)
+                    .HasForeignKey(d => d.PropertyId)
+                    .HasConstraintName("FK_Request_Property");
+
                 entity.HasOne(d => d.RequestType)
                     .WithMany(p => p.Request)
                     .HasForeignKey(d => d.RequestTypeId)

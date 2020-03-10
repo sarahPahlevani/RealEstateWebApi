@@ -38,6 +38,7 @@ namespace RealEstateAgency.DAL.Models
 
         public virtual Agent Agent { get; set; }
         public virtual SocialNetwork NetworkIdSharedNavigation { get; set; }
+        public virtual Property PropertyNavigation { get; set; }
         public virtual RequestType RequestType { get; set; }
         public virtual UserAccount UserAccountIdDeleteByNavigation { get; set; }
         public virtual UserAccount UserAccountIdRequesterNavigation { get; set; }

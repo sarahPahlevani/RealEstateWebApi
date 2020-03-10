@@ -13,6 +13,7 @@ namespace RealEstateAgency.DAL.Models
             PropertyFloorPlan = new HashSet<PropertyFloorPlan>();
             PropertyImage = new HashSet<PropertyImage>();
             PropertyInvolveFeature = new HashSet<PropertyInvolveFeature>();
+            RequestNavigation = new HashSet<Request>();
             RequestProperty = new HashSet<RequestProperty>();
             SharedProperty = new HashSet<SharedProperty>();
             UserAccountWishList = new HashSet<UserAccountWishList>();
@@ -57,6 +58,7 @@ namespace RealEstateAgency.DAL.Models
         public virtual ICollection<PropertyFloorPlan> PropertyFloorPlan { get; set; }
         public virtual ICollection<PropertyImage> PropertyImage { get; set; }
         public virtual ICollection<PropertyInvolveFeature> PropertyInvolveFeature { get; set; }
+        public virtual ICollection<Request> RequestNavigation { get; set; }
         public virtual ICollection<RequestProperty> RequestProperty { get; set; }
         public virtual ICollection<SharedProperty> SharedProperty { get; set; }
         public virtual ICollection<UserAccountWishList> UserAccountWishList { get; set; }

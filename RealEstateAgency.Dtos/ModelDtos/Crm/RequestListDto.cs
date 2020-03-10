@@ -27,7 +27,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
         public UserAccount User { get; set; }
         public int? AgentId { get; set; }
         public string AgentName { get; set; }
-        public Property Property { get; set; }
+        //public Property Property { get; set; }
+        public string PropertyTitle { get; set; }
+        public int? PropertyId { get; set; }
         public IEnumerable<RequestAction> Actions { get; set; }
         public IEnumerable<RequestState> States { get; set; }
         public bool IsAssigned { get; set; }
