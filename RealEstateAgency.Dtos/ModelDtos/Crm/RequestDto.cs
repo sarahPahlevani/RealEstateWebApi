@@ -101,6 +101,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
             Actions = entity.RequestAction;
             IsDone = entity.IsDone;
             IsSuccess = entity.IsSuccess;
+            Commission = entity.Commission;
             return this;
         }
 
@@ -126,6 +127,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
                 AgentId = AgentId,
                 IsDone = IsDone,
                 IsSuccess = IsSuccess,
+                Commission = Commission,
             };
 
         public override Request Update() =>
@@ -151,6 +153,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Crm
                 AgentId = AgentId,
                 IsDone = IsDone,
                 IsSuccess = IsSuccess,
+                Commission = Commission,
             };
     }
 }
