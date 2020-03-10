@@ -372,17 +372,16 @@ namespace RealEstateAgency.Controllers.Crm
             list = await (from r in ModelService.DbContext.Request
                     join p in ModelService.DbContext.Property on r.PropertyId equals p.Id
                     join u in ModelService.DbContext.UserAccount on r.UserAccountIdShared equals u.Id
-                    join pp in ModelService.DbContext.PropertyPrice on p.Id equals pp.Id
-
+                    join pp in ModelService.DbContext.PropertyPrice on r.PropertyId equals pp.Id
                     where r.UserAccountIdShared != null && r.IsDone == true && r.IsSuccess == true
                     //&& r.UserAccountIdShared == _userProvider.Id
                     select new CommissionDto
                     {
-                        CommissionPercent = p.Commission == null ? 1 : p.Commission,
+                        CommissionPercent = r.Commission == null ? 0 : r.Commission,
                         PropertyId = p.Id,
                         PropertyPrice = pp.Price,
                         PropertyTitle = p.Title,
-                        TotalCommission = pp.Price - (pp.Price - ((pp.Price * (p.Commission == null ? 1 : p.Commission)) / 100)),
+                        TotalCommission = pp.Price - (pp.Price - ((pp.Price * (r.Commission == null ? 0 : r.Commission)) / 100)),
                         DateCreated = r.DateCreated,
                         RequesterFullname = r.RequesterFullname,
                         UserName = u.UserName,
