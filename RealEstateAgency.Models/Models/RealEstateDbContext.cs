@@ -1434,6 +1434,8 @@ namespace RealEstateAgency.DAL.Models
                     .HasMaxLength(256)
                     .IsUnicode(false);
 
+                entity.Property(e => e.City).HasMaxLength(100);
+
                 entity.Property(e => e.Email).HasMaxLength(128);
 
                 entity.Property(e => e.FirstName)
@@ -1474,14 +1476,19 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.UserName).HasMaxLength(128);
 
-                entity.Property(e => e.ZipCode)
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
+                entity.Property(e => e.VatCode).HasMaxLength(50);
+
+                entity.Property(e => e.ZipCode).HasMaxLength(50);
 
                 entity.HasOne(d => d.AuthenticationProvider)
                     .WithMany(p => p.UserAccount)
                     .HasForeignKey(d => d.AuthenticationProviderId)
                     .HasConstraintName("FK_UserAccount_AuthenticationProvider");
+
+                entity.HasOne(d => d.Country)
+                    .WithMany(p => p.UserAccount)
+                    .HasForeignKey(d => d.CountryId)
+                    .HasConstraintName("FK_UserAccount_Country");
             });
 
             modelBuilder.Entity<UserAccountGroup>(entity =>

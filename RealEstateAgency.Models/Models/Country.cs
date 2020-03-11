@@ -9,6 +9,7 @@ namespace RealEstateAgency.DAL.Models
         {
             CountryTranslate = new HashSet<CountryTranslate>();
             Region = new HashSet<Region>();
+            UserAccount = new HashSet<UserAccount>();
         }
 
         public int Id { get; set; }
@@ -23,5 +24,6 @@ namespace RealEstateAgency.DAL.Models
         public virtual Currency Currency { get; set; }
         public virtual ICollection<CountryTranslate> CountryTranslate { get; set; }
         public virtual ICollection<Region> Region { get; set; }
+        public virtual ICollection<UserAccount> UserAccount { get; set; }
     }
 }

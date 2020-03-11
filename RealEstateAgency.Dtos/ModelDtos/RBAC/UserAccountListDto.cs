@@ -20,9 +20,13 @@ namespace RealEstateAgency.Dtos.ModelDtos.RBAC
         public string Email { get; set; }
         public string Phone01 { get; set; }
         public string Phone02 { get; set; }
+        public int? CountryId { get; set; }
+        public string CountryName { get; set; }
+        public string City { get; set; }
         public string Address01 { get; set; }
         public string Address02 { get; set; }
         public string ZipCode { get; set; }
+        public string VatCode { get; set; }
         public string UserPictureTumblr { get; set; }
         public string UserGroupName { get; set; }
     }

@@ -29,6 +29,7 @@ namespace RealEstateAgency.Controllers.RBAC
     public class UserAccountController : ModelPagingController<UserAccount, UserAccountDto, UserAccountListDto>
     {
         private readonly IUserProvider _userProvider;
+        private readonly IUserGroupProvider _groupProvider;
         private readonly IPathProvider _pathProvider;
         private readonly IFastHasher _fastHasher;
 
@@ -38,6 +39,7 @@ namespace RealEstateAgency.Controllers.RBAC
             _userProvider = userProvider;
             _pathProvider = pathProvider;
             _fastHasher = fastHasher;
+            _groupProvider = groupProvider;
             var administratorGroupId = groupProvider[UserGroup.Administrator].Id;
             modelService.SetBaseFilter(i => i.Where(u => u.IsActive == true && u.UserAccountGroup.FirstOrDefault(g => g.UserAccountId == u.Id).UserGroupId
                                                          != administratorGroupId));
@@ -47,44 +49,52 @@ namespace RealEstateAgency.Controllers.RBAC
             items => items.Select(i => new UserAccountDto
             {
                 Id = i.Id,
-                Phone01 = i.Phone01,
+                UserName = i.UserName,
+                FirstName = i.FirstName,
+                LastName = i.LastName,
+                MiddleName = i.MiddleName,
                 IsActive = i.IsActive,
-                ZipCode = i.ZipCode,
+                IsConfirmed = i.IsConfirmed,
+                Phone01 = i.Phone01,
+                Phone02 = i.Phone02,
+                CountryId = i.CountryId,
+                CountryName = i.Country == null ? "" : i.Country.Name,
+                City = i.City,
                 Address01 = i.Address01,
-                Address02 = i.Address01,
+                Address02 = i.Address02,
                 Email = i.Email,
                 ActivationKey = i.ActivationKey,
                 AuthenticationProviderAccessToken = i.AuthenticationProviderAccessToken,
                 AuthenticationProviderId = i.AuthenticationProviderId,
-                FirstName = i.FirstName,
                 HasExternalAuthentication = i.HasExternalAuthentication,
-                IsConfirmed = i.IsConfirmed,
-                LastName = i.LastName,
-                MiddleName = i.MiddleName,
-                Phone02 = i.Phone02,
+                ZipCode = i.ZipCode,
+                VatCode = i.VatCode,
                 RegistrationDate = i.RegistrationDate,
-                UserName = i.UserName
             });
 
         public override Func<IQueryable<UserAccount>, IQueryable<UserAccountListDto>> PagingConverter =>
             items => items.Select(i => new UserAccountListDto
             {
                 Id = i.Id,
-                Phone01 = i.Phone01,
-                IsActive = i.IsActive,
-                ZipCode = i.ZipCode,
-                Address01 = i.Address01,
-                Address02 = i.Address01,
-                Email = i.Email,
-                ActivationKey = i.ActivationKey,
+                UserName = i.UserName,
                 FirstName = i.FirstName,
-                HasExternalAuthentication = i.HasExternalAuthentication,
-                IsConfirmed = i.IsConfirmed,
                 LastName = i.LastName,
                 MiddleName = i.MiddleName,
+                IsActive = i.IsActive,
+                IsConfirmed = i.IsConfirmed,
+                ZipCode = i.ZipCode,
+                VatCode = i.VatCode,
+                CountryId = i.CountryId,
+                CountryName = i.Country == null ? "" : i.Country.Name,
+                City = i.City,
+                Address01 = i.Address01,
+                Address02 = i.Address02,
+                Email = i.Email,
+                ActivationKey = i.ActivationKey,
+                HasExternalAuthentication = i.HasExternalAuthentication,
+                Phone01 = i.Phone01,
                 Phone02 = i.Phone02,
                 RegistrationDate = i.RegistrationDate,
-                UserName = i.UserName,
                 UserGroupName = i.UserAccountGroup
                     .FirstOrDefault(g => g.UserAccountId == i.Id).UserGroup.Name
             });
@@ -125,6 +135,9 @@ namespace RealEstateAgency.Controllers.RBAC
                     LanguageId = u.Id,
                     Email = u.Email,
                     UserName = u.UserName,
+                    CountryId = u.CountryId,
+                    CountryName = u.Country == null ? "" : u.Country.Name,
+                    City = u.City,
                     Address01 = u.Address01,
                     Address02 = u.Address02,
                     FirstName = u.FirstName,
@@ -133,11 +146,11 @@ namespace RealEstateAgency.Controllers.RBAC
                     IsConfirmed = u.IsConfirmed,
                     MiddleName = u.MiddleName,
                     ZipCode = u.ZipCode,
+                    VatCode = u.VatCode,
                     Phone01 = u.Phone01,
                     Phone02 = u.Phone02,
                     RegistrationDate = u.RegistrationDate,
-                })
-                .FirstAsync(cancellationToken);
+                }).FirstAsync(cancellationToken);
 
             user.UserPicture = _pathProvider.GetImageApiPath<UserAccount>(nameof(UserAccount.UserPicture), user.Id.ToString());
             user.UserPictureTumblr = _pathProvider.GetImageApiPath<UserAccount>(nameof(UserAccount.UserPictureTumblr), user.Id.ToString());
@@ -162,9 +175,12 @@ namespace RealEstateAgency.Controllers.RBAC
             //return await base.Delete(id, cancellationToken);
         }
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         public override async Task<ActionResult> UpdateAsync(UserAccountDto value, CancellationToken cancellationToken)
         {
+            if (_userProvider.Id != value.Id && _userProvider.GroupId != _groupProvider[UserGroup.Administrator].Id && _userProvider.GroupId != _groupProvider[UserGroup.RealEstateAdministrator].Id)
+                return Forbid();
+
             var user = await ModelService.GetAsync(u => u.Id == value.Id, cancellationToken);
             if (user is null)
                 return NoContent();
@@ -180,9 +196,12 @@ namespace RealEstateAgency.Controllers.RBAC
             user.Email = value.Email;
             user.Phone01 = value.Phone01;
             user.Phone02 = value.Phone02;
+            user.CountryId = value.CountryId;
+            user.City = value.City;
             user.Address01 = value.Address01;
             user.Address02 = value.Address02;
             user.ZipCode = value.ZipCode;
+            user.VatCode = value.VatCode;
 
             await ModelService.UpdateAsync(user, cancellationToken);
 

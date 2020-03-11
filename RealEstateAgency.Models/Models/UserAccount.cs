@@ -51,14 +51,18 @@ namespace RealEstateAgency.DAL.Models
         public string Email { get; set; }
         public string Phone01 { get; set; }
         public string Phone02 { get; set; }
+        public int? CountryId { get; set; }
+        public string City { get; set; }
         public string Address01 { get; set; }
         public string Address02 { get; set; }
         public string ZipCode { get; set; }
+        public string VatCode { get; set; }
         public byte[] UserPicture { get; set; }
         public byte[] UserPictureTumblr { get; set; }
         public string ReferralCode { get; set; }
 
         public virtual AuthenticationProvider AuthenticationProvider { get; set; }
+        public virtual Country Country { get; set; }
         public virtual ICollection<Agent> AgentUserAccount { get; set; }
         public virtual ICollection<Agent> AgentUserAccountIdDeleteByNavigation { get; set; }
         public virtual ICollection<ImportantPlaceType> ImportantPlaceType { get; set; }

@@ -26,9 +26,13 @@ namespace RealEstateAgency.Dtos.ModelDtos.RBAC
         public string Email { get; set; }
         public string Phone01 { get; set; }
         public string Phone02 { get; set; }
+        public int? CountryId { get; set; }
+        public string CountryName { get; set; }
+        public string City { get; set; }
         public string Address01 { get; set; }
         public string Address02 { get; set; }
         public string ZipCode { get; set; }
+        public string VatCode { get; set; }
         public string UserPicture { get; set; }
         public string UserPictureTumblr { get; set; }
 
@@ -58,10 +62,13 @@ namespace RealEstateAgency.Dtos.ModelDtos.RBAC
             MiddleName = entity.MiddleName;
             Email = entity.Email;
             Phone01 = entity.Phone01;
-            Phone02 = entity.Phone01;
+            Phone02 = entity.Phone02;
+            CountryId = entity.CountryId;
+            City = entity.City;
             Address01 = entity.Address01;
-            Address02 = entity.Address01;
+            Address02 = entity.Address02;
             ZipCode = entity.ZipCode;
+            VatCode = entity.VatCode;
             ReferralCode = entity.ReferralCode;
             return this;
         }
@@ -83,10 +90,13 @@ namespace RealEstateAgency.Dtos.ModelDtos.RBAC
                 MiddleName = MiddleName,
                 Email = Email,
                 Phone01 = Phone01,
-                Phone02 = Phone01,
+                Phone02 = Phone02,
+                CountryId = CountryId,
+                City = City,
                 Address01 = Address01,
-                Address02 = Address01,
+                Address02 = Address02,
                 ZipCode = ZipCode,
+                VatCode = VatCode,
             };
 
         public override UserAccount Update() =>
@@ -107,10 +117,13 @@ namespace RealEstateAgency.Dtos.ModelDtos.RBAC
                 MiddleName = MiddleName,
                 Email = Email,
                 Phone01 = Phone01,
-                Phone02 = Phone01,
+                Phone02 = Phone02,
+                CountryId = CountryId,
+                City = City,
                 Address01 = Address01,
-                Address02 = Address01,
+                Address02 = Address02,
                 ZipCode = ZipCode,
+                VatCode = VatCode,
             };
     }
 }
