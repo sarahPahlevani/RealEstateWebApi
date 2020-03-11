@@ -31,7 +31,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
 
         public string ImagePath { get; set; }
         public string TumbPath { get; set; }
-
+        
         public bool? Is360View { get; set; }
 
         public byte[] ImageFull { get; set; }
