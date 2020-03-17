@@ -30,8 +30,9 @@ namespace RealEstateAgency.Controllers.BasicInformation
         private Func<IQueryable<PropertyType>, IQueryable<PropertyTypeDto>> _converter
             => entities => entities.Select(i => new PropertyTypeDto
             {
-                Name = i.Name,
                 Id = i.Id,
+                Name = i.Name,
+                Icon = i.Icon,
             });
 
         public override Func<IQueryable<PropertyType>, IQueryable<PropertyTypeDto>> DtoConverter => _converter;
@@ -47,6 +48,7 @@ namespace RealEstateAgency.Controllers.BasicInformation
                 {
                     Id = r.Id,
                     Name = r.Name,
+                    Icon = r.Icon,
                     PropertyCount = r.Property.Count(p => p.IsPublished),
                 }).ToListAsync(cancellationToken);
         }

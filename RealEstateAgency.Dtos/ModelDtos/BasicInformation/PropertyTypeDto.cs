@@ -11,17 +11,20 @@ namespace RealEstateAgency.Dtos.ModelDtos.BasicInformation
 
         [Required]
         public string Name { get; set; }
+
         [Required]
         public bool CanAddProperty { get; set; }
 
         public int PropertyCount { get; set; }
 
+        public string Icon { get; set; }
 
 
         public override IModelDto<PropertyType> From(PropertyType entity)
         {
             Id = entity.Id;
             Name = entity.Name;
+            Icon = entity.Icon;
             return this;
         }
 
@@ -29,6 +32,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.BasicInformation
             new PropertyType
             {
                 Name = Name,
+                Icon = Icon,
             };
 
         public override PropertyType Update() =>
@@ -36,6 +40,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.BasicInformation
             {
                 Id = Id,
                 Name = Name,
+                Icon = Icon,
             };
     }
 }

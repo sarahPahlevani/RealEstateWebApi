@@ -30,8 +30,9 @@ namespace RealEstateAgency.Controllers.BasicInformation
         private Func<IQueryable<PropertyFeature>, IQueryable<PropertyFeatureDto>> _converter
          => entities => entities.Select(i => new PropertyFeatureDto
          {
+             Id = i.Id,
              Name = i.Name,
-             Id = i.Id
+             Icon = i.Icon,
          });
 
         [HttpPatch("[Action]")]
@@ -59,7 +60,8 @@ namespace RealEstateAgency.Controllers.BasicInformation
                 .Select(i => new PropertyFeatureDto
                 {
                     Id = i.PropertyFeatureId,
-                    Name = i.PropertyFeature.Name
+                    Name = i.PropertyFeature.Name,
+                    Icon = i.PropertyFeature.Icon,
                 }).ToListAsync(cancellationToken);
 
         public override Func<IQueryable<PropertyFeature>, IQueryable<PropertyFeatureDto>> DtoConverter => _converter;
