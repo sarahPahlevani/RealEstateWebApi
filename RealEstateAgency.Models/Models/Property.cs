@@ -7,6 +7,7 @@ namespace RealEstateAgency.DAL.Models
     {
         public Property()
         {
+            Bookmark = new HashSet<Bookmark>();
             PropertyAdditionalDetail = new HashSet<PropertyAdditionalDetail>();
             PropertyAroundImportantLandmark = new HashSet<PropertyAroundImportantLandmark>();
             PropertyAttachment = new HashSet<PropertyAttachment>();
@@ -52,6 +53,7 @@ namespace RealEstateAgency.DAL.Models
         public virtual PropertyDetail PropertyDetail { get; set; }
         public virtual PropertyLocation PropertyLocation { get; set; }
         public virtual PropertyPrice PropertyPrice { get; set; }
+        public virtual ICollection<Bookmark> Bookmark { get; set; }
         public virtual ICollection<PropertyAdditionalDetail> PropertyAdditionalDetail { get; set; }
         public virtual ICollection<PropertyAroundImportantLandmark> PropertyAroundImportantLandmark { get; set; }
         public virtual ICollection<PropertyAttachment> PropertyAttachment { get; set; }

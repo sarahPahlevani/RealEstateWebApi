@@ -19,6 +19,7 @@ namespace RealEstateAgency.DAL.Models
         public virtual DbSet<ActionTypeTranslate> ActionTypeTranslate { get; set; }
         public virtual DbSet<Agent> Agent { get; set; }
         public virtual DbSet<AuthenticationProvider> AuthenticationProvider { get; set; }
+        public virtual DbSet<Bookmark> Bookmark { get; set; }
         public virtual DbSet<City> City { get; set; }
         public virtual DbSet<CityTranslate> CityTranslate { get; set; }
         public virtual DbSet<ContentPage> ContentPage { get; set; }
@@ -159,6 +160,25 @@ namespace RealEstateAgency.DAL.Models
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(128);
+            });
+
+            modelBuilder.Entity<Bookmark>(entity =>
+            {
+                entity.ToTable("Bookmark", "Infrastructure");
+
+                entity.Property(e => e.DateCreated).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Property)
+                    .WithMany(p => p.Bookmark)
+                    .HasForeignKey(d => d.PropertyId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Bookmark_Property");
+
+                entity.HasOne(d => d.UserAccount)
+                    .WithMany(p => p.Bookmark)
+                    .HasForeignKey(d => d.UserAccountId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Bookmark_UserAccount");
             });
 
             modelBuilder.Entity<City>(entity =>
@@ -1478,7 +1498,9 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.VatCode).HasMaxLength(50);
 
-                entity.Property(e => e.ZipCode).HasMaxLength(50);
+                entity.Property(e => e.ZipCode)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
 
                 entity.HasOne(d => d.AuthenticationProvider)
                     .WithMany(p => p.UserAccount)

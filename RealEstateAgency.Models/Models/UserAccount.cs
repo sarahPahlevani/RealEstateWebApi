@@ -9,6 +9,7 @@ namespace RealEstateAgency.DAL.Models
         {
             AgentUserAccount = new HashSet<Agent>();
             AgentUserAccountIdDeleteByNavigation = new HashSet<Agent>();
+            Bookmark = new HashSet<Bookmark>();
             ImportantPlaceType = new HashSet<ImportantPlaceType>();
             MarketingAssistant = new HashSet<MarketingAssistant>();
             PropertyAdditionalDetail = new HashSet<PropertyAdditionalDetail>();
@@ -65,6 +66,7 @@ namespace RealEstateAgency.DAL.Models
         public virtual Country Country { get; set; }
         public virtual ICollection<Agent> AgentUserAccount { get; set; }
         public virtual ICollection<Agent> AgentUserAccountIdDeleteByNavigation { get; set; }
+        public virtual ICollection<Bookmark> Bookmark { get; set; }
         public virtual ICollection<ImportantPlaceType> ImportantPlaceType { get; set; }
         public virtual ICollection<MarketingAssistant> MarketingAssistant { get; set; }
         public virtual ICollection<PropertyAdditionalDetail> PropertyAdditionalDetail { get; set; }
