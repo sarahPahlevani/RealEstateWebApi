@@ -14,6 +14,7 @@ using RealEstateAgency.Shared.Statics;
 
 namespace RealEstateAgency.Controllers.Infrastructure
 {
+    [AllowAnonymous]
     public class LanguageController : ModelController<Language, LanguageDto>
     {
         private readonly ILanguageProvider _languageProvider;
@@ -34,7 +35,7 @@ namespace RealEstateAgency.Controllers.Infrastructure
                 UrlCode = i.Code.Substring(0, 2).ToLower()
             });
 
-        [AllowAnonymous]
+        
         public override Task<ActionResult<IEnumerable<LanguageDto>>> GetAllAsync(CancellationToken cancellationToken)
             => base.GetAllAsync(cancellationToken);
 

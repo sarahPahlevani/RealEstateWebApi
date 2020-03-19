@@ -4,9 +4,11 @@ using RealEstateAgency.DAL.Models;
 using RealEstateAgency.Dtos.ModelDtos.Infrastructure;
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RealEstateAgency.Controllers.Infrastructure
 {
+    [AllowAnonymous]
     public class CountryController : ModelPagingController<Country, CountryDto, CountryDto>
     {
         public CountryController(IModelService<Country, CountryDto> modelService) : base(modelService)
