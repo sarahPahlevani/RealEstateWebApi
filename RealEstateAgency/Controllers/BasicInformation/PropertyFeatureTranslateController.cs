@@ -23,17 +23,18 @@ namespace RealEstateAgency.Controllers.BasicInformation
         public override Func<IQueryable<PropertyFeatureTranslate>, IQueryable<PropertyFeatureTranslateDto>> DtoConverter
         => items => items.Select(i => new PropertyFeatureTranslateDto
         {
-            Name = i.Name,
             Id = i.Id,
+            PropertyFeatureId = i.PropertyFeatureId,
+            PropertyFeature = i.PropertyFeature,
             LanguageId = i.LanguageId,
-            PropertyFeatureId = i.PropertyFeatureId
+            Language = i.Language,
+            Name = i.Name,
         });
 
         [HttpGet("PropertyFeatureTranslates/{tenantId}")]
         public async Task<ActionResult<IEnumerable<PropertyFeatureTranslateDto>>> GetFromTenant(int tenantId, CancellationToken cancellationToken)
         {
-            var res = await ModelService.DataConvertQuery(ModelService
-                .AsQueryable(i => i.PropertyFeatureId == tenantId))
+            var res = await ModelService.DataConvertQuery(ModelService.AsQueryable(i => i.PropertyFeatureId == tenantId))
                 .ToListAsync(cancellationToken);
             return res;
         }
