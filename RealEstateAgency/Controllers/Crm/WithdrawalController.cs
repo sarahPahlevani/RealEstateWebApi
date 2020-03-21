@@ -1,7 +1,7 @@
 ﻿using RealEstateAgency.Implementations.ApiImplementations.Services.Contracts;
 using RealEstateAgency.Controllers.Contracts;
 using RealEstateAgency.DAL.Models;
-using RealEstateAgency.Dtos.ModelDtos.Infrastructure;
+using RealEstateAgency.Dtos.ModelDtos.CRM;
 using System;
 using System.Linq;
 using RealEstateAgency.Implementations.Authentication;
@@ -13,7 +13,7 @@ using System.Threading;
 using RealEstateAgency.Implementations.ApiImplementations.PageDtos.PageFilters;
 using System.Collections.Generic;
 
-namespace RealEstateAgency.Controllers.Infrastructure
+namespace RealEstateAgency.Controllers.CRM
 {
     public class WithdrawalController : ModelPagingController<Withdrawal, WithdrawalDto, WithdrawalListDto>
     {
@@ -46,10 +46,10 @@ namespace RealEstateAgency.Controllers.Infrastructure
                     DateCreated = i.DateCreated,
                 });
 
-        [HttpGet("[Action]")]
-        public ActionResult<List<WithdrawalListDto>> GetByUser()
+        [HttpGet("[Action]/{userId}")]
+        public ActionResult<List<WithdrawalListDto>> GetByUser(int userId)
         {
-            return ModelService.Queryable.Where(r => r.UserAccountId == _userProvider.Id)
+            return ModelService.Queryable.Where(r => r.UserAccountId == userId)
                 .Select(r => new WithdrawalListDto
                 {
                     Id = r.Id,

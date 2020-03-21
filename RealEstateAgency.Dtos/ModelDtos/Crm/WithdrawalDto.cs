@@ -3,7 +3,7 @@ using RealEstateAgency.DAL.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace RealEstateAgency.Dtos.ModelDtos.Infrastructure
+namespace RealEstateAgency.Dtos.ModelDtos.CRM
 {
     public class WithdrawalDto : ModelDtoBase<Withdrawal>
     {

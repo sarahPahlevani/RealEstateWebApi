@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using RealEstateAgency.DAL.DtoContracts;
 using RealEstateAgency.DAL.Models;
 
-namespace RealEstateAgency.Dtos.ModelDtos.Infrastructure
+namespace RealEstateAgency.Dtos.ModelDtos.CRM
 {
     public class WithdrawalListDto : IDto
     {
