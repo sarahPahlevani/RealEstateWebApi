@@ -82,7 +82,7 @@ namespace RealEstateAgency.DAL.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=176.9.235.212,2134;Database=RealEstateDbTest;User Id=sa;Password=FarJef123!@#;");
+                optionsBuilder.UseSqlServer("Server=176.9.235.212,2134;Database=RealEstateDbTest;User Id=sa;Password=FarJef123!@#;MultipleActiveResultSets=true;");
             }
         }
 
@@ -415,6 +415,8 @@ namespace RealEstateAgency.DAL.Models
                 entity.Property(e => e.ActionName).HasMaxLength(50);
 
                 entity.Property(e => e.ControllerName).HasMaxLength(50);
+
+                entity.Property(e => e.IconName).HasMaxLength(20);
 
                 entity.Property(e => e.Name)
                     .IsRequired()

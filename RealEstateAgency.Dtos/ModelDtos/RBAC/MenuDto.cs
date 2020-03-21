@@ -1,5 +1,6 @@
 ﻿using RealEstateAgency.DAL.DtoContracts;
 using RealEstateAgency.DAL.Models;
+using System.Collections.Generic;
 
 namespace RealEstateAgency.Dtos.ModelDtos.RBAC
 {
@@ -48,5 +49,26 @@ namespace RealEstateAgency.Dtos.ModelDtos.RBAC
             ParentId = ParentId,
             ActionName = ActionName
         };
+    }
+
+    public class ParentMenuDto
+    {
+        public ParentMenuDto()
+        {
+            subs = new List<subMenuDto>();
+        }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string ActionName { get; set; }
+        public string IconName { get; set; }
+        public List<subMenuDto> subs { get; set; }
+    }
+    public class subMenuDto
+    {
+        public int Id { get; set; }
+        public int parentId { get; set; }
+        public string IconName { get; set; }
+        public string Name { get; set; }
+        public string ActionName { get; set; }
     }
 }
