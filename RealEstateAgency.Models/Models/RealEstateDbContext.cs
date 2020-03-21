@@ -74,6 +74,7 @@ namespace RealEstateAgency.DAL.Models
         public virtual DbSet<UserGroup> UserGroup { get; set; }
         public virtual DbSet<UserGroupPermission> UserGroupPermission { get; set; }
         public virtual DbSet<UserGroupTranslate> UserGroupTranslate { get; set; }
+        public virtual DbSet<Withdrawal> Withdrawal { get; set; }
         public virtual DbSet<Workflow> Workflow { get; set; }
         public virtual DbSet<WorkflowStep> WorkflowStep { get; set; }
 
@@ -415,6 +416,8 @@ namespace RealEstateAgency.DAL.Models
                 entity.Property(e => e.ActionName).HasMaxLength(50);
 
                 entity.Property(e => e.ControllerName).HasMaxLength(50);
+
+                entity.Property(e => e.IconName).HasMaxLength(20);
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -1598,6 +1601,21 @@ namespace RealEstateAgency.DAL.Models
                     .HasForeignKey(d => d.UserGroupId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserGroupTranslate_UserGroup");
+            });
+
+            modelBuilder.Entity<Withdrawal>(entity =>
+            {
+                entity.ToTable("Withdrawal", "CRM");
+
+                entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.DateCreated).HasColumnType("datetime");
+
+                entity.HasOne(d => d.UserAccount)
+                    .WithMany(p => p.Withdrawal)
+                    .HasForeignKey(d => d.UserAccountId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Withdrawal_UserAccount");
             });
 
             modelBuilder.Entity<Workflow>(entity =>

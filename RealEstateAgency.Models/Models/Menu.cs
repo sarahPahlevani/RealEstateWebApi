@@ -20,6 +20,7 @@ namespace RealEstateAgency.DAL.Models
         public string PluginName { get; set; }
         public string ControllerName { get; set; }
         public string ActionName { get; set; }
+        public string IconName { get; set; }
 
         public virtual Menu Parent { get; set; }
         public virtual ICollection<ContentPage> ContentPage { get; set; }

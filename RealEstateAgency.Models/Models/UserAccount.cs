@@ -32,6 +32,7 @@ namespace RealEstateAgency.DAL.Models
             SharedProperty = new HashSet<SharedProperty>();
             UserAccountGroup = new HashSet<UserAccountGroup>();
             UserAccountWishList = new HashSet<UserAccountWishList>();
+            Withdrawal = new HashSet<Withdrawal>();
         }
 
         public int Id { get; set; }
@@ -89,5 +90,6 @@ namespace RealEstateAgency.DAL.Models
         public virtual ICollection<SharedProperty> SharedProperty { get; set; }
         public virtual ICollection<UserAccountGroup> UserAccountGroup { get; set; }
         public virtual ICollection<UserAccountWishList> UserAccountWishList { get; set; }
+        public virtual ICollection<Withdrawal> Withdrawal { get; set; }
     }
 }
