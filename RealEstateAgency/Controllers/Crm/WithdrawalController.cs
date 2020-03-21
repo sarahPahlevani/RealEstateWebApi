@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using RealEstateAgency.Implementations.ApiImplementations.PageDtos.PageFilters;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace RealEstateAgency.Controllers.CRM
 {
@@ -47,9 +48,9 @@ namespace RealEstateAgency.Controllers.CRM
                 });
 
         [HttpGet("[Action]/{userId}")]
-        public ActionResult<List<WithdrawalListDto>> GetByUser(int userId)
+        public async Task<ActionResult<List<WithdrawalListDto>>> GetByUser(int userId, CancellationToken cancellationToken)
         {
-            return ModelService.Queryable.Where(r => r.UserAccountId == userId)
+            return await ModelService.Queryable.Where(r => r.UserAccountId == userId)
                 .Select(r => new WithdrawalListDto
                 {
                     Id = r.Id,
@@ -57,7 +58,7 @@ namespace RealEstateAgency.Controllers.CRM
                     UserAccount = r.UserAccount,
                     Amount = r.Amount,
                     DateCreated = r.DateCreated,
-                }).OrderByDescending(r => r.DateCreated).ToList();
+                })/*.OrderByDescending(i => i.DateCreated)*/.ToListAsync(cancellationToken);
         }
     }
 }

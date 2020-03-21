@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using RealEstateAgency.Implementations.ApiImplementations.PageDtos.PageFilters;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace RealEstateAgency.Controllers.Infrastructure
 {
@@ -47,9 +48,9 @@ namespace RealEstateAgency.Controllers.Infrastructure
                 });
 
         [HttpGet("[Action]")]
-        public ActionResult<List<BookmarkListDto>> GetByUser()
+        public async Task<ActionResult<List<BookmarkListDto>>> GetByUser(CancellationToken cancellationToken)
         {
-            return ModelService.Queryable.Where(r => r.UserAccountId == _userProvider.Id)
+            return await ModelService.Queryable.Where(r => r.UserAccountId == _userProvider.Id)
                 .Select(r => new BookmarkListDto
                 {
                     Id = r.Id,
@@ -58,7 +59,7 @@ namespace RealEstateAgency.Controllers.Infrastructure
                     PropertyId = r.PropertyId,
                     Property = r.Property,
                     DateCreated = r.DateCreated,
-                }).OrderByDescending(r => r.DateCreated).ToList();
+                }).OrderByDescending(r => r.DateCreated).ToListAsync(cancellationToken);
         }
     }
 }
