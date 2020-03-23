@@ -95,8 +95,13 @@ namespace RealEstateAgency.Controllers.RBAC
                 Phone01 = i.Phone01,
                 Phone02 = i.Phone02,
                 RegistrationDate = i.RegistrationDate,
-                UserGroupName = i.UserAccountGroup
-                    .FirstOrDefault(g => g.UserAccountId == i.Id).UserGroup.Name
+                UserGroupName = i.UserAccountGroup.FirstOrDefault(g => g.UserAccountId == i.Id).UserGroup.Name,
+                //TotalEarn = (from te in i.RequestUserAccountIdSharedNavigation
+                //             where te.IsDone && te.IsSuccess
+                //             select te.PropertyNavigation.PropertyPrice.Price - (te.PropertyNavigation.PropertyPrice.Price * (te.Commission.GetValueOrDefault(0)) / 100)).FirstOrDefault(),
+                //TotalWithdrawal = (from te in i.RequestUserAccountIdSharedNavigation
+                //                   where te.IsDone && te.IsSuccess
+                //                   select te.PropertyNavigation.PropertyPrice.Price - (te.PropertyNavigation.PropertyPrice.Price * (te.Commission.GetValueOrDefault(0)) / 100)).FirstOrDefault(),
             });
 
         [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]

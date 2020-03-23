@@ -2,7 +2,7 @@
 
 namespace RealEstateAgency.DAL.Models
 {
-    public partial class Bookmark : IEntity, IForbiddenModify, ICacheResult
+    public partial class Bookmark : IEntity, IForbiddenModify
     {
     }
 }

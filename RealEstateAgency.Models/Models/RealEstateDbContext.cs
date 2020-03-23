@@ -22,6 +22,7 @@ namespace RealEstateAgency.DAL.Models
         public virtual DbSet<Bookmark> Bookmark { get; set; }
         public virtual DbSet<City> City { get; set; }
         public virtual DbSet<CityTranslate> CityTranslate { get; set; }
+        public virtual DbSet<Commission> Commission { get; set; }
         public virtual DbSet<ContentPage> ContentPage { get; set; }
         public virtual DbSet<ContentPageTranslate> ContentPageTranslate { get; set; }
         public virtual DbSet<Country> Country { get; set; }
@@ -74,7 +75,6 @@ namespace RealEstateAgency.DAL.Models
         public virtual DbSet<UserGroup> UserGroup { get; set; }
         public virtual DbSet<UserGroupPermission> UserGroupPermission { get; set; }
         public virtual DbSet<UserGroupTranslate> UserGroupTranslate { get; set; }
-        public virtual DbSet<Withdrawal> Withdrawal { get; set; }
         public virtual DbSet<Workflow> Workflow { get; set; }
         public virtual DbSet<WorkflowStep> WorkflowStep { get; set; }
 
@@ -83,7 +83,7 @@ namespace RealEstateAgency.DAL.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=176.9.235.212,2134;Database=RealEstateDbTest;User Id=sa;Password=FarJef123!@#;");
+                optionsBuilder.UseSqlServer("Server=.;Database=RealEstateDbLocal;Integrated Security=True;Trusted_Connection=True;");
             }
         }
 
@@ -216,6 +216,27 @@ namespace RealEstateAgency.DAL.Models
                     .HasForeignKey(d => d.LanguageId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CityTranslate_Language");
+            });
+
+            modelBuilder.Entity<Commission>(entity =>
+            {
+                entity.ToTable("Commission", "CRM");
+
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.DateCreated).HasColumnType("datetime");
+
+                entity.Property(e => e.PayCode).HasMaxLength(50);
+
+                entity.Property(e => e.PayDate).HasColumnType("datetime");
+
+                entity.HasOne(d => d.IdNavigation)
+                    .WithOne(p => p.CommissionNavigation)
+                    .HasForeignKey<Commission>(d => d.Id)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Commission_Request");
             });
 
             modelBuilder.Entity<ContentPage>(entity =>
@@ -416,8 +437,6 @@ namespace RealEstateAgency.DAL.Models
                 entity.Property(e => e.ActionName).HasMaxLength(50);
 
                 entity.Property(e => e.ControllerName).HasMaxLength(50);
-
-                entity.Property(e => e.IconName).HasMaxLength(20);
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -1601,21 +1620,6 @@ namespace RealEstateAgency.DAL.Models
                     .HasForeignKey(d => d.UserGroupId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_UserGroupTranslate_UserGroup");
-            });
-
-            modelBuilder.Entity<Withdrawal>(entity =>
-            {
-                entity.ToTable("Withdrawal", "CRM");
-
-                entity.Property(e => e.Amount).HasColumnType("decimal(18, 2)");
-
-                entity.Property(e => e.DateCreated).HasColumnType("datetime");
-
-                entity.HasOne(d => d.UserAccount)
-                    .WithMany(p => p.Withdrawal)
-                    .HasForeignKey(d => d.UserAccountId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Withdrawal_UserAccount");
             });
 
             modelBuilder.Entity<Workflow>(entity =>

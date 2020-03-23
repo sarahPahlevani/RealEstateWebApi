@@ -9,9 +9,9 @@ namespace RealEstateAgency.DAL.Models
         public string Country { get; set; }
         public string Region { get; set; }
         public string City { get; set; }
-        public string ZipCode { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
+        public string ZipCode { get; set; }
         public string GoogleMapsLatitude { get; set; }
         public string GoogleMapsLongitude { get; set; }
 

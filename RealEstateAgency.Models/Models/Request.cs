@@ -28,9 +28,9 @@ namespace RealEstateAgency.DAL.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime DateCreated { get; set; }
-        public int? UserAccountIdDeleteBy { get; set; }
         public bool Deleted { get; set; }
         public DateTime? DeletedDate { get; set; }
+        public int? UserAccountIdDeleteBy { get; set; }
         public int? PropertyId { get; set; }
         public byte? Commission { get; set; }
         public bool IsDone { get; set; }
@@ -44,6 +44,7 @@ namespace RealEstateAgency.DAL.Models
         public virtual UserAccount UserAccountIdRequesterNavigation { get; set; }
         public virtual UserAccount UserAccountIdSharedNavigation { get; set; }
         public virtual Workflow Workflow { get; set; }
+        public virtual Commission CommissionNavigation { get; set; }
         public virtual ICollection<Property> Property { get; set; }
         public virtual ICollection<RequestAction> RequestAction { get; set; }
         public virtual ICollection<RequestAgent> RequestAgent { get; set; }
