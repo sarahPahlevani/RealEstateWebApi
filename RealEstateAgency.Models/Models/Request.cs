@@ -28,9 +28,9 @@ namespace RealEstateAgency.DAL.Models
         public string Title { get; set; }
         public string Description { get; set; }
         public DateTime DateCreated { get; set; }
+        public int? UserAccountIdDeleteBy { get; set; }
         public bool Deleted { get; set; }
         public DateTime? DeletedDate { get; set; }
-        public int? UserAccountIdDeleteBy { get; set; }
         public int? PropertyId { get; set; }
         public byte? Commission { get; set; }
         public bool IsDone { get; set; }

@@ -40,9 +40,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.CRM
             IsPay = entity.IsPay;
             PayCode = entity.PayCode;
             PayDate = entity.PayDate;
-            Request = entity.IdNavigation;
-            UserAccount = entity.IdNavigation.UserAccountIdSharedNavigation;
-            Property = entity.IdNavigation.PropertyNavigation;
+            //UserAccount = entity.IdNavigation.UserAccountIdSharedNavigation;
+            //Property = entity.IdNavigation.PropertyNavigation;
             return this;
         }
 

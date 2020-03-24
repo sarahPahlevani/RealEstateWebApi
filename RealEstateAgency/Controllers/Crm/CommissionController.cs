@@ -84,7 +84,41 @@ namespace RealEstateAgency.Controllers.CRM
                 }).OrderByDescending(i => i.DateCreated).ToListAsync(cancellationToken);
         }
 
-        
+        [AllowAnonymous]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        [HttpGet("[Action]/{currencyId}/{isPay}")]
+        public async Task<ActionResult<List<CommissionListDto>>> GetDetails(int currencyId, bool? isPay)
+        {
+            var db = new RealEstateDbContext();
+
+            var list = await (from r in db.Commission
+                              join q in db.Request on r.Id equals q.Id
+                              join u in db.UserAccount on q.UserAccountIdShared equals u.Id
+                              join p in db.Property on q.PropertyId equals p.Id
+                              join pp in db.PropertyPrice on p.Id equals pp.Id
+                              join pc in db.Currency on pp.CurrencyId equals pc.Id
+                              where pc.Id == currencyId && (!isPay.HasValue || r.IsPay == isPay.Value)
+                              select new CommissionListDto
+                              {
+                                  Id = r.Id,
+                                  CommissionPercent = r.CommissionPercent,
+                                  Amount = r.Amount,
+                                  DateCreated = r.DateCreated,
+                                  IsPay = r.IsPay,
+                                  PayCode = r.PayCode,
+                                  PayDate = r.PayDate,
+                                  UserAccountId = u.Id,
+                                  Username = u.UserName,
+                                  PropertyId = p.Id,
+                                  PropertyTitle = p.Title,
+                                  PropertyPrice = pp.Price,
+                                  PropertyPriceCurrency = pc,
+                              }).ToListAsync();
+
+            return list;
+        }
+
+
         [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         [HttpGet("[Action]")]
         public async Task<ActionResult<List<CommissionInfoDto>>> GetCommissionInfo()

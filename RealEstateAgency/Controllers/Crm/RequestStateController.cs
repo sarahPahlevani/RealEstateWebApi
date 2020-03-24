@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using RealEstateAgency.Implementations.ApiImplementations.PageDtos.PageFilters;
 using Microsoft.EntityFrameworkCore;
 using System.Transactions;
+using RealEstateAgency.Dtos.ModelDtos.CRM;
 
 namespace RealEstateAgency.Controllers.Crm
 {
@@ -21,13 +22,16 @@ namespace RealEstateAgency.Controllers.Crm
         private readonly IEntityService<Request> _requestService;
         private readonly IEntityService<RequestState> _requestStateService;
         private readonly IEntityService<WorkflowStep> _workflowStepService;
+        private readonly IEntityService<Commission> _commissionService;
 
         public RequestStateController(IModelService<RequestState, RequestStateDto> modelService, IEntityService<Request> requestService,
-            IEntityService<RequestState> requestStateService, IEntityService<WorkflowStep> workflowStepService) : base(modelService)
+            IEntityService<RequestState> requestStateService, IEntityService<WorkflowStep> workflowStepService,
+            IEntityService<Commission> commissionService) : base(modelService)
         {
             _requestService = requestService;
             _requestStateService = requestStateService;
             _workflowStepService = workflowStepService;
+            _commissionService = commissionService;
         }
 
         public override Func<IQueryable<RequestState>, IQueryable<RequestStateDto>> DtoConverter
@@ -117,6 +121,15 @@ namespace RealEstateAgency.Controllers.Crm
                     {
                         req.IsDone = true;
                         req.IsSuccess = true;
+
+                        var com = new Commission
+                        {
+                            Id = value.RequestId,
+                            CommissionPercent = req.Commission.GetValueOrDefault(0),
+                            Amount = (req.PropertyNavigation.PropertyPrice.Price * req.Commission.GetValueOrDefault(0)) / 100,
+                            DateCreated = DateTime.UtcNow,
+                        };
+                        var commissionResult = await _commissionService.CreateAsync(com, cancellationToken);
                     }
 
                     var newReq = _requestService.Update(req);
