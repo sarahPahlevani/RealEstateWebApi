@@ -101,8 +101,7 @@ namespace RealEstateAgency.Controllers.Crm
             {
                 try
                 {
-
-                    var req = _requestService.Get(value.RequestId);
+                    var req = _requestService.AsQueryable(r => r.Id == value.RequestId).Include("PropertyNavigation").Include("PropertyNavigation.PropertyPrice").FirstOrDefault();
                     if (req is null)
                         throw new Exception("not found request");
 
@@ -122,14 +121,17 @@ namespace RealEstateAgency.Controllers.Crm
                         req.IsDone = true;
                         req.IsSuccess = true;
 
-                        var com = new Commission
+                        if (req.UserAccountIdShared.HasValue)
                         {
-                            Id = value.RequestId,
-                            CommissionPercent = req.Commission.GetValueOrDefault(0),
-                            Amount = (req.PropertyNavigation.PropertyPrice.Price * req.Commission.GetValueOrDefault(0)) / 100,
-                            DateCreated = DateTime.UtcNow,
-                        };
-                        var commissionResult = await _commissionService.CreateAsync(com, cancellationToken);
+                            var com = new Commission
+                            {
+                                Id = value.RequestId,
+                                CommissionPercent = req.Commission.GetValueOrDefault(0),
+                                Amount = (req.PropertyNavigation.PropertyPrice.CalculatedPriceUnit * req.Commission.GetValueOrDefault(0)) / 100,
+                                DateCreated = DateTime.UtcNow,
+                            };
+                            var commissionResult = await _commissionService.CreateAsync(com, cancellationToken);
+                        }
                     }
 
                     var newReq = _requestService.Update(req);

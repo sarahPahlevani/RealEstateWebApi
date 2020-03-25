@@ -79,7 +79,7 @@ namespace RealEstateAgency.Controllers.CRM
                     Username = i.IdNavigation.UserAccountIdSharedNavigation.UserName,
                     PropertyId = i.IdNavigation.PropertyId.GetValueOrDefault(0),
                     PropertyTitle = i.IdNavigation.PropertyNavigation.Title,
-                    PropertyPrice = i.IdNavigation.PropertyNavigation.PropertyPrice.Price,
+                    PropertyPrice = i.IdNavigation.PropertyNavigation.PropertyPrice.CalculatedPriceUnit,
                     PropertyPriceCurrency = i.IdNavigation.PropertyNavigation.PropertyPrice.Currency,
                 }).OrderByDescending(i => i.DateCreated).ToListAsync(cancellationToken);
         }
@@ -111,7 +111,7 @@ namespace RealEstateAgency.Controllers.CRM
                                   Username = u.UserName,
                                   PropertyId = p.Id,
                                   PropertyTitle = p.Title,
-                                  PropertyPrice = pp.Price,
+                                  PropertyPrice = pp.CalculatedPriceUnit,
                                   PropertyPriceCurrency = pc,
                               }).ToListAsync();
 
@@ -150,13 +150,6 @@ namespace RealEstateAgency.Controllers.CRM
                         TotalCommission = gp.ToList().Where(i => !i.IsPay).Sum(i => i.Amount),
                         TotalEarn = gp.ToList().Where(i => i.IsPay).Sum(i => i.Amount),
                     }).ToList();
-        }
-
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
-        [HttpGet("[Action]")]
-        public async Task<ActionResult<decimal>> TotalEarn()
-        {
-            return await ModelService.Queryable.Where(r => r.IsPay).SumAsync(r => r.Amount);
         }
 
 
