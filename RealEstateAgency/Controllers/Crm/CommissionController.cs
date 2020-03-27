@@ -65,7 +65,12 @@ namespace RealEstateAgency.Controllers.CRM
         [HttpGet("[Action]/{userId}")]
         public async Task<ActionResult<List<CommissionListDto>>> GetByUser(int userId, CancellationToken cancellationToken)
         {
-            return await ModelService.Queryable.Where(r => r.IdNavigation.UserAccountIdShared == userId)
+            return await ModelService.Queryable
+                .Include(r => r.IdNavigation)
+                .Include(r => r.IdNavigation.UserAccountIdSharedNavigation)
+                .Include(r => r.IdNavigation.PropertyNavigation)
+                .Include(r => r.IdNavigation.PropertyNavigation.PropertyPrice)
+                .Where(r => r.IdNavigation.UserAccountIdShared == userId)
                 .Select(i => new CommissionListDto
                 {
                     Id = i.Id,
@@ -89,33 +94,57 @@ namespace RealEstateAgency.Controllers.CRM
         [HttpGet("[Action]/{currencyId}/{isPay}")]
         public async Task<ActionResult<List<CommissionListDto>>> GetDetails(int currencyId, bool? isPay)
         {
-            var db = new RealEstateDbContext();
+            return await ModelService.Queryable
+                .Include(r => r.IdNavigation)
+                .Include(r => r.IdNavigation.UserAccountIdSharedNavigation)
+                .Include(r => r.IdNavigation.PropertyNavigation)
+                .Include(r => r.IdNavigation.PropertyNavigation.PropertyPrice)
+                .Include(r => r.IdNavigation.PropertyNavigation.PropertyPrice.Currency)
+                .Where(r => r.IdNavigation.PropertyNavigation.PropertyPrice.CurrencyId == currencyId && (!isPay.HasValue || r.IsPay == isPay.Value))
+                .Select(r => new CommissionListDto
+                {
+                    Id = r.Id,
+                    CommissionPercent = r.CommissionPercent,
+                    Amount = r.Amount,
+                    DateCreated = r.DateCreated,
+                    IsPay = r.IsPay,
+                    PayCode = r.PayCode,
+                    PayDate = r.PayDate,
+                    UserAccountId = r.IdNavigation.UserAccountIdSharedNavigation.Id,
+                    Username = r.IdNavigation.UserAccountIdSharedNavigation.UserName,
+                    PropertyId = r.IdNavigation.PropertyNavigation.Id,
+                    PropertyTitle = r.IdNavigation.PropertyNavigation.Title,
+                    PropertyPrice = r.IdNavigation.PropertyNavigation.PropertyPrice.CalculatedPriceUnit,
+                    PropertyPriceCurrency = r.IdNavigation.PropertyNavigation.PropertyPrice.Currency,
+                }).ToListAsync();
 
-            var list = await (from r in db.Commission
-                              join q in db.Request on r.Id equals q.Id
-                              join u in db.UserAccount on q.UserAccountIdShared equals u.Id
-                              join p in db.Property on q.PropertyId equals p.Id
-                              join pp in db.PropertyPrice on p.Id equals pp.Id
-                              join pc in db.Currency on pp.CurrencyId equals pc.Id
-                              where pc.Id == currencyId && (!isPay.HasValue || r.IsPay == isPay.Value)
-                              select new CommissionListDto
-                              {
-                                  Id = r.Id,
-                                  CommissionPercent = r.CommissionPercent,
-                                  Amount = r.Amount,
-                                  DateCreated = r.DateCreated,
-                                  IsPay = r.IsPay,
-                                  PayCode = r.PayCode,
-                                  PayDate = r.PayDate,
-                                  UserAccountId = u.Id,
-                                  Username = u.UserName,
-                                  PropertyId = p.Id,
-                                  PropertyTitle = p.Title,
-                                  PropertyPrice = pp.CalculatedPriceUnit,
-                                  PropertyPriceCurrency = pc,
-                              }).ToListAsync();
+            //var db = new RealEstateDbContext();
 
-            return list;
+            //var list = await (from r in db.Commission
+            //                  join q in db.Request on r.Id equals q.Id
+            //                  join u in db.UserAccount on q.UserAccountIdShared equals u.Id
+            //                  join p in db.Property on q.PropertyId equals p.Id
+            //                  join pp in db.PropertyPrice on p.Id equals pp.Id
+            //                  join pc in db.Currency on pp.CurrencyId equals pc.Id
+            //                  where pc.Id == currencyId && (!isPay.HasValue || r.IsPay == isPay.Value)
+            //                  select new CommissionListDto
+            //                  {
+            //                      Id = r.Id,
+            //                      CommissionPercent = r.CommissionPercent,
+            //                      Amount = r.Amount,
+            //                      DateCreated = r.DateCreated,
+            //                      IsPay = r.IsPay,
+            //                      PayCode = r.PayCode,
+            //                      PayDate = r.PayDate,
+            //                      UserAccountId = u.Id,
+            //                      Username = u.UserName,
+            //                      PropertyId = p.Id,
+            //                      PropertyTitle = p.Title,
+            //                      PropertyPrice = pp.CalculatedPriceUnit,
+            //                      PropertyPriceCurrency = pc,
+            //                  }).ToListAsync();
+
+            //return list;
         }
 
 
@@ -124,21 +153,19 @@ namespace RealEstateAgency.Controllers.CRM
         public async Task<ActionResult<List<CommissionInfoDto>>> GetCommissionInfo()
         {
 
-            var db = new RealEstateDbContext();
-
-            var currencyList = await (from r in db.Commission
-                                      join q in db.Request on r.Id equals q.Id
-                                      join p in db.Property on q.PropertyId equals p.Id
-                                      join pp in db.PropertyPrice on p.Id equals pp.Id
-                                      join pc in db.Currency on pp.CurrencyId equals pc.Id
-                                      select new CommissionInfoDto
-                                      {
-                                          CurrencyId = r.IdNavigation.PropertyNavigation.PropertyPrice.CurrencyId,
-                                          CurrencyName = r.IdNavigation.PropertyNavigation.PropertyPrice.Currency.Name,
-                                          CurrencySymbol = r.IdNavigation.PropertyNavigation.PropertyPrice.Currency.Symbol,
-                                          Amount = r.Amount,
-                                          IsPay = r.IsPay,
-                                      }).ToListAsync();
+            var currencyList = await ModelService.Queryable
+                .Include(r => r.IdNavigation)
+                .Include(r => r.IdNavigation.PropertyNavigation)
+                .Include(r => r.IdNavigation.PropertyNavigation.PropertyPrice)
+                .Include(r => r.IdNavigation.PropertyNavigation.PropertyPrice.Currency)
+                .Select(r => new CommissionInfoDto
+                {
+                    CurrencyId = r.IdNavigation.PropertyNavigation.PropertyPrice.CurrencyId,
+                    CurrencyName = r.IdNavigation.PropertyNavigation.PropertyPrice.Currency.Name,
+                    CurrencySymbol = r.IdNavigation.PropertyNavigation.PropertyPrice.Currency.Symbol,
+                    Amount = r.Amount,
+                    IsPay = r.IsPay,
+                }).ToListAsync();
 
             return (from r in currencyList
                     group r by r.CurrencyId into gp
@@ -150,6 +177,25 @@ namespace RealEstateAgency.Controllers.CRM
                         TotalCommission = gp.ToList().Where(i => !i.IsPay).Sum(i => i.Amount),
                         TotalEarn = gp.ToList().Where(i => i.IsPay).Sum(i => i.Amount),
                     }).ToList();
+
+
+            //var db = new RealEstateDbContext();
+
+            //var currencyList = await (from r in db.Commission
+            //                          join q in db.Request on r.Id equals q.Id
+            //                          join p in db.Property on q.PropertyId equals p.Id
+            //                          join pp in db.PropertyPrice on p.Id equals pp.Id
+            //                          join pc in db.Currency on pp.CurrencyId equals pc.Id
+            //                          select new CommissionInfoDto
+            //                          {
+            //                              CurrencyId = r.IdNavigation.PropertyNavigation.PropertyPrice.CurrencyId,
+            //                              CurrencyName = r.IdNavigation.PropertyNavigation.PropertyPrice.Currency.Name,
+            //                              CurrencySymbol = r.IdNavigation.PropertyNavigation.PropertyPrice.Currency.Symbol,
+            //                              Amount = r.Amount,
+            //                              IsPay = r.IsPay,
+            //                          }).ToListAsync();
+
+
         }
 
 

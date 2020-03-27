@@ -16,9 +16,12 @@ namespace RealEstateAgency.Controllers.Estate
     public class PropertyPriceController : ModelController<PropertyPrice, PropertyPriceDto>
     {
         private readonly IEntityService<Property> _propertyService;
+        private readonly IEntityService<PriceScaleUnit> _priceScaleUnitService;
 
-        public PropertyPriceController(IModelService<PropertyPrice, PropertyPriceDto> modelService, IEntityService<Property> propertyService) : base(modelService)
+        public PropertyPriceController(IModelService<PropertyPrice, PropertyPriceDto> modelService, IEntityService<Property> propertyService,
+            IEntityService<PriceScaleUnit> priceScaleUnitService) : base(modelService)
         {
+            _priceScaleUnitService = priceScaleUnitService;
             _propertyService = propertyService;
         }
 
@@ -38,7 +41,7 @@ namespace RealEstateAgency.Controllers.Estate
         [HttpPost]
         public override async Task<ActionResult<PropertyPriceDto>> Create(PropertyPriceDto value, CancellationToken cancellationToken)
         {
-            var unit = new RealEstateDbContext().PriceScaleUnit.FirstOrDefault(r => r.Id == value.PriceScaleUnitId);
+            var unit = _priceScaleUnitService.Queryable.FirstOrDefault(r => r.Id == value.PriceScaleUnitId);
             if (unit is null)
                 throw new Exception("not found price unit");
 
@@ -51,7 +54,7 @@ namespace RealEstateAgency.Controllers.Estate
         [HttpPut]
         public override async Task<ActionResult> UpdateAsync(PropertyPriceDto value, CancellationToken cancellationToken)
         {
-            var unit = new RealEstateDbContext().PriceScaleUnit.FirstOrDefault(r => r.Id == value.PriceScaleUnitId);
+            var unit = _priceScaleUnitService.Queryable.FirstOrDefault(r => r.Id == value.PriceScaleUnitId);
             if (unit is null)
                 throw new Exception("not found price unit");
 

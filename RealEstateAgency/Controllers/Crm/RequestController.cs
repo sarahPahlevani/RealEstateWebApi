@@ -27,19 +27,24 @@ namespace RealEstateAgency.Controllers.Crm
         private readonly IUserProvider _userProvider;
         private readonly IEntityService<RequestState> _requestStateService;
         private readonly IEntityService<RequestAgent> _requestAgentService;
+        private readonly IEntityService<Property> _propertyService;
+        private readonly IEntityService<Workflow> _workflowService;
         private readonly IEntityService<WorkflowStep> _workflowStepService;
         private readonly IEntityService<UserAccount> _userAccountService;
         private readonly IUpdateSignaler _signaler;
 
-        public RequestController(IModelService<Request, RequestDto> modelService, IFastHasher hasher
-            , IUserProvider userProvider, IEntityService<RequestState> requestStateService, IEntityService<RequestAgent> requestAgentService,
-            IEntityService<WorkflowStep> workflowStepService, IUpdateSignaler signaler, IEntityService<UserAccount> userAccountService)
+        public RequestController(IModelService<Request, RequestDto> modelService, IFastHasher hasher,
+            IUserProvider userProvider, IEntityService<RequestState> requestStateService, IEntityService<RequestAgent> requestAgentService,
+            IEntityService<Property> propertyService, IEntityService<Workflow> workflowService, IEntityService<WorkflowStep> workflowStepService,
+            IUpdateSignaler signaler, IEntityService<UserAccount> userAccountService)
             : base(modelService)
         {
             _hasher = hasher;
             _userProvider = userProvider;
             _requestStateService = requestStateService;
             _requestAgentService = requestAgentService;
+            _propertyService = propertyService;
+            _workflowService = workflowService;
             _workflowStepService = workflowStepService;
             _signaler = signaler;
             _userAccountService = userAccountService;
@@ -131,15 +136,16 @@ namespace RealEstateAgency.Controllers.Crm
                     RequestTypeId = i.RequestTypeId,
                     RequestType = i.RequestType,
                     WorkflowId = i.WorkflowId,
-                    Workflow = i.Workflow != null ? new Workflow
-                    {
-                        Id = i.Workflow.Id,
-                        Name = i.Workflow.Name,
-                        RequestTypeId = i.Workflow.RequestTypeId,
-                        RequestType = i.Workflow.RequestType,
-                        Request = i.Workflow.Request,
-                        WorkflowStep = i.Workflow.WorkflowStep,
-                    } : null,
+                    Workflow = i.Workflow,
+                    //Workflow = i.Workflow != null ? new Workflow
+                    //{
+                    //    Id = i.Workflow.Id,
+                    //    Name = i.Workflow.Name,
+                    //    RequestTypeId = i.Workflow.RequestTypeId,
+                    //    RequestType = i.Workflow.RequestType,
+                    //    Request = i.Workflow.Request,
+                    //    WorkflowStep = i.Workflow.WorkflowStep,
+                    //} : null,
                     CanAddProperty = i.RequestType.CanAddProperty,
                     UserAccountIdShared = i.UserAccountIdShared,
                     UserAccountShared = i.UserAccountIdSharedNavigation,
@@ -156,20 +162,21 @@ namespace RealEstateAgency.Controllers.Crm
                     AgentId = i.AgentId,
                     AgentName = $"{i.Agent.UserAccount.FirstName} {i.Agent.UserAccount.LastName}",
                     Actions = i.RequestAction,
-                    States = i.RequestState.Select(r => new RequestState
-                    {
-                        Id = r.Id,
-                        RequestId = r.RequestId,
-                        Request = r.Request,
-                        StartStepDate = r.StartStepDate,
-                        FinishedDate = r.FinishedDate,
-                        Description = r.Description,
-                        AgentId = r.AgentId,
-                        Agent = r.Agent,
-                        WorkflowStepId = r.WorkflowStepId,
-                        WorkflowStep = r.WorkflowStep,
-                        IsDone = r.IsDone,
-                    }),
+                    States = i.RequestState,
+                    //States = i.RequestState.Select(r => new RequestState
+                    //{
+                    //    Id = r.Id,
+                    //    RequestId = r.RequestId,
+                    //    Request = r.Request,
+                    //    StartStepDate = r.StartStepDate,
+                    //    FinishedDate = r.FinishedDate,
+                    //    Description = r.Description,
+                    //    AgentId = r.AgentId,
+                    //    Agent = r.Agent,
+                    //    WorkflowStepId = r.WorkflowStepId,
+                    //    WorkflowStep = r.WorkflowStep,
+                    //    IsDone = r.IsDone,
+                    //}),
                     IsAssigned = i.AgentId.HasValue,
                     Commission = i.Commission,
                     IsDone = i.IsDone,
@@ -242,8 +249,7 @@ namespace RealEstateAgency.Controllers.Crm
 
         [AllowAnonymous]
         [HttpPost("[Action]")]
-        public async Task<ActionResult<RequestDto>> CreateRequestSandBox(
-            [FromBody]RequestDto request, CancellationToken cancellationToken)
+        public async Task<ActionResult<RequestDto>> CreateRequestSandBox([FromBody]RequestDto request, CancellationToken cancellationToken)
         {
             request.TrackingNumber = _hasher.CalculateTimeHash("TrackingNumber" + Guid.NewGuid());
             request.DateCreated = DateTime.Now;
@@ -256,7 +262,7 @@ namespace RealEstateAgency.Controllers.Crm
         [AllowAnonymous]
         public override async Task<ActionResult<RequestDto>> Create(RequestDto value, CancellationToken cancellationToken)
         {
-            var workflow = new RealEstateDbContext().Workflow.FirstOrDefault(r => r.RequestTypeId == value.RequestTypeId);
+            var workflow = _workflowService.Queryable.FirstOrDefault(r => r.RequestTypeId == value.RequestTypeId);
             if (workflow is null)
                 throw new Exception("not found workflow of this request");
             value.IsDone = false;
@@ -267,7 +273,7 @@ namespace RealEstateAgency.Controllers.Crm
 
             if (value.PropertyId.HasValue)
             {
-                var property = new RealEstateDbContext().Property.FirstOrDefault(r => r.Id == value.PropertyId.Value);
+                var property = _propertyService.Queryable.FirstOrDefault(r => r.Id == value.PropertyId.Value);
                 if (property is null)
                     throw new Exception("not found property of this request");
                 value.Commission = property.Commission;
