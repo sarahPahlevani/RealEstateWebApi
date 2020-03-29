@@ -119,7 +119,7 @@ namespace RealEstateAgency.Controllers.Other
 
         private async Task<ContentResult> RenderResetPasswordResult(ResetPasswordDto dto)
         {
-            var res = await _mailer.RenderAsync(new UserREsetPasswordPage(dto));
+            var res = await _mailer.RenderAsync(new UserResetPasswordPage(dto));
             return Content(res, "text/html");
         }
 
