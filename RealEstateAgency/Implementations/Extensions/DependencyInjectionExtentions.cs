@@ -30,8 +30,11 @@ namespace RealEstateAgency.Implementations.Extensions
         public static IServiceCollection RegisterDbDependencies(this IServiceCollection services,
             IConfiguration configuration)
         {
-            services.AddDbContext<RealEstateDbContext>(options => options.UseSqlServer(configuration
-                .GetConnectionString("DefaultConnection")));
+            services.AddDbContext<RealEstateDbContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                options.EnableSensitiveDataLogging(true);
+            });
             return services;
         }
 

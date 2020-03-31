@@ -76,8 +76,7 @@ namespace RealEstateAgency.Controllers.BasicInformation
 
         [AllowAnonymous]
         [HttpGet("[Action]/{language}")]
-        public async Task<ActionResult<IEnumerable<PropertyFeatureDto>>> GetAllByLanguage(string language,
-            CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<PropertyFeatureDto>>> GetAllByLanguage(string language, CancellationToken cancellationToken)
         {
             try
             {
@@ -91,17 +90,17 @@ namespace RealEstateAgency.Controllers.BasicInformation
         }
 
 
-        [HttpDelete("{id}")]
-        public override async Task<ActionResult> Delete(int id, CancellationToken cancellationToken)
-        {
-            var item = await ModelService.GetAsync(id, cancellationToken);
-            item.Deleted = true;
-            item.DeletedDate = DateTime.UtcNow;
-            item.UserAccountIdDeleteBy = _userProvider.Id;
-            await ModelService.UpdateAsync(item, cancellationToken);
+        //[HttpDelete("{id}")]
+        //public override async Task<ActionResult> Delete(int id, CancellationToken cancellationToken)
+        //{
+        //    var item = await ModelService.GetDtoAsync(id, cancellationToken);
+        //    item.Deleted = true;
+        //    item.DeletedDate = DateTime.UtcNow;
+        //    item.UserAccountIdDeleteBy = _userProvider.Id;
+        //    await ModelService.UpdateByDtoAsync(item, cancellationToken);
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
     }
 }
