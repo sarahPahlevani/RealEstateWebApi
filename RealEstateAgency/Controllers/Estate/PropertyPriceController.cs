@@ -41,9 +41,9 @@ namespace RealEstateAgency.Controllers.Estate
         [HttpPost]
         public override async Task<ActionResult<PropertyPriceDto>> Create(PropertyPriceDto value, CancellationToken cancellationToken)
         {
-            var unit = _priceScaleUnitService.Queryable.FirstOrDefault(r => r.Id == value.PriceScaleUnitId);
+            var unit = await _priceScaleUnitService.GetAsync(value.PriceScaleUnitId, cancellationToken);
             if (unit is null)
-                throw new Exception("not found price unit");
+                throw new Exception("not found price scale unit");
 
             value.CalculatedPriceUnit = value.Price * unit.Scale;
             var res = await ModelService.CreateByDtoAsync(value, cancellationToken);
