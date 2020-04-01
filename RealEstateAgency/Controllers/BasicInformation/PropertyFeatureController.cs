@@ -89,18 +89,5 @@ namespace RealEstateAgency.Controllers.BasicInformation
             }
         }
 
-
-        //[HttpDelete("{id}")]
-        //public override async Task<ActionResult> Delete(int id, CancellationToken cancellationToken)
-        //{
-        //    var item = await ModelService.GetDtoAsync(id, cancellationToken);
-        //    item.Deleted = true;
-        //    item.DeletedDate = DateTime.UtcNow;
-        //    item.UserAccountIdDeleteBy = _userProvider.Id;
-        //    await ModelService.UpdateByDtoAsync(item, cancellationToken);
-
-        //    return NoContent();
-        //}
-
     }
 }

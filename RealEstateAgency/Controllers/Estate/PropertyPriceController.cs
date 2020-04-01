@@ -54,9 +54,9 @@ namespace RealEstateAgency.Controllers.Estate
         [HttpPut]
         public override async Task<ActionResult> UpdateAsync(PropertyPriceDto value, CancellationToken cancellationToken)
         {
-            var unit = _priceScaleUnitService.Queryable.FirstOrDefault(r => r.Id == value.PriceScaleUnitId);
+            var unit = await _priceScaleUnitService.GetAsync(value.PriceScaleUnitId, cancellationToken);
             if (unit is null)
-                throw new Exception("not found price unit");
+                throw new Exception("not found price scale unit");
 
             value.CalculatedPriceUnit = value.Price * unit.Scale;
             await ModelService.UpdateByDtoAsync(value, cancellationToken);
