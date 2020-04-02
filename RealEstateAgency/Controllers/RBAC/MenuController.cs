@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using RealEstateAgency.Shared.Statics;
 
 namespace RealEstateAgency.Controllers.RBAC
 {
@@ -24,16 +26,17 @@ namespace RealEstateAgency.Controllers.RBAC
         {
            
             _entityService = entityService;
-          
-        }
+         }
 
-        public override Func<IQueryable<Menu>, IQueryable<MenuDto>> PagingConverter=> items => items.Select(i => new MenuDto
+        public override Func<IQueryable<Menu>, IQueryable<MenuDto>> PagingConverter=> items => items//.Include(i => i.UserGroupPermission)
+        .Select(i => new MenuDto
         {
             Id = i.Id,
             Name = i.Name,
             ActionName = i.ActionName,
             ControllerName = i.ControllerName,
-            PluginName = i.PluginName
+            PluginName = i.PluginName,
+            IconName = i.IconName
         });
 
         public override Func<IQueryable<Menu>, IQueryable<MenuDto>> DtoConverter => items => items.Include(i=> i.UserGroupPermission)
@@ -45,9 +48,11 @@ namespace RealEstateAgency.Controllers.RBAC
             Name = i.Name,
             ActionName = i.ActionName,
             ControllerName = i.ControllerName,
-            PluginName = i.PluginName
+            PluginName = i.PluginName,
+            IconName = i.IconName
         });
 
+        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
         public async Task<ActionResult<IEnumerable<MenuDto>>> GetAllMenu1(CancellationToken cancellationToken)
        => await ModelService.DbContext.Menu.Where(t => t.IsPanelPage == true).Select(i => new MenuDto
@@ -56,11 +61,13 @@ namespace RealEstateAgency.Controllers.RBAC
            Name = i.Name,
            ActionName = i.ActionName,
            ControllerName = i.ControllerName,
-           PluginName = i.PluginName
+           PluginName = i.PluginName,
+           IconName = i.IconName
        }).ToListAsync(cancellationToken);
 
 
         [HttpGet("[Action]")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<MenuDto>>> GetMenuPermission12(CancellationToken cancellationToken)
             =>
             await ModelService.DbContext.Menu.Include(i => i.UserGroupPermission.Where(item => item.UserGroupId == 1))
@@ -71,10 +78,11 @@ namespace RealEstateAgency.Controllers.RBAC
                     Name = i.Name,
                     ActionName = i.ActionName,
                     ControllerName = i.ControllerName,
-                    PluginName = i.PluginName
+                    PluginName = i.PluginName,
+                    IconName = i.IconName
                 }).ToListAsync(cancellationToken);
 
-
+        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
         public ActionResult<IEnumerable<Menu>> GetAllMenu(CancellationToken cancellationToken)
         {
@@ -86,43 +94,61 @@ namespace RealEstateAgency.Controllers.RBAC
 
         }
 
+        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
-        public async Task<ActionResult<IEnumerable<MenuDto>>> GetMenuPermission1(CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<ParentMenuDto>>> GetMenuPermission1(CancellationToken cancellationToken)
         {
-            var item1 =await _entityService.DbContext.Menu.Where(t => t.IsPanelPage == true).ToListAsync(cancellationToken);
-            var tt=await ModelService.DbContext.Menu.Where(item => item.IsPanelPage == true).Select(i => new MenuDto
-                {
-                    Id = i.Id,
-                    Name = i.Name,
-                    ActionName = i.ActionName,
-                    ControllerName = i.ControllerName,
-                    PluginName = i.PluginName
-                }).ToListAsync(cancellationToken);
-            var ite= await ModelService.DbContext.Menu.Include(i => i.UserGroupPermission.Where(item => item.UserGroupId == 1))
+            var item1 = await ModelService.DbContext.Menu.Where(t => t.IsPanelPage == true && t.ParentId==null)
+                   .Include(i => i.UserGroupPermission).Select(i => new ParentMenuDto
+                   {
+                       Id = i.Id,
+                       Name = i.Name,
+                       ActionName = i.ActionName,
+                       ControllerName = i.ControllerName,
+                       PluginName = i.PluginName,
+                       IconName = i.IconName,
+                       subs = ModelService.DbContext.Menu.Where(t => t.ParentId == i.Id).Select(ff => new subMenuDto
+                       {
+                           Id = ff.Id,
+                           Name = ff.Name,
+                           ActionName = ff.ActionName,
+                           ControllerName = ff.ControllerName,
+                           PluginName = ff.PluginName,
+                           IconName = ff.IconName,
 
-                .Select(i => new MenuDto
-                {
-                    Id = i.Id,
-                    Name = i.Name,
-                    ActionName = i.ActionName,
-                    ControllerName = i.ControllerName,
-                    PluginName = i.PluginName
-                }).ToListAsync(cancellationToken);
-            return  tt;
+                       }).ToList()
+
+                   }).ToListAsync(cancellationToken);
+            return item1;
         }
 
+        
+
+
+        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
-        public async Task<ActionResult<IEnumerable<MenuDto>>> GetMenuPermission(CancellationToken cancellationToken)
-            =>
-            await ModelService.DbContext.Menu.Where(item=>item.IsPanelPage == true)
-                
-                .Select(i => new MenuDto
-                {
-                    Id = i.Id,
-                    Name = i.Name,
-                    ActionName=i.ActionName,
-                    ControllerName=i.ControllerName,
-                   PluginName=i.PluginName 
-                }).ToListAsync(cancellationToken);
+        public async Task<ActionResult<IEnumerable<ParentMenuDto>>> GetMenuPermission(CancellationToken cancellationToken) 
+            => await ModelService.DbContext.UserGroupPermission.Where(t => t.ReadPermission==true ||t.UpdatePermission==true || t.DeletePermission==true)
+                   .Include(i => i.Menu).Where(f=>f.Menu.IsPanelPage==true && f.Menu.ParentId==null)
+            .Select ( g => new ParentMenuDto
+                   {
+                       Id = g.Id,
+                       Name = g.Menu.Name,
+                       ActionName = g.Menu.ActionName,
+                       ControllerName = g.Menu.ControllerName,
+                       PluginName = g.Menu.PluginName,
+                       IconName = g.Menu.IconName,
+                       subs = ModelService.DbContext.Menu.Where(t => t.ParentId == g.Id).Select(ff => new subMenuDto
+                       {
+                           Id = ff.Id,
+                           Name = ff.Name,
+                           ActionName = ff.ActionName,
+                           ControllerName = ff.ControllerName,
+                           PluginName = ff.PluginName,
+                           IconName = ff.IconName,
+
+                       }).ToList()
+
+                   }).ToListAsync(cancellationToken);
     }
 }

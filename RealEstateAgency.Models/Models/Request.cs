@@ -44,6 +44,7 @@ namespace RealEstateAgency.DAL.Models
         public virtual UserAccount UserAccountIdRequesterNavigation { get; set; }
         public virtual UserAccount UserAccountIdSharedNavigation { get; set; }
         public virtual Workflow Workflow { get; set; }
+        public virtual Commission CommissionNavigation { get; set; }
         public virtual ICollection<Property> Property { get; set; }
         public virtual ICollection<RequestAction> RequestAction { get; set; }
         public virtual ICollection<RequestAgent> RequestAgent { get; set; }
