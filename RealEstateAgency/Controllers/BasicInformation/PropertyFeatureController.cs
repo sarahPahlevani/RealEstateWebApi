@@ -13,18 +13,21 @@ using Microsoft.AspNetCore.Authorization;
 using RealEstateAgency.Implementations.ApiImplementations.Services.Contracts;
 using RealEstateAgency.Implementations.Extensions;
 using RealEstateAgency.Implementations.Providers;
+using RealEstateAgency.Implementations.Authentication;
 
 namespace RealEstateAgency.Controllers.BasicInformation
 {
     public class PropertyFeatureController : ModelPagingController<PropertyFeature, PropertyFeatureDto, PropertyFeatureDto>
     {
         private readonly ILanguageProvider _languageProvider;
+        private readonly IUserProvider _userProvider;
 
         public PropertyFeatureController(IModelService<PropertyFeature, PropertyFeatureDto> modelService,
-            ILanguageProvider languageProvider)
+            ILanguageProvider languageProvider, IUserProvider userProvider)
             : base(modelService)
         {
             _languageProvider = languageProvider;
+            _userProvider = userProvider;
         }
 
         private Func<IQueryable<PropertyFeature>, IQueryable<PropertyFeatureDto>> _converter
@@ -73,8 +76,7 @@ namespace RealEstateAgency.Controllers.BasicInformation
 
         [AllowAnonymous]
         [HttpGet("[Action]/{language}")]
-        public async Task<ActionResult<IEnumerable<PropertyFeatureDto>>> GetAllByLanguage(string language,
-            CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<PropertyFeatureDto>>> GetAllByLanguage(string language, CancellationToken cancellationToken)
         {
             try
             {
@@ -86,5 +88,6 @@ namespace RealEstateAgency.Controllers.BasicInformation
                 return await base.GetAllAsync(cancellationToken);
             }
         }
+
     }
 }

@@ -30,6 +30,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
 
         public override IModelDto<PropertyPrice> From(PropertyPrice entity)
         {
+            Id = entity.Id;
             PropertyId = entity.Id;
             CurrencyId = entity.CurrencyId;
             PriceScaleUnitId = entity.PriceScaleUnitId;

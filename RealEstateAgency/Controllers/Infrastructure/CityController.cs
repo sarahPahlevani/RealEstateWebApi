@@ -16,6 +16,7 @@ using RealEstateAgency.Implementations.Providers;
 
 namespace RealEstateAgency.Controllers.Infrastructure
 {
+    [AllowAnonymous]
     public class CityController : ModelPagingController<City, CityDto, CityDto>
     {
         private readonly ILanguageProvider _languageProvider;
@@ -36,7 +37,7 @@ namespace RealEstateAgency.Controllers.Infrastructure
         public override Func<IQueryable<City>, IQueryable<CityDto>> DtoConverter => _baseConverter;
         public override Func<IQueryable<City>, IQueryable<CityDto>> PagingConverter => _baseConverter;
 
-        [AllowAnonymous]
+        
         [HttpGet("[Action]/{language}")]
         public async Task<ActionResult<IEnumerable<CityDto>>> GetAllByLanguage(string language,
             CancellationToken cancellationToken)

@@ -52,7 +52,7 @@ namespace RealEstateAgency.Implementations.ApiImplementations.Services.DeleteSer
         private void VirtualDelete<TVirtualDelete>(TVirtualDelete entity)
             where TVirtualDelete : class, IVirtualDelete
         {
-            entity.DeletedDate = DateTime.Now;
+            entity.DeletedDate = DateTime.UtcNow;
             entity.Deleted = true;
             entity.UserAccountIdDeleteBy = _userId;
         }

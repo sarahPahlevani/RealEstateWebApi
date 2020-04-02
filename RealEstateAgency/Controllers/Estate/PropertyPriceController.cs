@@ -16,9 +16,12 @@ namespace RealEstateAgency.Controllers.Estate
     public class PropertyPriceController : ModelController<PropertyPrice, PropertyPriceDto>
     {
         private readonly IEntityService<Property> _propertyService;
+        private readonly IEntityService<PriceScaleUnit> _priceScaleUnitService;
 
-        public PropertyPriceController(IModelService<PropertyPrice, PropertyPriceDto> modelService, IEntityService<Property> propertyService) : base(modelService)
+        public PropertyPriceController(IModelService<PropertyPrice, PropertyPriceDto> modelService, IEntityService<Property> propertyService,
+            IEntityService<PriceScaleUnit> priceScaleUnitService) : base(modelService)
         {
+            _priceScaleUnitService = priceScaleUnitService;
             _propertyService = propertyService;
         }
 
@@ -38,9 +41,9 @@ namespace RealEstateAgency.Controllers.Estate
         [HttpPost]
         public override async Task<ActionResult<PropertyPriceDto>> Create(PropertyPriceDto value, CancellationToken cancellationToken)
         {
-            var unit = new RealEstateDbContext().PriceScaleUnit.FirstOrDefault(r => r.Id == value.PriceScaleUnitId);
+            var unit = await _priceScaleUnitService.GetAsync(value.PriceScaleUnitId, cancellationToken);
             if (unit is null)
-                throw new Exception("not found price unit");
+                throw new Exception("not found price scale unit");
 
             value.CalculatedPriceUnit = value.Price * unit.Scale;
             var res = await ModelService.CreateByDtoAsync(value, cancellationToken);
@@ -51,9 +54,9 @@ namespace RealEstateAgency.Controllers.Estate
         [HttpPut]
         public override async Task<ActionResult> UpdateAsync(PropertyPriceDto value, CancellationToken cancellationToken)
         {
-            var unit = new RealEstateDbContext().PriceScaleUnit.FirstOrDefault(r => r.Id == value.PriceScaleUnitId);
+            var unit = await _priceScaleUnitService.GetAsync(value.PriceScaleUnitId, cancellationToken);
             if (unit is null)
-                throw new Exception("not found price unit");
+                throw new Exception("not found price scale unit");
 
             value.CalculatedPriceUnit = value.Price * unit.Scale;
             await ModelService.UpdateByDtoAsync(value, cancellationToken);

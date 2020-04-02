@@ -26,7 +26,9 @@ namespace RealEstateAgency.Controllers.BasicInformation
             Id = i.Id,
             Name = i.Name,
             LanguageId = i.LanguageId,
-            PropertyStatusId = i.PropertyStatusId
+            Language = i.Language,
+            PropertyStatusId = i.PropertyStatusId,
+            PropertyStatus = i.PropertyStatus,
         });
 
         [HttpGet("PropertyStatusTranslates/{tenantId}")]

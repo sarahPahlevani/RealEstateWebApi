@@ -13,6 +13,7 @@ namespace RealEstateAgency.DAL.Models
                 Name = PriceScaleUnitTranslate.Any(t => t.PriceScaleUnitId == Id && t.LanguageId == languageId)
                     ? PriceScaleUnitTranslate.First().Name
                     : Name,
+                Scale = Scale,
             };
         }
     }

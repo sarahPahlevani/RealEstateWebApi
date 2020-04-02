@@ -27,19 +27,24 @@ namespace RealEstateAgency.Controllers.Crm
         private readonly IUserProvider _userProvider;
         private readonly IEntityService<RequestState> _requestStateService;
         private readonly IEntityService<RequestAgent> _requestAgentService;
+        private readonly IEntityService<Property> _propertyService;
+        private readonly IEntityService<Workflow> _workflowService;
         private readonly IEntityService<WorkflowStep> _workflowStepService;
         private readonly IEntityService<UserAccount> _userAccountService;
         private readonly IUpdateSignaler _signaler;
 
-        public RequestController(IModelService<Request, RequestDto> modelService, IFastHasher hasher
-            , IUserProvider userProvider, IEntityService<RequestState> requestStateService, IEntityService<RequestAgent> requestAgentService,
-            IEntityService<WorkflowStep> workflowStepService, IUpdateSignaler signaler, IEntityService<UserAccount> userAccountService)
+        public RequestController(IModelService<Request, RequestDto> modelService, IFastHasher hasher,
+            IUserProvider userProvider, IEntityService<RequestState> requestStateService, IEntityService<RequestAgent> requestAgentService,
+            IEntityService<Property> propertyService, IEntityService<Workflow> workflowService, IEntityService<WorkflowStep> workflowStepService,
+            IUpdateSignaler signaler, IEntityService<UserAccount> userAccountService)
             : base(modelService)
         {
             _hasher = hasher;
             _userProvider = userProvider;
             _requestStateService = requestStateService;
             _requestAgentService = requestAgentService;
+            _propertyService = propertyService;
+            _workflowService = workflowService;
             _workflowStepService = workflowStepService;
             _signaler = signaler;
             _userAccountService = userAccountService;
@@ -119,61 +124,72 @@ namespace RealEstateAgency.Controllers.Crm
         public override Func<IQueryable<Request>, IQueryable<RequestListDto>> PagingConverter
             => items => items
                 .Include(i => i.UserAccountIdRequesterNavigation)
+                .Include(i => i.UserAccountIdSharedNavigation)
                 .Include(i => i.RequestAgent)
                 .Include(i => i.RequestType)
+                .Include(i => i.Workflow)
+                .Include(i => i.Workflow.WorkflowStep)
+                .Include(i => i.RequestState)
                 .Include("RequestAction.RequestActionFollowUp")
                 .Select(i => new RequestListDto
                 {
                     Id = i.Id,
-                    Description = i.Description,
-                    Title = i.Title,
-                    DateCreated = i.DateCreated,
                     RequestTypeId = i.RequestTypeId,
-                    RequestType = i.RequestType,
+                    RequestTypeName = i.RequestType.Name,
                     WorkflowId = i.WorkflowId,
-                    Workflow = i.Workflow != null ? new Workflow
-                    {
-                        Id = i.Workflow.Id,
-                        Name = i.Workflow.Name,
-                        RequestTypeId = i.Workflow.RequestTypeId,
-                        RequestType = i.Workflow.RequestType,
-                        Request = i.Workflow.Request,
-                        WorkflowStep = i.Workflow.WorkflowStep,
-                    } : null,
                     CanAddProperty = i.RequestType.CanAddProperty,
                     UserAccountIdShared = i.UserAccountIdShared,
-                    UserAccountShared = i.UserAccountIdSharedNavigation,
+                    UserAccountSharedFullname = i.UserAccountIdSharedNavigation == null ? "" : $"{i.UserAccountIdSharedNavigation.FirstName} {i.UserAccountIdSharedNavigation.LastName}",
                     NetworkIdShared = i.NetworkIdShared,
-                    NetworkShared = i.NetworkIdSharedNavigation,
-                    TrackingNumber = i.TrackingNumber,
+                    NetworkSharedName = i.NetworkIdSharedNavigation == null ? "" : i.NetworkIdSharedNavigation.Name,
                     UserAccountIdRequester = i.UserAccountIdRequester,
-                    RequesterFullname = i.RequesterFullname,
-                    RequesterEmail = i.RequesterEmail,
-                    RequesterPhone = i.RequesterPhone,
-                    User = i.UserAccountIdRequesterNavigation,
-                    PropertyId = i.PropertyId,
-                    PropertyTitle = i.PropertyNavigation != null ? i.PropertyNavigation.Title : "",
+                    RequesterFullname = i.UserAccountIdRequesterNavigation == null ? i.RequesterFullname : $"{i.UserAccountIdRequesterNavigation.FirstName} {i.UserAccountIdRequesterNavigation.LastName}",
+                    RequesterEmail = i.UserAccountIdRequesterNavigation == null ? i.RequesterEmail : i.UserAccountIdRequesterNavigation.Email,
+                    RequesterPhone = i.UserAccountIdRequesterNavigation == null ? i.RequesterPhone : i.UserAccountIdRequesterNavigation.Phone01,
+                    TrackingNumber = i.TrackingNumber,
+                    Title = i.Title,
+                    Description = i.Description,
                     AgentId = i.AgentId,
                     AgentName = $"{i.Agent.UserAccount.FirstName} {i.Agent.UserAccount.LastName}",
-                    Actions = i.RequestAction,
-                    States = i.RequestState.Select(r => new RequestState
-                    {
-                        Id = r.Id,
-                        RequestId = r.RequestId,
-                        Request = r.Request,
-                        StartStepDate = r.StartStepDate,
-                        FinishedDate = r.FinishedDate,
-                        Description = r.Description,
-                        AgentId = r.AgentId,
-                        Agent = r.Agent,
-                        WorkflowStepId = r.WorkflowStepId,
-                        WorkflowStep = r.WorkflowStep,
-                        IsDone = r.IsDone,
-                    }),
+                    PropertyId = i.PropertyId,
+                    PropertyTitle = i.PropertyNavigation != null ? i.PropertyNavigation.Title : "",
+                    LatestStateName = i.RequestState.OrderByDescending(rs => rs.Id).FirstOrDefault().WorkflowStep.Name,
+                    LatestStateIsFinish = i.RequestState.OrderByDescending(rs => rs.Id).FirstOrDefault().WorkflowStep.IsFinish,
                     IsAssigned = i.AgentId.HasValue,
-                    Commission = i.Commission,
+                    DateCreated = i.DateCreated,
                     IsDone = i.IsDone,
                     IsSuccess = i.IsSuccess,
+                    Commission = i.Commission,
+
+                    //Workflow = i.Workflow,
+                    //Workflow = i.Workflow != null ? new Workflow
+                    //{
+                    //    Id = i.Workflow.Id,
+                    //    Name = i.Workflow.Name,
+                    //    RequestTypeId = i.Workflow.RequestTypeId,
+                    //    RequestType = i.Workflow.RequestType,
+                    //    Request = i.Workflow.Request,
+                    //    WorkflowStep = i.Workflow.WorkflowStep,
+                    //} : null,
+                    //UserAccountShared = i.UserAccountIdSharedNavigation,
+                    //NetworkShared = i.NetworkIdSharedNavigation,
+                    //User = i.UserAccountIdRequesterNavigation,
+                    //Actions = i.RequestAction,
+                    //States = i.RequestState,
+                    //States = i.RequestState.Select(r => new RequestState
+                    //{
+                    //    Id = r.Id,
+                    //    RequestId = r.RequestId,
+                    //    Request = r.Request,
+                    //    StartStepDate = r.StartStepDate,
+                    //    FinishedDate = r.FinishedDate,
+                    //    Description = r.Description,
+                    //    AgentId = r.AgentId,
+                    //    Agent = r.Agent,
+                    //    WorkflowStepId = r.WorkflowStepId,
+                    //    WorkflowStep = r.WorkflowStep,
+                    //    IsDone = r.IsDone,
+                    //}),
                 }).OrderBy(i => i.IsAssigned).ThenByDescending(i => i.DateCreated);
 
         public override async Task<ActionResult<RequestDto>> GetAsync(int id, CancellationToken cancellationToken)
@@ -242,8 +258,7 @@ namespace RealEstateAgency.Controllers.Crm
 
         [AllowAnonymous]
         [HttpPost("[Action]")]
-        public async Task<ActionResult<RequestDto>> CreateRequestSandBox(
-            [FromBody]RequestDto request, CancellationToken cancellationToken)
+        public async Task<ActionResult<RequestDto>> CreateRequestSandBox([FromBody]RequestDto request, CancellationToken cancellationToken)
         {
             request.TrackingNumber = _hasher.CalculateTimeHash("TrackingNumber" + Guid.NewGuid());
             request.DateCreated = DateTime.Now;
@@ -256,7 +271,7 @@ namespace RealEstateAgency.Controllers.Crm
         [AllowAnonymous]
         public override async Task<ActionResult<RequestDto>> Create(RequestDto value, CancellationToken cancellationToken)
         {
-            var workflow = new RealEstateDbContext().Workflow.FirstOrDefault(r => r.RequestTypeId == value.RequestTypeId);
+            var workflow = _workflowService.Queryable.FirstOrDefault(r => r.RequestTypeId == value.RequestTypeId);
             if (workflow is null)
                 throw new Exception("not found workflow of this request");
             value.IsDone = false;
@@ -267,7 +282,7 @@ namespace RealEstateAgency.Controllers.Crm
 
             if (value.PropertyId.HasValue)
             {
-                var property = new RealEstateDbContext().Property.FirstOrDefault(r => r.Id == value.PropertyId.Value);
+                var property = _propertyService.Queryable.FirstOrDefault(r => r.Id == value.PropertyId.Value);
                 if (property is null)
                     throw new Exception("not found property of this request");
                 value.Commission = property.Commission;
@@ -281,35 +296,42 @@ namespace RealEstateAgency.Controllers.Crm
             return res;
         }
 
-        public override async Task<ActionResult<PageResultDto<RequestListDto>>>
-            GetPageAsync([FromBody] PageRequestFilterDto requestDto, CancellationToken cancellationToken)
+        public override async Task<ActionResult<PageResultDto<RequestListDto>>> GetPageAsync([FromBody] PageRequestFilterDto requestDto, CancellationToken cancellationToken)
         {
             var result = await GetPageResultAsync(
                 ModelService.AsQueryable(i => i.AgentId == _userProvider.AgentId),
                 requestDto,
                 requestDto.Filter.ToObject<RequestListFilter>(),
                 cancellationToken);
-            foreach (var item in result.Value.Items)
-            {
-                if (item.User != null)
-                    item.User.PasswordHash = null;
-            }
+            //foreach (var item in result.Value.Items)
+            //{
+            //    if (item.User != null)
+            //        item.User.PasswordHash = null;
+            //}
 
             return result;
         }
 
-        public override async Task<ActionResult<PageResultDto<RequestListDto>>> GetPageAsync(int pageSize, int pageNumber,
-            CancellationToken cancellationToken)
+        public override async Task<ActionResult<PageResultDto<RequestListDto>>> GetPageAsync(int pageSize, int pageNumber, CancellationToken cancellationToken)
         {
             var result = await GetPageResultAsync(
                 ModelService.AsQueryable(i => i.AgentId == _userProvider.AgentId),
+                //.Include(r => r.RequestAgent)
+                //.Include(r => r.RequestType)
+                //.Include(r => r.UserAccountIdRequesterNavigation)
+                //.Include(r => r.UserAccountIdSharedNavigation)
+                //.Include(r => r.PropertyNavigation)
+                //.Include(r => r.RequestState)
+                //.Include(r => r.RequestAction)
+                //.Include(r => r.Workflow)
+                //.Include(r => r.Workflow.WorkflowStep),
                 new PageRequestDto(pageSize, pageNumber),
                 new NullFilter<Request>(), cancellationToken);
-            foreach (var item in result.Value.Items)
-            {
-                if (item.User != null)
-                    item.User.PasswordHash = null;
-            }
+            //foreach (var item in result.Value.Items)
+            //{
+            //    if (item.User != null)
+            //        item.User.PasswordHash = null;
+            //}
 
             return result;
         }
@@ -322,76 +344,14 @@ namespace RealEstateAgency.Controllers.Crm
                     return Forbid();
 
             var result = await GetPageResultAsync(ModelService.Queryable, requestDto, requestDto.Filter.ToObject<RequestListFilter>(), cancellationToken);
-            foreach (var item in result.Value.Items)
-            {
-                if (item.User != null)
-                    item.User.PasswordHash = null;
-            }
+            //foreach (var item in result.Value.Items)
+            //{
+            //    if (item.User != null)
+            //        item.User.PasswordHash = null;
+            //}
 
             return result;
         }
-
-
-        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
-        //[HttpPost("[Action]")]
-        //public async Task<ActionResult<List<CommissionDto>>> NewGetUserCommission()
-        //{
-        //    List<CommissionDto> list = new List<CommissionDto>();
-        //    var result = await ModelService.AsQueryable(t => t.IsDone == true && t.IsSuccess == true && t.UserAccountIdShared != null)
-        //        .Include(t => t.Property).Include(i => i.Property.FirstOrDefault().PropertyPrice)
-        //        .Select(o => new CommissionDto
-        //        {
-        //            CommissionPercent = o.Commission,
-        //            DateCreated = o.DateCreated,
-        //            PropertyId = o.Id,
-        //            PropertyPrice = o.Property.FirstOrDefault(t => t.Id == o.PropertyId).PropertyPrice.Price,
-        //            PropertyTitle = o.Title,
-        //            RequesterFullname = o.RequesterFullname,
-        //            TotalCommission = (o.Property.FirstOrDefault(t => t.Id == o.PropertyId).PropertyPrice.Price - ((o.Property.FirstOrDefault(t => t.Id == o.PropertyId).PropertyPrice.Price * (o.Commission == null ? 1 : o.Commission)) / 100)),
-        //            UserName = ""
-        //        }).ToListAsync();
-        //    return result;
-        //}
-
-
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
-        [HttpPost("[Action]")]
-        public async Task<ActionResult<List<CommissionDto>>> NewGetUserCommission()
-        {
-
-            //SELECT R.RequesterFullname , P.Title , p.Commission , R.Commission , PP.Price , A.UserName , A.FirstName , A.LastName , R.DateCreated FROM CRM.Request R
-            //INNER JOIN Estate.Property P ON R.PropertyId = P.Id
-            //INNER JOIN RBAC.UserAccount A ON R.UserAccountId_Shared = A.Id
-            //INNER JOIN Estate.PropertyPrice PP ON PP.Id = P.Id
-            //WHERE R.IsDone = 1 and R.IsSuccess = 1 and R.UserAccountId_Shared is not NULL
-
-
-            //ModelService.AsQueryable(t => t.RequestAgent).Select(t => t.Property);
-
-            List<CommissionDto> list = new List<CommissionDto>();
-            list = await (from r in ModelService.DbContext.Request
-                    join p in ModelService.DbContext.Property on r.PropertyId equals p.Id
-                    join u in ModelService.DbContext.UserAccount on r.UserAccountIdShared equals u.Id
-                    join pp in ModelService.DbContext.PropertyPrice on r.PropertyId equals pp.Id
-                    where r.UserAccountIdShared != null && r.IsDone == true && r.IsSuccess == true
-                    //&& r.UserAccountIdShared == _userProvider.Id
-                    select new CommissionDto
-                    {
-                        CommissionPercent = r.Commission == null ? 0 : r.Commission,
-                        PropertyId = p.Id,
-                        PropertyPrice = pp.Price,
-                        PropertyTitle = p.Title,
-                        TotalCommission = pp.Price - (pp.Price - ((pp.Price * (r.Commission == null ? 0 : r.Commission)) / 100)),
-                        DateCreated = r.DateCreated,
-                        RequesterFullname = r.RequesterFullname,
-                        UserName = u.UserName,
-                        CurrencySymbol = pp.Currency.Symbol
-                    }).ToListAsync();
-
-            return list;
-        }
-
-
 
         [HttpPost("[Action]")]
         public async Task<ActionResult> ChangeRequestAgent([FromBody] ChangeRequestAgentDto dto, CancellationToken cancellationToken)

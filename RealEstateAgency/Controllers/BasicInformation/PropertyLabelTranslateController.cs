@@ -23,10 +23,12 @@ namespace RealEstateAgency.Controllers.BasicInformation
         public override Func<IQueryable<PropertyLabelTranslate>, IQueryable<PropertyLabelTranslateDto>> DtoConverter
         => items => items.Select(i => new PropertyLabelTranslateDto
         {
-            Name = i.Name,
             Id = i.Id,
+            Name = i.Name,
+            Language = i.Language,
             LanguageId = i.LanguageId,
-            PropertyLabelId = i.PropertyLabelId
+            PropertyLabelId = i.PropertyLabelId,
+            PropertyLabel = i.PropertyLabel,
         });
 
         [HttpGet("PropertyLabelTranslates/{tenantId}")]

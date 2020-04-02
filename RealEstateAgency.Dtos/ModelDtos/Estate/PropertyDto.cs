@@ -41,6 +41,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
         public DateTime? ReadyForPublishDate { get; set; }
         public byte? Commission { get; set; }
 
+
         public override IModelDto<Property> From(Property entity)
         {
             Id = entity.Id;

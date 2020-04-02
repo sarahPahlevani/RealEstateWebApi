@@ -4,9 +4,11 @@ using RealEstateAgency.DAL.Models;
 using RealEstateAgency.Dtos.ModelDtos.Infrastructure;
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RealEstateAgency.Controllers.Infrastructure
 {
+    [AllowAnonymous]
     public class CityTranslateController : ModelController<CityTranslate, CityTranslateDto>
     {
         public CityTranslateController(IModelService<CityTranslate, CityTranslateDto> modelService) : base(modelService)

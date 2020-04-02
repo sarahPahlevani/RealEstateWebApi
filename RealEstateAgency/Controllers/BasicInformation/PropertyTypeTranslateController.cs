@@ -27,8 +27,10 @@ namespace RealEstateAgency.Controllers.BasicInformation
         {
             Name = i.Name,
             Id = i.Id,
+            Language = i.Language,
             LanguageId = i.LanguageId,
-            PropertyTypeId = i.PropertyTypeId
+            PropertyTypeId = i.PropertyTypeId,
+            PropertyType = i.PropertyType,
         });
 
         [HttpGet("PropertyTypeTranslates/{tenantId}")]

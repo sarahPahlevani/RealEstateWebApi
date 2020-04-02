@@ -11,8 +11,12 @@ namespace RealEstateAgency.Dtos.ModelDtos.BasicInformation
         [Required]
         public int PropertyTypeId { get; set; }
 
+        public PropertyType PropertyType { get; set; }
+
         [Required]
         public int LanguageId { get; set; }
+
+        public Language Language { get; set; }
 
         [Required]
         public string Name { get; set; }
@@ -22,7 +26,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.BasicInformation
             Id = entity.Id;
             Name = entity.Name;
             PropertyTypeId = entity.PropertyTypeId;
+            PropertyType = entity.PropertyType;
             LanguageId = entity.LanguageId;
+            Language = entity.Language;
             return this;
         }
 

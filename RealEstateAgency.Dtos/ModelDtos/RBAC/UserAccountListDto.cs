@@ -29,5 +29,11 @@ namespace RealEstateAgency.Dtos.ModelDtos.RBAC
         public string VatCode { get; set; }
         public string UserPictureTumblr { get; set; }
         public string UserGroupName { get; set; }
+
+
+
+        public decimal TotalEarn { get; set; }
+
+        public decimal TotalWithdrawal { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace RealEstateAgency.Implementations.ApiImplementations.Services.GetServic
             => _getAllService = getAllService;
 
         public override async Task<TEntity> GetAsync(int id, CancellationToken cancellationToken = default)
-            => await AsQueryable().FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
+            => await AsQueryable().AsNoTracking().FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
 
         public override async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
             => await AsQueryable().FirstOrDefaultAsync(filter, cancellationToken);
@@ -25,7 +25,7 @@ namespace RealEstateAgency.Implementations.ApiImplementations.Services.GetServic
         public override TEntity Get(Expression<Func<TEntity, bool>> filter)
             => AsQueryable().FirstOrDefault(filter);
 
-        public override TEntity Get(int id) => AsQueryable().FirstOrDefault(i => i.Id == id);
+        public override TEntity Get(int id) => AsQueryable().AsNoTracking().FirstOrDefault(i => i.Id == id);
 
         private IQueryable<TEntity> AsQueryable() => _getAllService.Queryable;
     }

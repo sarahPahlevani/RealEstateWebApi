@@ -21,6 +21,8 @@ using RealEstateAgency.Mailables;
 using RealEstateAgency.Shared.BaseModels;
 using static RealEstateAgency.Controllers.Other.PublicController;
 using System;
+using RealEstateAgency.Shared.Statics;
+using RealEstateAgency.Shared.Services;
 
 namespace RealEstateAgency.Controllers.Authentication
 {
@@ -35,12 +37,14 @@ namespace RealEstateAgency.Controllers.Authentication
         private readonly IUserGroupProvider _groupProvider;
         private readonly AppSetting _appSetting; 
         private readonly IEntityService<UserAccount> _userService;
+        private readonly IPasswordService _passwordService;
 
         public AuthController(IAppAuthService appAuthService, IEntityService<UserAccount> userService
             , IModelService<UserAccount, UserAccountDto> userAccount
             , IUserProvider userProvider,IMailer mailer,IOptions<AppSetting> appSetting
             , IUserGroupProvider groupProvider, IEntityService<RealEstate> estateService
-            , IRecaptchaService recaptchaService)
+            , IRecaptchaService recaptchaService
+            , IPasswordService passwordService)
         {
             _appAuthService = appAuthService;
             _userAccount = userAccount;
@@ -51,6 +55,7 @@ namespace RealEstateAgency.Controllers.Authentication
             _recaptchaService = recaptchaService;
             _appSetting = appSetting.Value;
             _userService = userService;
+            _passwordService = passwordService;
         }
 
         [AllowAnonymous]
@@ -93,8 +98,7 @@ namespace RealEstateAgency.Controllers.Authentication
 
         [AllowAnonymous]
         [HttpPost("[Action]")]
-        public async Task<CheckUserResultDto> CheckUser([FromBody] UserCheckDto registerAgentDto
-            , CancellationToken cancellationToken)
+        public async Task<CheckUserResultDto> CheckUser([FromBody] UserCheckDto registerAgentDto, CancellationToken cancellationToken)
         {
             try
             {
@@ -161,6 +165,34 @@ namespace RealEstateAgency.Controllers.Authentication
         }
 
 
+        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        [HttpPost("[Action]")]
+        public async Task<ActionResult> AdminChangePassword(int id, string password)
+        {
+            return await UserChangePassword(id, null, password);
+        }
+
+        [HttpPost("[Action]")]
+        public async Task<ActionResult> UserChangePassword(int id, string oldPassword, string newPassword)
+        {
+            if (_userProvider.Id != id && _userProvider.Role != UserGroups.Administrator && _userProvider.Role != UserGroups.RealEstateAdministrator)
+                return Forbid();
+
+            var user = await _userService.GetAsync(u => u.Id == id);
+            if (user is null)
+                throw new AppNotFoundException("User cannot be found");
+
+            if (_userProvider.Role != UserGroups.Administrator && _userProvider.Role != UserGroups.RealEstateAdministrator)
+                if (!_passwordService.VerifyUser(user.Email, oldPassword, user.PasswordHash))
+                    throw new AppException("Current password is invalid");
+
+            await _appAuthService.UpdatePasswordAsync(user.Id, newPassword);
+
+            return Ok();
+        }
+
+
+
         [AllowAnonymous]
         [HttpPost("[Action]")]
         public async Task<ActionResult<string>> RequestResetPassword(LoginDto login, CancellationToken cancellationToken)
@@ -179,7 +211,6 @@ namespace RealEstateAgency.Controllers.Authentication
 
             return resetPasswordKey;
         }
-
 
 
         [HttpPost("[Action]")]
@@ -208,7 +239,7 @@ namespace RealEstateAgency.Controllers.Authentication
         }
         private async Task<ContentResult> RenderResetPasswordResult(ResetPasswordDto dto)
         {
-            var res = await _mailer.RenderAsync(new UserREsetPasswordPage(dto));
+            var res = await _mailer.RenderAsync(new UserResetPasswordPage(dto));
             return Content(res, "text/html");
         }
     }

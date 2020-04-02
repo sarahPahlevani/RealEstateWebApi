@@ -29,6 +29,7 @@ namespace RealEstateAgency.Controllers.Organization
     public class AgentController : ModelPagingController<Agent, AgentDto, AgentListDto>
     {
         private readonly IEntityService<UserAccount> _userAccountService;
+        private readonly IEntityService<Agent> _agentService;
         private readonly IFastHasher _fastHasher;
         private readonly IUserProvider _userProvider;
         private readonly IPasswordService _passwordService;
@@ -36,12 +37,14 @@ namespace RealEstateAgency.Controllers.Organization
 
         public AgentController(IModelService<Agent, AgentDto> modelService,
             IEntityService<UserAccount> userAccountService,
+            IEntityService<Agent> agentService,
             IFastHasher fastHasher,
             IUserProvider userProvider,
             IPasswordService passwordService,
             IPathProvider pathProvider) : base(modelService)
         {
             _userAccountService = userAccountService;
+            _agentService = agentService;
             _fastHasher = fastHasher;
             _userProvider = userProvider;
             _passwordService = passwordService;
@@ -199,7 +202,7 @@ namespace RealEstateAgency.Controllers.Organization
         [HttpGet("[Action]/{userId}")]
         public async Task<ActionResult<AgentAccountDto>> GetAgentByUserId(int userId, CancellationToken cancellationToken)
         {
-            var item = await new RealEstateDbContext().Agent.Where(r => r.UserAccountId == userId)
+            var item = await _agentService.Queryable.Where(r => r.UserAccountId == userId)
                 .Select(i => new AgentAccountDto
                 {
                     Description = i.Description,
