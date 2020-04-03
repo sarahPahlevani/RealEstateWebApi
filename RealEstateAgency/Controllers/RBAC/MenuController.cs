@@ -28,7 +28,7 @@ namespace RealEstateAgency.Controllers.RBAC
             _entityService = entityService;
          }
 
-        public override Func<IQueryable<Menu>, IQueryable<MenuDto>> PagingConverter=> items => items//.Include(i => i.UserGroupPermission)
+        public override Func<IQueryable<Menu>, IQueryable<MenuDto>> PagingConverter=> items => items.Include(i => i.UserGroupPermission)
         .Select(i => new MenuDto
         {
             Id = i.Id,
@@ -138,7 +138,7 @@ namespace RealEstateAgency.Controllers.RBAC
                        ControllerName = g.Menu.ControllerName,
                        PluginName = g.Menu.PluginName,
                        IconName = g.Menu.IconName,
-                       subs = ModelService.DbContext.Menu.Where(t => t.ParentId == g.Id).Select(ff => new subMenuDto
+                       subs = ModelService.DbContext.Menu.Where(t => t.ParentId == g.MenuId).Select(ff => new subMenuDto
                        {
                            Id = ff.Id,
                            Name = ff.Name,
