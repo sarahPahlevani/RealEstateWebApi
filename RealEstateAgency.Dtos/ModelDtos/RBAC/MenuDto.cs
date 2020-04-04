@@ -23,7 +23,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.RBAC
             IsPanelPage = IsPanelPage,
             ControllerName = ControllerName,
             ParentId = ParentId,
-            //IconName=IconName,
+            IconName=IconName,
             ActionName = ActionName
         };
         public override IModelDto<Menu> From (Menu entity)
@@ -35,7 +35,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.RBAC
             IsPanelPage = entity.IsPanelPage;
             ControllerName = entity.ControllerName;
             ParentId = entity.ParentId;
-            //IconName = entity.IconName;
+            IconName = entity.IconName;
             ActionName = entity.ActionName;
 
             return this;
@@ -49,11 +49,30 @@ namespace RealEstateAgency.Dtos.ModelDtos.RBAC
             IsPanelPage = IsPanelPage,
             ControllerName = ControllerName,
             ParentId = ParentId,
-            //IconName = IconName,
+            IconName = IconName,
             ActionName = ActionName
         };
     }
+    public class MenuNameDto : ModelDtoBase<Menu>
+    {
+        public override int Id { get; set; }
+        public string MenuTypeName { get; set; }
 
+        public override Menu Create()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override IModelDto<Menu> From(Menu entity)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override Menu Update()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
     public class ParentMenuDto : ModelDtoBase<Menu>
     {
         public ParentMenuDto()

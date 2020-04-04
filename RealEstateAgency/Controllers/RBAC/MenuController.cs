@@ -54,7 +54,7 @@ namespace RealEstateAgency.Controllers.RBAC
 
         [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
-        public async Task<ActionResult<IEnumerable<MenuDto>>> GetAllMenu1(CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<MenuDto>>> GetAllPanelMenu(CancellationToken cancellationToken)
        => await ModelService.DbContext.Menu.Where(t => t.IsPanelPage == true).Select(i => new MenuDto
        {
            Id = i.Id,
@@ -96,29 +96,13 @@ namespace RealEstateAgency.Controllers.RBAC
 
         [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
-        public async Task<ActionResult<IEnumerable<ParentMenuDto>>> GetMenuPermission1(CancellationToken cancellationToken)
+        public async Task<ActionResult<IEnumerable<MenuNameDto>>> GetMenu(CancellationToken cancellationToken)
         {
-            var item1 = await ModelService.DbContext.Menu.Where(t => t.IsPanelPage == true && t.ParentId==null)
-                   .Include(i => i.UserGroupPermission).Select(i => new ParentMenuDto
+            var item1 = await ModelService.DbContext.Menu.Select(i => new MenuNameDto
                    {
                        Id = i.Id,
-                       Name = i.Name,
-                       ActionName = i.ActionName,
-                       ControllerName = i.ControllerName,
-                       PluginName = i.PluginName,
-                       IconName = i.IconName,
-                       subs = ModelService.DbContext.Menu.Where(t => t.ParentId == i.Id).Select(ff => new subMenuDto
-                       {
-                           Id = ff.Id,
-                           Name = ff.Name,
-                           ActionName = ff.ActionName,
-                           ControllerName = ff.ControllerName,
-                           PluginName = ff.PluginName,
-                           IconName = ff.IconName,
-
-                       }).ToList()
-
-                   }).ToListAsync(cancellationToken);
+                MenuTypeName = i.Name
+            }).ToListAsync(cancellationToken);
             return item1;
         }
 
