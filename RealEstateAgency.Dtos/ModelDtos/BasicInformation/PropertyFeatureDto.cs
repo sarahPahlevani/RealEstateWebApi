@@ -15,8 +15,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.BasicInformation
 
         public override IModelDto<PropertyFeature> From(PropertyFeature entity)
         {
-            Name = entity.Name;
             Id = entity.Id;
+            Name = entity.Name;
             Icon = entity.Icon;
             return this;
         }

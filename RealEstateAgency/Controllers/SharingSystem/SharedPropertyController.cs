@@ -42,21 +42,22 @@ namespace RealEstateAgency.Controllers.SharingSystem
             GetUserSharedPropertyAsync([FromQuery] int userId, [FromQuery] PageRequestDto requestDto, CancellationToken cancellationToken)
         {
             var list = await new PageResultDto<UserSharedPropertyDto>(
-                    ModelService.Queryable.Where(r => r.UserAccountId == userId)
+                    ModelService.Queryable
+                    .Where(r => r.UserAccountId == userId)
+                    .GroupBy(r => r.SocialNetworkId)
                         .Select(p => new UserSharedPropertyDto
                         {
-                            Id = p.Id,
-                            PropertyId = p.PropertyId,
-                            PropertyType = p.Property.PropertyType.Name,
-                            PropertyTitle = p.Property.Title,
-                            PropertyPrice = p.Property.PropertyPrice.Price,
-                            PropertyImage = p.Property.PropertyImage.OrderBy(r => r.Priority).Select(r => new PropertyWebAppImageDto { Id = r.Id, ImagePath = r.ImagePath, TumbPath = r.TumbPath }).FirstOrDefault(),
-                            UserAccountId = p.UserAccountId,
-                            SocialNetworkId = p.SocialNetworkId,
-                            SocialNetworkTitle = p.SocialNetwork.Name,
-                            SocialNetworkIcon = p.SocialNetwork.LogoPicture,
-                            RefererUrl = p.RefererUrl,
-                            ClickCount = p.ClickCount,
+                            PropertyId = p.First().PropertyId,
+                            PropertyType = p.First().Property.PropertyType.Name,
+                            PropertyTitle = p.First().Property.Title,
+                            PropertyPrice = p.First().Property.PropertyPrice.Price,
+                            PropertyImage = p.First().Property.PropertyImage.OrderBy(r => r.Priority).Select(r => new PropertyWebAppImageDto { Id = r.Id, ImagePath = r.ImagePath, TumbPath = r.TumbPath }).FirstOrDefault(),
+                            UserAccountId = p.First().UserAccountId,
+                            SocialNetworkId = p.First().SocialNetworkId,
+                            SocialNetworkTitle = p.First().SocialNetwork.Name,
+                            SocialNetworkIcon = p.First().SocialNetwork.LogoPicture,
+                            RefererUrl = p.First().RefererUrl,
+                            ClickCount = p.Sum(r => r.ClickCount),
                         }), requestDto)
                 .GetPage(cancellationToken);
 

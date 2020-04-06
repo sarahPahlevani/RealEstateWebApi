@@ -13,6 +13,7 @@ using System.Threading;
 using RealEstateAgency.Implementations.ApiImplementations.PageDtos.PageFilters;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RealEstateAgency.Controllers.Infrastructure
 {
@@ -33,7 +34,7 @@ namespace RealEstateAgency.Controllers.Infrastructure
                     UserAccountId = i.UserAccountId,
                     UserAccount = i.UserAccount,
                     PropertyId = i.PropertyId,
-                    Property = i.Property,
+                    //Property = i.Property,
                     DateCreated = i.DateCreated,
                 }).OrderByDescending(i => i.DateCreated);
 
@@ -47,10 +48,16 @@ namespace RealEstateAgency.Controllers.Infrastructure
                     DateCreated = i.DateCreated,
                 });
 
+        
         [HttpGet("[Action]")]
         public async Task<ActionResult<List<BookmarkListDto>>> GetByUser(CancellationToken cancellationToken)
         {
-            return await ModelService.Queryable.Where(r => r.UserAccountId == _userProvider.Id)
+            return await ModelService.Queryable
+                .Include(r => r.UserAccount)
+                .Include(r => r.Property)
+                .Include(r => r.Property.PropertyPrice)
+                .Include(r => r.Property.PropertyImage)
+                .Where(r => r.UserAccountId == _userProvider.Id && r.Property.IsPublished && !r.Property.Deleted)
                 .Select(r => new BookmarkListDto
                 {
                     Id = r.Id,
@@ -58,6 +65,8 @@ namespace RealEstateAgency.Controllers.Infrastructure
                     UserAccount = r.UserAccount,
                     PropertyId = r.PropertyId,
                     Property = r.Property,
+                    PropertyPrice = r.Property.PropertyPrice,
+                    PropertyImage = r.Property.PropertyImage,
                     DateCreated = r.DateCreated,
                 }).OrderByDescending(r => r.DateCreated).ToListAsync(cancellationToken);
         }

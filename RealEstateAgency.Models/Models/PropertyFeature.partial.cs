@@ -15,7 +15,8 @@ namespace RealEstateAgency.DAL.Models
                 Id = Id,
                 Name = PropertyFeatureTranslate.Any(t => t.PropertyFeatureId == Id && t.LanguageId == languageId)
                     ? PropertyFeatureTranslate.First().Name
-                    : Name
+                    : Name,
+                Icon = Icon,
             };
         }
     }
