@@ -48,27 +48,26 @@ namespace RealEstateAgency.Controllers.Infrastructure
                     DateCreated = i.DateCreated,
                 });
 
-        
         [HttpGet("[Action]")]
         public async Task<ActionResult<List<BookmarkListDto>>> GetByUser(CancellationToken cancellationToken)
         {
-            return await ModelService.Queryable
+            var list = await ModelService.Queryable
                 .Include(r => r.UserAccount)
                 .Include(r => r.Property)
                 .Include(r => r.Property.PropertyPrice)
                 .Include(r => r.Property.PropertyImage)
                 .Where(r => r.UserAccountId == _userProvider.Id && r.Property.IsPublished && !r.Property.Deleted)
-                .Select(r => new BookmarkListDto
-                {
-                    Id = r.Id,
-                    UserAccountId = r.UserAccountId,
-                    UserAccount = r.UserAccount,
-                    PropertyId = r.PropertyId,
-                    Property = r.Property,
-                    PropertyPrice = r.Property.PropertyPrice,
-                    PropertyImage = r.Property.PropertyImage,
-                    DateCreated = r.DateCreated,
-                }).OrderByDescending(r => r.DateCreated).ToListAsync(cancellationToken);
+                .OrderByDescending(r => r.DateCreated).ToListAsync(cancellationToken);
+
+            return list.Select(r => new BookmarkListDto
+            {
+                Id = r.Id,
+                UserAccountId = r.UserAccountId,
+                UserAccount = r.UserAccount,
+                PropertyId = r.PropertyId,
+                Property = r.Property,
+                DateCreated = r.DateCreated,
+            }).ToList();
         }
     }
 }
