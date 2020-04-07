@@ -12,6 +12,8 @@ namespace RealEstateAgency.Dtos.ModelDtos.Infrastructure
         public UserAccount UserAccount { get; set; }
         public int PropertyId { get; set; }
         public Property Property { get; set; }
+        //public PropertyPrice PropertyPrice { get; set; }
+        //public ICollection<PropertyImage> PropertyImage { get; set; }
         public DateTime DateCreated { get; set; }
     }
 }

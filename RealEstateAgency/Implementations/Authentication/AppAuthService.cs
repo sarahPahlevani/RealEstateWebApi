@@ -61,6 +61,7 @@ namespace RealEstateAgency.Implementations.Authentication
             var role = userData.role;
             var groupId = userData.groupId;
 
+            if (user.IsConfirmed == false) throw new AppException("Please confirm your email");
             if (user.IsActive == false) throw new AppException("User is deactivated");
             if (!_passwordService.VerifyUser(user.Email, password, user.PasswordHash))
                 throw new AppException("Username or password is invalid");
