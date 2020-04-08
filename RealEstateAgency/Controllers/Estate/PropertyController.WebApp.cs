@@ -53,6 +53,7 @@ namespace RealEstateAgency.Controllers.Estate
                                 TumbPath = i.TumbPath,
                             }).ToList(),
                             PublishingDate = p.PublishingDate,
+                            Commission = p.Commission,
                         }), requestDto)
                 .GetPage(cancellationToken);
 

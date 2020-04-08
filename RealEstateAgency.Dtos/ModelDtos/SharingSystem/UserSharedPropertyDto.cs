@@ -18,7 +18,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.SharingSystem
         public int? UserAccountId { get; set; }
         public int? SocialNetworkId { get; set; }
         public string SocialNetworkTitle { get; set; }
-        public byte[] SocialNetworkIcon { get; set; }
+        public string SocialNetworkIcon { get; set; }
         public string RefererUrl { get; set; }
         public int ClickCount { get; set; }
     }

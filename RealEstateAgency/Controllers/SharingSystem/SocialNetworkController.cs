@@ -21,7 +21,7 @@ namespace RealEstateAgency.Controllers.SharingSystem
                 Id = i.Id,
                 Name = i.Name,
                 UniqueKey = i.UniqueKey,
-                LogoPicture = i.LogoPicture,
+                Icon = i.Icon,
                 Url = i.Url,
             });
     }
