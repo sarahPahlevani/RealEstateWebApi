@@ -70,3 +70,26 @@ Error Number:207,State:1,Class:16
    at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
    at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
    at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)
+2020-04-09 18:41:14.978 +04:30 [ERR] Something went wrong: RealEstateAgency.Shared.Exceptions.AppException: Please confirm your email
+   at RealEstateAgency.Implementations.Authentication.AppAuthService.AuthenticateAsync(String email, String password, CancellationToken cancellationToken) in E:\Projects\SolutionsApps\HomeAndShare\WebApi\RealEstateAgency\Implementations\Authentication\AppAuthService.cs:line 65
+   at RealEstateAgency.Implementations.Authentication.AppAuthService.RegisterAsync(RegisterUserDto registerDto, CancellationToken cancellationToken) in E:\Projects\SolutionsApps\HomeAndShare\WebApi\RealEstateAgency\Implementations\Authentication\AppAuthService.cs:line 126
+   at RealEstateAgency.Controllers.Authentication.AuthController.Register(RegisterUserDto registerDto, CancellationToken cancellationToken) in E:\Projects\SolutionsApps\HomeAndShare\WebApi\RealEstateAgency\Controllers\Authentication\AuthController.cs:line 92
+   at lambda_method(Closure , Object )
+   at Microsoft.Extensions.Internal.ObjectMethodExecutorAwaitable.Awaiter.GetResult()
+   at Microsoft.AspNetCore.Mvc.Internal.ActionMethodExecutor.AwaitableObjectResultExecutor.Execute(IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at System.Threading.Tasks.ValueTask`1.get_Result()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeActionMethodAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeNextActionFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Rethrow(ActionExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.InvokeInnerFilterAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeNextResourceFilter()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Rethrow(ResourceExecutedContext context)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeFilterPipelineAsync()
+   at Microsoft.AspNetCore.Mvc.Internal.ResourceInvoker.InvokeAsync()
+   at Microsoft.AspNetCore.Routing.EndpointMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.StaticFiles.StaticFileMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Builder.RouterMiddleware.Invoke(HttpContext httpContext)
+   at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware.Invoke(HttpContext context)

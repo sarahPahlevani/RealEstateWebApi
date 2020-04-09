@@ -120,10 +120,15 @@ namespace RealEstateAgency.Implementations.Authentication
                                                       + registerDto.Email
                                                       + registerDto.Username);
             var passwordHash = _passwordService.HashUserPassword(registerDto.Email, registerDto.Password);
-            CreateUser(registerDto, UserGroup.AppClient, passwordHash, activationKey);
+            var reg = CreateUser(registerDto, UserGroup.AppClient, passwordHash, activationKey);
 
             _entityService.DbContext.SaveChanges();
-            return await AuthenticateAsync(registerDto.Email, registerDto.Password, cancellationToken);
+
+            var userDto = new UserAccountDto();
+            userDto.From(reg);
+            return userDto;
+
+            //return await AuthenticateAsync(registerDto.Email, registerDto.Password, cancellationToken);
 
         }
 
