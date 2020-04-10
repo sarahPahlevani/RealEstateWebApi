@@ -49,11 +49,12 @@ namespace RealEstateAgency.Controllers.SharingSystem
                                 .Include(r => r.Property.PropertyType)
                                 .Include(r => r.Property.PropertyPrice)
                                 .Include(r => r.Property.PropertyImage)
+                                .Include(r => r.SocialNetwork)
                                 .Where(r => r.UserAccountId == userId), requestDto)
                             .GetPage(cancellationToken);
 
             var list = query.Items
-                .GroupBy(r => r.SocialNetworkId)
+                .GroupBy(r => new { r.PropertyId, r.SocialNetworkId })
                 .Select(p => new UserSharedPropertyDto
                 {
                     PropertyId = p.First().PropertyId,
