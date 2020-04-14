@@ -39,6 +39,8 @@ namespace RealEstateAgency.DAL.Models
         public int? AuthenticationProviderId { get; set; }
         public string AuthenticationProviderAccessToken { get; set; }
         public string UserName { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
         public string PasswordHash { get; set; }
         public string PasswordSalt { get; set; }
         public bool? IsActive { get; set; }
@@ -50,7 +52,6 @@ namespace RealEstateAgency.DAL.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string MiddleName { get; set; }
-        public string Email { get; set; }
         public string Phone01 { get; set; }
         public string Phone02 { get; set; }
         public int? CountryId { get; set; }
@@ -59,8 +60,8 @@ namespace RealEstateAgency.DAL.Models
         public string Address02 { get; set; }
         public string ZipCode { get; set; }
         public string VatCode { get; set; }
-        public byte[] UserPicture { get; set; }
-        public byte[] UserPictureTumblr { get; set; }
+        public string UserPicture { get; set; }
+        public string UserPictureTumblr { get; set; }
         public string ReferralCode { get; set; }
 
         public virtual AuthenticationProvider AuthenticationProvider { get; set; }

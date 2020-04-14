@@ -14,7 +14,7 @@ namespace RealEstateAgency.DAL.Models
         public int Id { get; set; }
         public int LanguageIdDefault { get; set; }
         public string Name { get; set; }
-        public byte[] LogoPicture { get; set; }
+        public string LogoPicture { get; set; }
         public string Address01 { get; set; }
         public string Address02 { get; set; }
         public string Phone01 { get; set; }
@@ -24,10 +24,12 @@ namespace RealEstateAgency.DAL.Models
         public string ZipCode { get; set; }
         public string Email { get; set; }
         public string WebsiteUrl { get; set; }
+        public string Domain { get; set; }
         public string MetadataJson { get; set; }
         public string DateFormat { get; set; }
         public int CurrencyId { get; set; }
         public bool? Deleted { get; set; }
+        public DateTime? DeletedDate { get; set; }
         public int? UserAccountIdDeleteBy { get; set; }
 
         public virtual Currency Currency { get; set; }

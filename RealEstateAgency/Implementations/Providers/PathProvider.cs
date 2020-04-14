@@ -22,23 +22,23 @@ namespace RealEstateAgency.Implementations.Providers
         public string ApplicationPath => Startup.ApplicationPath;
         public string ImagesUploadDirectory => Path.Combine(ApplicationPath, @"images");
 
-        private string GetImagePhysicalPath(string category, string key)
-            => $"{ImagesUploadDirectory}\\{_hasher.FileNameHash(category, key)}.jpeg";
+        private string GetImagePhysicalPath(string directory, string category, string key)
+            => $"{ImagesUploadDirectory}\\{directory}\\{_hasher.FileNameHash(category, key)}.jpeg";
 
-        public string GetImagePhysicalPath<T>(string property, string key)
-            => GetImagePhysicalPath($"{typeof(T).Name}_{property}", key);
+        public string GetImagePhysicalPath<T>(string category, string key)
+            => GetImagePhysicalPath(typeof(T).Name, category, key);
 
-        private string GetImageApiPath(string category, string key)
-            => $"{_appSetting.ApiBaseUrl}/images/{_hasher.FileNameHash(category, key)}.jpeg";
+        private string GetImageApiPath(string directory, string category, string key)
+            => $"{_appSetting.ApiBaseUrl}/images/{directory}/{_hasher.FileNameHash(category, key)}.jpeg";
 
-        public string GetImageApiPath<T>(string property, string key)
-            => GetImageApiPath($"{typeof(T).Name}_{property}", key);
+        public string GetImageApiPath<T>(string category, string key)
+            => GetImageApiPath(typeof(T).Name, category, key);
 
-        private string GetImageVirtualPath(string category, string key)
-            => $"/images/{_hasher.FileNameHash(category, key)}.jpeg";
+        private string GetImageVirtualPath(string directory, string category, string key)
+            => $"/images/{directory}/{_hasher.FileNameHash(category, key)}.jpeg";
 
-        public string GetImageVirtualPath<T>(string property, string key)
-            => GetImageVirtualPath($"{typeof(T).Name}_{property}", key);
+        public string GetImageVirtualPath<T>(string category, string key)
+            => GetImageVirtualPath(typeof(T).Name, category, key);
     }
 
     public interface IPathProvider
@@ -46,10 +46,10 @@ namespace RealEstateAgency.Implementations.Providers
         string ApplicationPath { get; }
         string ImagesUploadDirectory { get; }
 
-        string GetImagePhysicalPath<T>(string property, string key);
+        string GetImagePhysicalPath<T>(string category, string key);
 
-        string GetImageApiPath<T>(string property, string key);
+        string GetImageApiPath<T>(string category, string key);
 
-        string GetImageVirtualPath<T>(string property, string key);
+        string GetImageVirtualPath<T>(string category, string key);
     }
 }

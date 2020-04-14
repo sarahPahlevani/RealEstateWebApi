@@ -1033,11 +1033,19 @@ namespace RealEstateAgency.DAL.Models
                     .HasMaxLength(50)
                     .HasDefaultValueSql("(N'YYYY-MM-DD')");
 
+                entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Domain)
+                    .IsRequired()
+                    .HasMaxLength(256);
+
                 entity.Property(e => e.Email).HasMaxLength(50);
 
                 entity.Property(e => e.Fax).HasMaxLength(20);
 
                 entity.Property(e => e.LanguageIdDefault).HasColumnName("LanguageId_Default");
+
+                entity.Property(e => e.LogoPicture).HasMaxLength(1000);
 
                 entity.Property(e => e.MetadataJson).HasColumnName("Metadata_JSON");
 
@@ -1483,7 +1491,9 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.City).HasMaxLength(100);
 
-                entity.Property(e => e.Email).HasMaxLength(128);
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(128);
 
                 entity.Property(e => e.FirstName)
                     .IsRequired()
@@ -1499,7 +1509,12 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.MiddleName).HasMaxLength(128);
 
+                entity.Property(e => e.Password)
+                    .HasMaxLength(128)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.PasswordHash)
+                    .IsRequired()
                     .HasMaxLength(128)
                     .IsUnicode(false);
 
@@ -1521,7 +1536,13 @@ namespace RealEstateAgency.DAL.Models
                     .HasMaxLength(128)
                     .IsUnicode(false);
 
-                entity.Property(e => e.UserName).HasMaxLength(128);
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasMaxLength(128);
+
+                entity.Property(e => e.UserPicture).HasMaxLength(1000);
+
+                entity.Property(e => e.UserPictureTumblr).HasMaxLength(1000);
 
                 entity.Property(e => e.VatCode).HasMaxLength(50);
 

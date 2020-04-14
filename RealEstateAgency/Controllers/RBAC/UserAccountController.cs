@@ -30,13 +30,15 @@ namespace RealEstateAgency.Controllers.RBAC
     {
         private readonly IUserProvider _userProvider;
         private readonly IUserGroupProvider _groupProvider;
+        private readonly IUploadHelperService _uploadHelperService;
         private readonly IPathProvider _pathProvider;
         private readonly IFastHasher _fastHasher;
 
         public UserAccountController(IModelService<UserAccount, UserAccountDto> modelService,
-            IUserProvider userProvider, IUserGroupProvider groupProvider, IFastHasher fastHasher, IPathProvider pathProvider) : base(modelService)
+            IUserProvider userProvider, IUserGroupProvider groupProvider, IFastHasher fastHasher, IUploadHelperService uploadHelperService, IPathProvider pathProvider) : base(modelService)
         {
             _userProvider = userProvider;
+            _uploadHelperService = uploadHelperService;
             _pathProvider = pathProvider;
             _fastHasher = fastHasher;
             _groupProvider = groupProvider;
@@ -155,10 +157,12 @@ namespace RealEstateAgency.Controllers.RBAC
                     Phone01 = u.Phone01,
                     Phone02 = u.Phone02,
                     RegistrationDate = u.RegistrationDate,
+                    UserPicture = u.UserPicture,
+                    UserPictureTumblr = u.UserPictureTumblr,
                 }).FirstAsync(cancellationToken);
 
-            user.UserPicture = _pathProvider.GetImageApiPath<UserAccount>(nameof(UserAccount.UserPicture), user.Id.ToString());
-            user.UserPictureTumblr = _pathProvider.GetImageApiPath<UserAccount>(nameof(UserAccount.UserPictureTumblr), user.Id.ToString());
+            //user.UserPicture = _pathProvider.GetImageApiPath<UserAccount>(nameof(UserAccount.UserPicture), user.Id.ToString());
+            //user.UserPictureTumblr = _pathProvider.GetImageApiPath<UserAccount>(nameof(UserAccount.UserPictureTumblr), user.Id.ToString());
             return user;
         }
 
@@ -213,6 +217,49 @@ namespace RealEstateAgency.Controllers.RBAC
             return NoContent();
 
             //return await base.Delete(id, cancellationToken);
+        }
+
+
+        [HttpPost("[Action]")]
+        public async Task<ActionResult> UpdatePicture(CancellationToken cancellationToken)
+        {
+            if (Request.Form is null) throw new AppException("form is null");
+
+            if (Request.Form.Files.Count != 1) throw new AppException("files are not set OR more than one");
+
+            var userId = int.Parse(Request.Form["userId"]);
+
+            var user = await ModelService.GetAsync(userId, cancellationToken);
+            if (user == null)
+                throw new AppException("Not found UserId");
+
+
+            var file = Request.Form.Files[0];
+            var fileInfo = _uploadHelperService.FileService.GetFileInfo(file.FileName, file.Length);
+            if (!_uploadHelperService.ImageService.IsValidImageExtension(fileInfo.FileExtension))
+                throw new InvalidOperationException(
+                    $"The extension {fileInfo.FileExtension} is not valid for image");
+
+            var imageFull = await _uploadHelperService
+                    .ImageService.GetImageBytes(file.OpenReadStream(), cancellationToken);
+            var imageTumb = await _uploadHelperService
+                    .ImageService.GetSmallerImageBytes(file.OpenReadStream(), cancellationToken);
+
+
+            var imagePath = _pathProvider.GetImagePhysicalPath<UserAccount>("User", user.Id.ToString());
+            var tumbPath = _pathProvider.GetImagePhysicalPath<UserAccount>("UserTumb", user.Id.ToString());
+
+            _uploadHelperService.ImageService.SaveImage(imageFull, imagePath);
+            _uploadHelperService.ImageService.SaveSmallerImage(imageTumb, tumbPath);
+
+            user.UserPicture = _pathProvider.GetImageVirtualPath<UserAccount>("User", user.Id.ToString());
+            user.UserPictureTumblr = _pathProvider.GetImageVirtualPath<UserAccount>("UserTumb", user.Id.ToString());
+
+            ModelService.DbContext.Entry(user).State = EntityState.Modified;
+            await ModelService.DbContext.SaveChangesAsync();
+
+
+            return Ok();
         }
 
 
