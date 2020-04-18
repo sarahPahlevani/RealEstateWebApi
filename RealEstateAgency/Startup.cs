@@ -40,7 +40,7 @@ namespace RealEstateAgency
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }
-
+          //  app.UseMiddleware<UserProvider1Middleware>();
             app.UseAuthentication();
 
             app.UseMiddleware<UserProviderMiddleware>();
@@ -103,3 +103,4 @@ namespace RealEstateAgency
         }
     }
 }
+ 

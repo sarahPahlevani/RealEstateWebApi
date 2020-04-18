@@ -60,20 +60,19 @@ namespace RealEstateAgency.Dtos.ModelDtos.RBAC
         public bool HasDeletePermmite { get; set; }
         public bool HasReadPermmite { get; set; }
 
-        //public override UserGroupPermission Create()
-        //{
-        //    throw new System.NotImplementedException();
-        //}
+        
+    }
+    public class UserPermissionList:IDto
+    {
+        public int Id { get; set; }
+        public string Menu { get; set; }
+        public int MenuId { get; set; }
+        public string Role { get; set; }
+        public int RoleId { get; set; }
+        public bool HasUpdatePermmite { get; set; }
+        public bool HasDeletePermmite { get; set; }
+        public bool HasReadPermmite { get; set; }
 
-        //public override IModelDto<UserGroupPermission> From(UserGroupPermission entity)
-        //{
-        //    throw new System.NotImplementedException();
-        //}
-
-        //public override UserGroupPermission Update()
-        //{
-        //    throw new System.NotImplementedException();
-        //}
     }
 
 }

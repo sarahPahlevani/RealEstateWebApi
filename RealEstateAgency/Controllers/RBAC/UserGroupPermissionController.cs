@@ -11,11 +11,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using RealEstateAgency.Shared.Statics;
+using RealEstateAgency.Implementations.ApiImplementations.PageDtos;
+using RealEstateAgency.Implementations.ApiImplementations.PageDtos.PageFilters;
 
 namespace RealEstateAgency.Controllers.RBAC
 {
 
-    public class UserGroupPermissionController : ModelPagingController<UserGroupPermission, UserGroupPermissionDto, UserGroupPermissionDto>
+    public class UserGroupPermissionController : ModelPagingController<UserGroupPermission, UserGroupPermissionDto, UserPermissionList>
     {
         
         private readonly IEntityService<RealEstate> _entityService;
@@ -29,15 +31,15 @@ namespace RealEstateAgency.Controllers.RBAC
             _entityService = entityService;
          }
 
-        public override Func<IQueryable<UserGroupPermission>, IQueryable<UserGroupPermissionDto>> PagingConverter=> items => items.Select(i => new UserGroupPermissionDto
-        {
-            Id = i.Id,
-            UserGroupId =i. UserGroupId,
-            MenuId = i.MenuId,
-            DeletePermission = i.DeletePermission,
-            UpdatePermission = i.UpdatePermission,
-            ReadPermission = i.ReadPermission
-        });
+        //public override Func<IQueryable<UserGroupPermission>, IQueryable<UserGroupPermissionDto>> PagingConverter=> items => items.Select(i => new UserGroupPermissionDto
+        //{
+        //    Id = i.Id,
+        //    UserGroupId =i. UserGroupId,
+        //    MenuId = i.MenuId,
+        //    DeletePermission = i.DeletePermission,
+        //    UpdatePermission = i.UpdatePermission,
+        //    ReadPermission = i.ReadPermission
+        //});
 
         public override Func<IQueryable<UserGroupPermission>, IQueryable<UserGroupPermissionDto>> DtoConverter => items => items.Select(i => new UserGroupPermissionDto
         {
@@ -47,6 +49,18 @@ namespace RealEstateAgency.Controllers.RBAC
             DeletePermission = i.DeletePermission,
             UpdatePermission = i.UpdatePermission,
             ReadPermission = i.ReadPermission
+        });
+
+        public override Func<IQueryable<UserGroupPermission>, IQueryable<UserPermissionList>>  PagingConverter => items => items.Include(i => i.Menu).Include(i => i.UserGroup).Select(i => new UserPermissionList
+        {
+            Id = i.Id,
+            Menu=i.Menu.Name,
+            Role=i.UserGroup.Name,
+            RoleId = i.UserGroupId,
+            MenuId = i.MenuId,
+            HasDeletePermmite = i.DeletePermission,
+            HasUpdatePermmite = i.UpdatePermission,
+            HasReadPermmite = i.ReadPermission
         });
 
         [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
@@ -91,7 +105,18 @@ namespace RealEstateAgency.Controllers.RBAC
           UpdatePermission = i.UpdatePermission,
           ReadPermission = i.ReadPermission
       }).FirstOrDefaultAsync(cancellationToken);
-       
+
+        public override async Task<ActionResult<PageResultDto<UserPermissionList>>> GetPageAsync(
+          [FromBody] PageRequestFilterDto requestDto, CancellationToken cancellationToken) =>
+          await GetPageResultAsync(ModelService.Queryable,
+              requestDto, requestDto.Filter.ToObject<UserGroupPermissionListFilter>(),
+              cancellationToken);
+
+        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        public override Task<ActionResult<PageResultDto<UserPermissionList>>>
+            GetPageAsync(int pageSize, int pageNumber, CancellationToken cancellationToken)
+            => base.GetPageAsync(pageSize, pageNumber, cancellationToken);
+
 
         [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpDelete("[Action]/{id}")]

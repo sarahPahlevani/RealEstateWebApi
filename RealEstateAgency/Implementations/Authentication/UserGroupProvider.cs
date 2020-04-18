@@ -8,18 +8,22 @@ using RealEstateAgency.Implementations.Authentication.Contracts;
 using RealEstateAgency.Shared.Statics;
 using UserGroup = RealEstateAgency.Dtos.Other.UserGroup.UserGroup;
 using UserGroupModel = RealEstateAgency.DAL.Models.UserGroup;
+using UserGroupPermissionModel = RealEstateAgency.DAL.Models.UserGroupPermission;
 
 namespace RealEstateAgency.Implementations.Authentication
 {
     public class UserGroupProvider : IUserGroupProvider
     {
         private readonly List<UserGroupModel> _groups;
+
+        private readonly List<UserGroupPermissionModel> _groupsPermission;
         public UserGroupProvider(IServiceProvider provider)
         {
             using (var scope = provider.CreateScope())
             {
                 var context = scope.ServiceProvider.GetService<RealEstateDbContext>();
                 _groups = context.UserGroup.ToList();
+                _groupsPermission = context.UserGroupPermission.ToList();
             }
         }
 
