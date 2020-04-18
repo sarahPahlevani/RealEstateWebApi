@@ -84,7 +84,7 @@ namespace RealEstateAgency.DAL.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=176.9.235.212,2134;Database=RealEstateDbTest;User Id=sa;Password=FarJef123!@#;MultipleActiveResultSets=true;");
+                optionsBuilder.UseSqlServer("Server=176.9.235.212,2134;Database=RealEstateDbTest;User Id=sa;Password=FarJef123!@#;");
             }
         }
 
@@ -1427,6 +1427,8 @@ namespace RealEstateAgency.DAL.Models
                 entity.HasIndex(e => e.UniqueKey)
                     .HasName("IX_SocialNetwork_1")
                     .IsUnique();
+
+                entity.Property(e => e.Icon).HasMaxLength(50);
 
                 entity.Property(e => e.Name)
                     .IsRequired()
