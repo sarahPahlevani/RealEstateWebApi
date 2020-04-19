@@ -113,7 +113,7 @@ namespace RealEstateAgency.Controllers.RBAC
         [HttpGet("[Action]")]
         public async Task<ActionResult<IEnumerable<ParentMenuDto>>> GetMenuPermission(CancellationToken cancellationToken) 
             => await ModelService.DbContext.UserGroupPermission.Where(t => t.ReadPermission==true ||t.UpdatePermission==true || t.DeletePermission==true)
-                   .Include(i => i.Menu).Where(f=>f.Menu.IsPanelPage==true && f.Menu.ParentId==null)
+                   .Include(i => i.Menu).Where(f=>f.Menu.IsPanelPage==true && f.Menu.ParentId==null && f.Menu.HasMenu)
             .Select ( g => new ParentMenuDto
                    {
                        Id = g.Id,

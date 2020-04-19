@@ -47,12 +47,12 @@ namespace RealEstateAgency.Implementations.Middleware
                     var find = (from a in _dbContext.Menu
                                 join b in _dbContext.UserGroupPermission on a.Id equals b.MenuId
                                 join c in _dbContext.UserGroup on b.UserGroupId equals c.Id
-                              //  join d in _dbContext.UserAccountGroup on c.Id equals d.UserGroupId
+                                join d in _dbContext.Apicontroller on a.Id equals d.MenuId
                                 where c.Name == climerole// && d.UserAccountId.ToString() == httpContext.User.Identity.Name
                                 select new
                                 {
                                     MenuName = a.Name,
-                                    ControllerName = a.ApicontrollerName,
+                                    ControllerName = d.ControllerName,
                                     ActionName = a.ActionName,
                                     PluginName = a.PluginName,
                                     ReadPermission = b.ReadPermission,

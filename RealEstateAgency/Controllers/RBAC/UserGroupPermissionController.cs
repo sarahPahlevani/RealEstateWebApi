@@ -128,7 +128,7 @@ namespace RealEstateAgency.Controllers.RBAC
         [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
         public async Task<ActionResult<IEnumerable<UserPermission>>> GetUserGroupPermission(CancellationToken cancellationToken)
-       => await ModelService.DbContext.UserGroupPermission.Include(item=> item.Menu).Include(item=> item.UserGroup).Select(i => new UserPermission
+       => await ModelService.DbContext.UserGroupPermission.Include(item=> item.Menu).Include(item=> item.UserGroup).Where(item=> item.Menu.ParentId!=null).Select(i => new UserPermission
        {
            Id = i.Id,
            Menu = i.Menu.Name,

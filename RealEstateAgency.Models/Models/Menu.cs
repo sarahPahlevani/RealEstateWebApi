@@ -7,6 +7,7 @@ namespace RealEstateAgency.DAL.Models
     {
         public Menu()
         {
+            Apicontroller = new HashSet<Apicontroller>();
             ContentPage = new HashSet<ContentPage>();
             InverseParent = new HashSet<Menu>();
             MenuTranslate = new HashSet<MenuTranslate>();
@@ -21,8 +22,10 @@ namespace RealEstateAgency.DAL.Models
         public string ControllerName { get; set; }
         public string ActionName { get; set; }
         public string IconName { get; set; }
-        public string ApicontrollerName { get; set; }
+        public bool HasMenu { get; set; }
+
         public virtual Menu Parent { get; set; }
+        public virtual ICollection<Apicontroller> Apicontroller { get; set; }
         public virtual ICollection<ContentPage> ContentPage { get; set; }
         public virtual ICollection<Menu> InverseParent { get; set; }
         public virtual ICollection<MenuTranslate> MenuTranslate { get; set; }

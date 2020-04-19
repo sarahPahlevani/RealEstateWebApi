@@ -18,6 +18,7 @@ namespace RealEstateAgency.DAL.Models
         public virtual DbSet<ActionType> ActionType { get; set; }
         public virtual DbSet<ActionTypeTranslate> ActionTypeTranslate { get; set; }
         public virtual DbSet<Agent> Agent { get; set; }
+        public virtual DbSet<Apicontroller> Apicontroller { get; set; }
         public virtual DbSet<AuthenticationProvider> AuthenticationProvider { get; set; }
         public virtual DbSet<Bookmark> Bookmark { get; set; }
         public virtual DbSet<City> City { get; set; }
@@ -84,7 +85,7 @@ namespace RealEstateAgency.DAL.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=176.9.235.212,2134;Database=RealEstateDbTest;User Id=sa;Password=FarJef123!@#;");
+                optionsBuilder.UseSqlServer("Server=176.9.235.212,2134;Database=RealEstateDbTest;User Id=sa;Password=FarJef123!@#;MultipleActiveResultSets=true;");
             }
         }
 
@@ -153,6 +154,18 @@ namespace RealEstateAgency.DAL.Models
                     .WithMany(p => p.AgentUserAccountIdDeleteByNavigation)
                     .HasForeignKey(d => d.UserAccountIdDeleteBy)
                     .HasConstraintName("FK_Agent_UserAccount1__DeleteBy");
+            });
+
+            modelBuilder.Entity<Apicontroller>(entity =>
+            {
+                entity.ToTable("APIController", "RBAC");
+
+                entity.Property(e => e.ControllerName).HasMaxLength(50);
+
+                entity.HasOne(d => d.Menu)
+                    .WithMany(p => p.Apicontroller)
+                    .HasForeignKey(d => d.MenuId)
+                    .HasConstraintName("FK_APIController_Menu");
             });
 
             modelBuilder.Entity<AuthenticationProvider>(entity =>
@@ -394,13 +407,19 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.Code)
                     .IsRequired()
-                    .HasMaxLength(8)
-                    .IsUnicode(false);
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Flag)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Type)
                     .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<MarketingAssistant>(entity =>
@@ -1033,11 +1052,19 @@ namespace RealEstateAgency.DAL.Models
                     .HasMaxLength(50)
                     .HasDefaultValueSql("(N'YYYY-MM-DD')");
 
+                entity.Property(e => e.DeletedDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Domain)
+                    .IsRequired()
+                    .HasMaxLength(256);
+
                 entity.Property(e => e.Email).HasMaxLength(50);
 
                 entity.Property(e => e.Fax).HasMaxLength(20);
 
                 entity.Property(e => e.LanguageIdDefault).HasColumnName("LanguageId_Default");
+
+                entity.Property(e => e.LogoPicture).HasMaxLength(1000);
 
                 entity.Property(e => e.MetadataJson).HasColumnName("Metadata_JSON");
 
@@ -1483,7 +1510,9 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.City).HasMaxLength(100);
 
-                entity.Property(e => e.Email).HasMaxLength(128);
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(128);
 
                 entity.Property(e => e.FirstName)
                     .IsRequired()
@@ -1499,7 +1528,12 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.MiddleName).HasMaxLength(128);
 
+                entity.Property(e => e.Password)
+                    .HasMaxLength(128)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.PasswordHash)
+                    .IsRequired()
                     .HasMaxLength(128)
                     .IsUnicode(false);
 
@@ -1521,7 +1555,13 @@ namespace RealEstateAgency.DAL.Models
                     .HasMaxLength(128)
                     .IsUnicode(false);
 
-                entity.Property(e => e.UserName).HasMaxLength(128);
+                entity.Property(e => e.UserName)
+                    .IsRequired()
+                    .HasMaxLength(128);
+
+                entity.Property(e => e.UserPicture).HasMaxLength(1000);
+
+                entity.Property(e => e.UserPictureTumblr).HasMaxLength(1000);
 
                 entity.Property(e => e.VatCode).HasMaxLength(50);
 
