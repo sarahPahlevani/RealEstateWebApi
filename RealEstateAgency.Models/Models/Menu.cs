@@ -21,7 +21,7 @@ namespace RealEstateAgency.DAL.Models
         public string ControllerName { get; set; }
         public string ActionName { get; set; }
         public string IconName { get; set; }
-
+        public string ApicontrollerName { get; set; }
         public virtual Menu Parent { get; set; }
         public virtual ICollection<ContentPage> ContentPage { get; set; }
         public virtual ICollection<Menu> InverseParent { get; set; }

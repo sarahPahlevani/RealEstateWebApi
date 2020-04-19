@@ -22,26 +22,37 @@ namespace RealEstateAgency.Implementations.Middleware
         {
             userProvider.SetUser(httpContext.User, languageProvider.SelectedLanguage.Id);
 
-            var user = httpContext.User;
-            if (user.Identity.IsAuthenticated)
+          
+            if (httpContext.User.Identity.IsAuthenticated)
             {
-                bool isExist = false;
-                var climerole = user.Claims.Where(item => item.Type == ClaimTypes.Role).Select(i => i.Value).FirstOrDefault();
-                var request = httpContext.Request;
-                var path = httpContext.Request.Path;
-                var pa1 = path.Value.Substring(5);
-                var pa2 = pa1.IndexOf("/");
-                var cname = pa1.Substring(0, pa2);
-                using (RealEstateDbContext _dbContext = new RealEstateDbContext()) {
-                   var find = (from a in _dbContext.Menu
+               
+                if (Authorize(httpContext)) { await _next(httpContext); } 
+                else await _next(null);
+
+            }
+            else {
+                await _next(httpContext);
+            }
+                       
+           
+        }
+        private bool Authorize(HttpContext httpContext)
+        {
+                     
+                var climerole = httpContext.User.Claims.Where(item => item.Type == ClaimTypes.Role).Select(i => i.Value).FirstOrDefault();
+               
+                
+                using (RealEstateDbContext _dbContext = new RealEstateDbContext())
+                {
+                    var find = (from a in _dbContext.Menu
                                 join b in _dbContext.UserGroupPermission on a.Id equals b.MenuId
                                 join c in _dbContext.UserGroup on b.UserGroupId equals c.Id
-                                join d in _dbContext.UserAccountGroup on c.Id equals d.UserGroupId
-                                where c.Name == climerole && d.UserAccountId.ToString()== user.Identity.Name
+                              //  join d in _dbContext.UserAccountGroup on c.Id equals d.UserGroupId
+                                where c.Name == climerole// && d.UserAccountId.ToString() == httpContext.User.Identity.Name
                                 select new
                                 {
                                     MenuName = a.Name,
-                                    ControllerName = a.ControllerName,
+                                    ControllerName = a.ApicontrollerName,
                                     ActionName = a.ActionName,
                                     PluginName = a.PluginName,
                                     ReadPermission = b.ReadPermission,
@@ -52,31 +63,23 @@ namespace RealEstateAgency.Implementations.Middleware
                                 }).ToList();
                     foreach (var item in find)
                     {
-                        if (item.ControllerName==cname && 
+                        if (item.ControllerName == GetControllerName(httpContext.Request.Path.Value) &&
                             (checkPermmite(httpContext.Request.Method, item.ReadPermission, item.DeletePermission, item.UpdatePermission)))
                         {
-                            isExist = true;
-                            
+                            return  true;
                         }
-                        
                     }
+                };
 
-                    
-                } ;
-
-
-                if (isExist) { await _next(httpContext); } 
-                else await _next(null);
-
-            }
-            else {
-                await _next(httpContext);
-            }
-                       
-           
+            return false;
         }
-
-        private bool checkPermmite(string MethodType, bool read, bool delete, bool update)
+        private string GetControllerName(string Path)
+        {
+            var text1 = Path.Substring(5);
+            var index = text1.IndexOf("/");
+            return text1.Substring(0, index);
+        }
+            private bool checkPermmite(string MethodType, bool read, bool delete, bool update)
         {
             return hasReadPermmite(MethodType, read) || hasDeletePermmite(MethodType, delete) || hasUpdatePermmite(MethodType, update);
         }
