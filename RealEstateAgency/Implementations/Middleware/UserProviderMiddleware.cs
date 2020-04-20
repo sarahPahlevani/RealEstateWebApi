@@ -61,9 +61,10 @@ namespace RealEstateAgency.Implementations.Middleware
                                     UserGroupName = c.Name
 
                                 }).ToList();
+                var controllerName = GetControllerName(httpContext.Request.Path.Value);
                     foreach (var item in find)
                     {
-                        if (item.ControllerName == GetControllerName(httpContext.Request.Path.Value) &&
+                        if (item.ControllerName.ToLower() == controllerName.ToLower() &&
                             (checkPermmite(httpContext.Request.Method, item.ReadPermission, item.DeletePermission, item.UpdatePermission)))
                         {
                             return  true;
@@ -77,7 +78,7 @@ namespace RealEstateAgency.Implementations.Middleware
         {
             var text1 = Path.Substring(5);
             var index = text1.IndexOf("/");
-            return text1.Substring(0, index);
+            return index==-1? text1 : text1.Substring(0, index);
         }
             private bool checkPermmite(string MethodType, bool read, bool delete, bool update)
         {
