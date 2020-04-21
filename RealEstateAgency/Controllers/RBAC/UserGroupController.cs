@@ -27,7 +27,7 @@ namespace RealEstateAgency.Controllers.RBAC
                 Name = i.Name,
                 StaticCode = i.StaticCode
             });
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+       // [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
         public async Task<ActionResult<IEnumerable<UserGroupDto>>> GetRole(CancellationToken cancellationToken)
       => await ModelService.DbContext.UserGroup.Select(i => new UserGroupDto

@@ -126,7 +126,7 @@ namespace RealEstateAgency.Controllers.Estate
             return propertySummery;
         }
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+       // [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
         public async Task<ActionResult<CheckReadyToPublish>> CheckReadyToPublish(int propertyId, CancellationToken cancellationToken)
         {
@@ -141,7 +141,7 @@ namespace RealEstateAgency.Controllers.Estate
                 }).FirstOrDefaultAsync(cancellationToken);
         }
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+      //  [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpPut("[Action]")]
         public async Task<ActionResult> SetNotReadyForPublish([FromBody]PropertyDto propertyDto,
             CancellationToken cancellationToken)
@@ -154,7 +154,7 @@ namespace RealEstateAgency.Controllers.Estate
             return NoContent();
         }
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+       // [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpPut("[Action]")]
         public async Task<ActionResult> SetReadyForPublish([FromBody]PropertyDto propertyDto,
             CancellationToken cancellationToken)
@@ -176,7 +176,7 @@ namespace RealEstateAgency.Controllers.Estate
             return NoContent();
         }
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+      //  [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpPut("[Action]")]
         public async Task<ActionResult> PublishProperty([FromBody]PropertyPaginationListDto propertyDto,
            CancellationToken cancellationToken)
@@ -194,7 +194,7 @@ namespace RealEstateAgency.Controllers.Estate
             return NoContent();
         }
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+      //  [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpPut("[Action]")]
         public async Task<ActionResult> UnPublishProperty([FromBody]PropertyPaginationListDto propertyDto,
             CancellationToken cancellationToken)

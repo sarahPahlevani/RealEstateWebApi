@@ -23,16 +23,16 @@ namespace RealEstateAgency.Implementations.Middleware
             userProvider.SetUser(httpContext.User, languageProvider.SelectedLanguage.Id);
 
           
-            if (httpContext.User.Identity.IsAuthenticated)
-            {
+         //   if (httpContext.User.Identity.IsAuthenticated)
+         //   {
                
-                if (Authorize(httpContext)) { await _next(httpContext); } 
-                else await _next(null);
+          //      if (Authorize(httpContext)) { await _next(httpContext); } 
+          //      else await _next(null);
 
-            }
-            else {
+         //   }
+         //   else {
                 await _next(httpContext);
-            }
+        //    }
                        
            
         }

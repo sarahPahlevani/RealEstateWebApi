@@ -10,7 +10,7 @@ namespace RealEstateAgency.Implementations.ActionFilters
         public void OnActionExecuting(ActionExecutingContext context) => _started = DateTime.Now;
 
         public void OnActionExecuted(ActionExecutedContext context)
-        {
+         {
             if (context.ModelState.IsValid)
                 Console.WriteLine($"model validation completed in {(DateTime.Now - _started).TotalMilliseconds} Milliseconds");
         }

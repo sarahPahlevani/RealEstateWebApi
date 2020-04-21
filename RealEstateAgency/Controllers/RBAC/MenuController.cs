@@ -67,7 +67,7 @@ namespace RealEstateAgency.Controllers.RBAC
 
 
         [HttpGet("[Action]")]
-        [AllowAnonymous]
+       // [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<MenuDto>>> GetMenuPermission12(CancellationToken cancellationToken)
             =>
             await ModelService.DbContext.Menu.Include(i => i.UserGroupPermission.Where(item => item.UserGroupId == 1))
@@ -82,7 +82,7 @@ namespace RealEstateAgency.Controllers.RBAC
                     IconName = i.IconName
                 }).ToListAsync(cancellationToken);
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+      //  [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
         public ActionResult<IEnumerable<Menu>> GetAllMenu(CancellationToken cancellationToken)
         {
