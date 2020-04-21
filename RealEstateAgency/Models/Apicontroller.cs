@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RealEstateAgency.DAL.Models
+namespace RealEstateAgency.Models
 {
     public partial class Apicontroller
     {

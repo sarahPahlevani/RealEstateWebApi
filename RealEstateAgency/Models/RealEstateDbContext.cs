@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace RealEstateAgency.DAL.Models
+namespace RealEstateAgency.Models
 {
     public partial class RealEstateDbContext : DbContext
     {
