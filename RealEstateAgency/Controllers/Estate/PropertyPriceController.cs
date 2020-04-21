@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 using System.Threading;
 using RealEstateAgency.Implementations.ApiImplementations.PageDtos;
 using RealEstateAgency.Implementations.ApiImplementations.Models;
+using System.Collections.Generic;
+using RealEstateAgency.Dtos.ModelDtos.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 namespace RealEstateAgency.Controllers.Estate
 {
@@ -17,12 +20,14 @@ namespace RealEstateAgency.Controllers.Estate
     {
         private readonly IEntityService<Property> _propertyService;
         private readonly IEntityService<PriceScaleUnit> _priceScaleUnitService;
+        private readonly IEntityService<Currency> _currencyService;
 
         public PropertyPriceController(IModelService<PropertyPrice, PropertyPriceDto> modelService, IEntityService<Property> propertyService,
-            IEntityService<PriceScaleUnit> priceScaleUnitService) : base(modelService)
+            IEntityService<PriceScaleUnit> priceScaleUnitService, IEntityService<Currency> currencyService) : base(modelService)
         {
             _priceScaleUnitService = priceScaleUnitService;
             _propertyService = propertyService;
+            _currencyService = currencyService;
         }
 
         public override Func<IQueryable<PropertyPrice>, IQueryable<PropertyPriceDto>> DtoConverter
@@ -73,16 +78,32 @@ namespace RealEstateAgency.Controllers.Estate
 
         [AllowAnonymous]
         [HttpGet("[Action]")]
-        public ActionResult<PriceMinMax> GetMinMax()
+        public ActionResult<PriceMinMax> GetMinMax(/*int? currencyId*/)
         {
-            var min = ModelService.Queryable.Min(r => (decimal?)r.CalculatedPriceUnit).GetValueOrDefault(0);
-            var max = ModelService.Queryable.Max(r => (decimal?)r.CalculatedPriceUnit).GetValueOrDefault(0);
+            var min = ModelService.Queryable.Where(r => r.IdNavigation.IsPublished /*&& (!currencyId.HasValue || r.CurrencyId == currencyId.Value)*/)
+                .Min(r => (decimal?)r.CalculatedPriceUnit).GetValueOrDefault(0);
+            var max = ModelService.Queryable.Where(r => r.IdNavigation.IsPublished /*&& (!currencyId.HasValue || r.CurrencyId == currencyId.Value)*/)
+                .Max(r => (decimal?)r.CalculatedPriceUnit).GetValueOrDefault(0);
 
             return new PriceMinMax
             {
                 Min = min,
                 Max = max,
             };
+        }
+
+
+        [AllowAnonymous]
+        [HttpGet("[Action]")]
+        public ActionResult<List<Currency>> GetActiveCurrency()
+        {
+            var list= ModelService.Queryable
+                .Include(r => r.Currency)
+                .Where(r => r.IdNavigation.IsPublished)
+                .GroupBy(r => r.CurrencyId)
+                .Select(r => r.Key).ToList();
+
+            return _currencyService.AsQueryable(r => list.Contains(r.Id)).ToList();
         }
 
     }

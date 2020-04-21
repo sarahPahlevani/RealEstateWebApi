@@ -394,13 +394,19 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.Code)
                     .IsRequired()
-                    .HasMaxLength(8)
-                    .IsUnicode(false);
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Flag)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
 
                 entity.Property(e => e.Type)
                     .IsRequired()
-                    .HasMaxLength(50)
-                    .IsUnicode(false);
+                    .HasMaxLength(50);
             });
 
             modelBuilder.Entity<MarketingAssistant>(entity =>

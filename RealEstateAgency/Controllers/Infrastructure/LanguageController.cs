@@ -29,9 +29,11 @@ namespace RealEstateAgency.Controllers.Infrastructure
             items => items.Select(i => new LanguageDto
             {
                 Id = i.Id,
-                IsDefault = i.IsDefault,
+                Name = i.Name,
                 Code = i.Code,
                 Type = i.Type,
+                Flag = i.Flag,
+                IsDefault = i.IsDefault,
                 UrlCode = i.Code.Substring(0, 2).ToLower()
             });
 
