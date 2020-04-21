@@ -13,6 +13,7 @@
         public const string AgentId = nameof(AgentId);
         public const string IsResponsible = nameof(IsResponsible);
         public const string HasPublishingAuthorization = nameof(HasPublishingAuthorization);
+        public const string UserPic = nameof(UserPic);
 
     }
 }

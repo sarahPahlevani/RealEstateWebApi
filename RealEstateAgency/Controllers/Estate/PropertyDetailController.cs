@@ -7,6 +7,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Threading;
+using Microsoft.AspNetCore.Authorization;
+using RealEstateAgency.Implementations.ApiImplementations.Models;
 
 namespace RealEstateAgency.Controllers.Estate
 {
@@ -62,6 +64,25 @@ namespace RealEstateAgency.Controllers.Estate
             }
 
             return NoContent();
+        }
+
+
+        [AllowAnonymous]
+        [HttpGet("[Action]")]
+        public ActionResult<NumberMinMax> GetMinMax()
+        {
+            var query = ModelService.Queryable;
+            return new NumberMinMax
+            {
+                RoomMin = query.Where(r => r.IdNavigation.IsPublished).Min(r => r.Rooms).GetValueOrDefault(0),
+                RoomMax = query.Where(r => r.IdNavigation.IsPublished).Max(r => r.Rooms).GetValueOrDefault(0),
+                BedMin = query.Where(r => r.IdNavigation.IsPublished).Min(r => r.Bedrooms).GetValueOrDefault(0),
+                BedMax = query.Where(r => r.IdNavigation.IsPublished).Max(r => r.Bedrooms).GetValueOrDefault(0),
+                BathMin = query.Where(r => r.IdNavigation.IsPublished).Min(r => r.Bathrooms).GetValueOrDefault(0),
+                BathMax = query.Where(r => r.IdNavigation.IsPublished).Max(r => r.Bathrooms).GetValueOrDefault(0),
+                SizeMin = query.Where(r => r.IdNavigation.IsPublished).Min(r => r.Size).GetValueOrDefault(0),
+                SizeMax = query.Where(r => r.IdNavigation.IsPublished).Max(r => r.Size).GetValueOrDefault(0),
+            };
         }
 
     }

@@ -1,5 +1,6 @@
 ﻿using RealEstateAgency.DAL.DtoContracts;
 using RealEstateAgency.DAL.Models;
+using System;
 
 namespace RealEstateAgency.Dtos.ModelDtos.Organization
 {
@@ -8,7 +9,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Organization
         public override int Id { get; set; }
         public int LanguageIdDefault { get; set; }
         public string Name { get; set; }
-        public byte[] LogoPicture { get; set; }
+        public string LogoPicture { get; set; }
         public string Address01 { get; set; }
         public string Address02 { get; set; }
         public string Phone01 { get; set; }
@@ -21,7 +22,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.Organization
         public string MetadataJson { get; set; }
         public string DateFormat { get; set; }
         public int CurrencyId { get; set; }
+        public string Domain { get; set; }
         public bool? Deleted { get; set; }
+        public DateTime? DeletedDate { get; set; }
         public int? UserAccountId_DeleteBy { get; set; }
 
 
@@ -42,7 +45,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.Organization
             MetadataJson = entity.MetadataJson;
             DateFormat = entity.DateFormat;
             CurrencyId = entity.CurrencyId;
+            Domain = entity.Domain;
             Deleted = entity.Deleted;
+            DeletedDate = entity.DeletedDate;
             UserAccountId_DeleteBy = entity.UserAccountIdDeleteBy;
             return this;
         }
@@ -63,8 +68,10 @@ namespace RealEstateAgency.Dtos.ModelDtos.Organization
                 WebsiteUrl = WebsiteUrl,
                 MetadataJson = MetadataJson,
                 CurrencyId = CurrencyId,
+                Domain = Domain,
                 DateFormat = DateFormat,
                 Deleted = Deleted,
+                DeletedDate = DeletedDate,
                 UserAccountIdDeleteBy = UserAccountId_DeleteBy,
             };
 
@@ -85,8 +92,10 @@ namespace RealEstateAgency.Dtos.ModelDtos.Organization
                 WebsiteUrl = WebsiteUrl,
                 MetadataJson = MetadataJson,
                 CurrencyId = CurrencyId,
+                Domain = Domain,
                 DateFormat = DateFormat,
                 Deleted = Deleted,
+                DeletedDate = DeletedDate,
                 UserAccountIdDeleteBy = UserAccountId_DeleteBy,
             };
     }

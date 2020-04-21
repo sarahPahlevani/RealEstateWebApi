@@ -16,6 +16,7 @@ namespace RealEstateAgency.Controllers.Organization
         public override Func<IQueryable<RealEstate>, IQueryable<RealEstateDto>> DtoConverter
         => items => items.Select(i => new RealEstateDto
         {
+            Id = i.Id,
             LanguageIdDefault = i.LanguageIdDefault,
             Name = i.Name,
             Address01 = i.Address01,
@@ -27,9 +28,10 @@ namespace RealEstateAgency.Controllers.Organization
             ZipCode = i.ZipCode,
             Email = i.Email,
             WebsiteUrl = i.WebsiteUrl,
+            Domain = i.Domain,
             MetadataJson = i.MetadataJson,
-            Id = i.Id,
             Deleted = i.Deleted,
+            DeletedDate = i.DeletedDate,
             UserAccountId_DeleteBy = i.UserAccountIdDeleteBy,
         });
     }

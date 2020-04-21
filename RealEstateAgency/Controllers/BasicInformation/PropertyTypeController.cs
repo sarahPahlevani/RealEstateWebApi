@@ -40,17 +40,16 @@ namespace RealEstateAgency.Controllers.BasicInformation
 
         [AllowAnonymous]
         public override async Task<ActionResult<IEnumerable<PropertyTypeDto>>> GetAllAsync(CancellationToken cancellationToken)
-        //=> base.GetAllAsync(cancellationToken);
         {
-            return await ModelService.Queryable
-                .Include(r => r.Property)
-                .Select(r => new PropertyTypeDto
-                {
-                    Id = r.Id,
-                    Name = r.Name,
-                    Icon = r.Icon,
-                    PropertyCount = r.Property.Count(p => p.IsPublished),
-                }).ToListAsync(cancellationToken);
+            var db = ModelService.DbContext;
+            return await (from r in db.PropertyType
+                          select new PropertyTypeDto
+                          {
+                              Id = r.Id,
+                              Name = r.Name,
+                              Icon = r.Icon,
+                              PropertyCount = r.Property.Count(p => p.IsPublished),
+                          }).ToListAsync(cancellationToken);
         }
 
         [AllowAnonymous]

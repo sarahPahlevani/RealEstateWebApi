@@ -31,9 +31,10 @@ namespace RealEstateAgency.Implementations.Authentication
         private readonly IFastHasher _hasher;
         private readonly IUserGroupProvider _groupProvider;
         private readonly AuthSetting _authSetting;
+        private readonly AppSetting _appSetting;
 
         public AppAuthService(IEntityService<UserAccount> entityService, IEntityService<RealEstate> estateEntityService, IOptions<AuthSetting> authOptions,
-            IPasswordService passwordService, IFastHasher hasher, IUserGroupProvider groupProvider)
+             IOptions<AppSetting> appOptions, IPasswordService passwordService, IFastHasher hasher, IUserGroupProvider groupProvider)
         {
             _entityService = entityService;
             _estateEntityService = estateEntityService;
@@ -41,6 +42,7 @@ namespace RealEstateAgency.Implementations.Authentication
             _hasher = hasher;
             _groupProvider = groupProvider;
             _authSetting = authOptions.Value;
+            _appSetting = appOptions.Value;
         }
 
         public async Task<UserAccountDto> AuthenticateAsync(string email, string password, CancellationToken cancellationToken = default)
@@ -53,7 +55,7 @@ namespace RealEstateAgency.Implementations.Authentication
                     role = i.UserAccountGroup.First().UserGroup.StaticCode,
                     groupId = i.UserAccountGroup.First().UserGroup.Id,
                 })
-                .FirstOrDefaultAsync(i => i.user.Email == email || i.user.UserName == email, cancellationToken);
+                .FirstOrDefaultAsync(i => (i.user.Email == email || i.user.UserName == email) && (i.user.Password == password), cancellationToken);
 
             if (userData == null) throw new AppNotFoundException("User cannot be found");
 
@@ -63,8 +65,8 @@ namespace RealEstateAgency.Implementations.Authentication
 
             if (user.IsConfirmed == false) throw new AppException("Please confirm your email");
             if (user.IsActive == false) throw new AppException("User is deactivated");
-            if (!_passwordService.VerifyUser(user.Email, password, user.PasswordHash))
-                throw new AppException("Username or password is invalid");
+            //if (!_passwordService.VerifyUser(user.Email, password, user.PasswordHash))
+            //    throw new AppException("Username or password is invalid");
 
             // authentication successful so generate jwt token
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -94,7 +96,7 @@ namespace RealEstateAgency.Implementations.Authentication
                                                       + registerAgentDto.Email
                                                       + registerAgentDto.Username);
             var passwordHash = _passwordService.HashUserPassword(registerAgentDto.Email, registerAgentDto.Password);
-            var user = CreateUser(registerAgentDto, UserGroup.Agent, passwordHash, activationKey);
+            var user = CreateUser(registerAgentDto, UserGroup.Agent, registerAgentDto.Password, passwordHash, activationKey);
 
             _entityService.DbContext.Agent.Add(new Agent
             {
@@ -120,7 +122,7 @@ namespace RealEstateAgency.Implementations.Authentication
                                                       + registerDto.Email
                                                       + registerDto.Username);
             var passwordHash = _passwordService.HashUserPassword(registerDto.Email, registerDto.Password);
-            var reg = CreateUser(registerDto, UserGroup.AppClient, passwordHash, activationKey);
+            var reg = CreateUser(registerDto, UserGroup.AppClient, registerDto.Password, passwordHash, activationKey);
 
             _entityService.DbContext.SaveChanges();
 
@@ -132,7 +134,7 @@ namespace RealEstateAgency.Implementations.Authentication
 
         }
 
-        private UserAccount CreateUser(RegisterUserDto registerAgentDto, UserGroup userGroup, string passwordHash = null, string activationKey = null)
+        private UserAccount CreateUser(RegisterUserDto registerAgentDto, UserGroup userGroup, string password, string passwordHash = null, string activationKey = null)
         {
             using (TransactionScope scope = new TransactionScope())
             {
@@ -144,11 +146,12 @@ namespace RealEstateAgency.Implementations.Authentication
                         ActivationKey = activationKey,
                         Email = registerAgentDto.Email,
                         UserName = registerAgentDto.Username,
+                        Password = password,
+                        PasswordHash = passwordHash,
                         FirstName = registerAgentDto.Firstname,
                         LastName = registerAgentDto.Lastname,
                         HasExternalAuthentication = false,
                         IsConfirmed = false,
-                        PasswordHash = passwordHash,
                         IsActive = true,
                         RegistrationDate = DateTime.Now,
                         ReferralCode = _hasher.CalculateHash(nameof(UserAccount.ReferralCode), activationKey)
@@ -181,6 +184,7 @@ namespace RealEstateAgency.Implementations.Authentication
         private async Task<UserAccount> UpdatePassword(int userId, string newPassword)
         {
             var userAccount = _entityService.DbContext.UserAccount.Where(t => t.Id == userId).FirstOrDefault();
+            userAccount.Password = newPassword;
             userAccount.PasswordHash = _passwordService.HashUserPassword(userAccount.Email, newPassword);
             await _entityService.UpdateAsync(userAccount);
             await _entityService.DbContext.SaveChangesAsync();
@@ -230,7 +234,8 @@ namespace RealEstateAgency.Implementations.Authentication
                     string.IsNullOrEmpty(account.Phone01) ? "" : $"{account.Phone01},{account.Phone02}"),
                 new Claim(CustomClaimTypes.GroupId, groupId.ToString()),
                 new Claim(CustomClaimTypes.RegistrationDate,
-                    account.RegistrationDate.ToString(CultureInfo.InvariantCulture))
+                    account.RegistrationDate.ToString(CultureInfo.InvariantCulture)),
+                new Claim(CustomClaimTypes.UserPic, $"{_appSetting.ApiBaseUrl}{account.UserPictureTumblr??"/images/UserAccount/user.jpg"}"),
             });
             if (role == UserGroups.Agent
                 //|| role == UserGroups.Administrator

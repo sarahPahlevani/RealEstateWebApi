@@ -22,7 +22,7 @@ namespace RealEstateAgency.Shared.Services
             => CalculateHash(key + toHash);
 
         public string FileNameHash(string category, string key)
-            => $"File_{category}_{CalculateHash(category.Trim().ToLower() + key.Trim().ToLower())}";
+            => $"{category}_{CalculateHash(category.Trim().ToLower() + key.Trim().ToLower())}";
     }
 
     public interface IFastHasher
