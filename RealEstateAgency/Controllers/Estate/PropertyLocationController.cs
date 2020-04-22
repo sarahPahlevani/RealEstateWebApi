@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Threading;
+using Microsoft.EntityFrameworkCore;
 
 namespace RealEstateAgency.Controllers.Estate
 {
@@ -21,13 +22,17 @@ namespace RealEstateAgency.Controllers.Estate
         }
 
         public override Func<IQueryable<PropertyLocation>, IQueryable<PropertyLocationDto>> DtoConverter
-        => items => items.Select(i => new PropertyLocationDto
+        => items => items
+        .Include(r => r.CityNavigation)
+        .Include(r => r.CityNavigation.Region)
+        .Include(r => r.CityNavigation.Region.Country)
+        .Select(i => new PropertyLocationDto
         {
             Id = i.Id,
             PropertyId = i.Id,
-            //CountryId = i.CountryId,
-            //RegionId = i.RegionId,
-            //CityId = i.CityId,
+            CountryId = i.CityNavigation.Region.CountryId,
+            RegionId = i.CityNavigation.RegionId,
+            CityId = i.CityId,
             Country = i.Country,
             Region = i.Region,
             City = i.City,

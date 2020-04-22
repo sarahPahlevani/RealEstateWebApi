@@ -8,9 +8,9 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
     {
         public override int Id { get; set; }
         public int PropertyId { get; set; }
-        //public int? CountryId { get; set; }
-        //public int? RegionId { get; set; }
-        //public int? CityId { get; set; }
+        public int? CountryId { get; set; }
+        public int? RegionId { get; set; }
+        public int? CityId { get; set; }
         public string Country { get; set; }
         public string Region { get; set; }
         public string City { get; set; }
@@ -29,7 +29,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
             PropertyId = entity.Id;
             //CountryId = entity.CountryId;
             //RegionId = entity.RegionId;
-            //CityId = entity.CityId;
+            CityId = entity.CityId;
             Country = entity.Country;
             Region = entity.Region;
             City = entity.City;
@@ -47,7 +47,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
                 Id = PropertyId,
                 //CountryId = CountryId,
                 //RegionId = RegionId,
-                //CityId = CityId,
+                CityId = CityId,
                 Country = Country,
                 Region = Region,
                 City = City,
@@ -64,7 +64,7 @@ namespace RealEstateAgency.Dtos.ModelDtos.Estate
             Id = PropertyId,
             //CountryId = CountryId,
             //RegionId = RegionId,
-            //CityId = CityId,
+            CityId = CityId,
             Country = Country,
             Region = Region,
             City = City,
