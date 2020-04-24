@@ -78,8 +78,7 @@ namespace RealEstateAgency.Controllers.Estate
             GetWebAppEstate(int propertyId, CancellationToken cancellationToken)
         {
             var propertyPage = await ModelService
-                .AsQueryable(p => p.IsPublished
-                                  && p.Id == propertyId)
+                .AsQueryable(p => p.IsPublished && p.Id == propertyId)
                 .Include(p => p.PropertyPrice)
                 .Include(p => p.PropertyDetail)
                 .Include(p => p.PropertyLocation)
@@ -201,6 +200,8 @@ namespace RealEstateAgency.Controllers.Estate
                 [FromQuery(Name = "floors_from")] string floorsFrom,
                 [FromQuery(Name = "floors_to")] string floorsTo,
                 [FromQuery(Name = "has_image")] string hasImage,
+                [FromQuery(Name = "country")] string country,
+                [FromQuery(Name = "region")] string region,
                 [FromQuery(Name = "city")] string city,
                 [FromQuery(Name = "lat")] string latitude,
                 [FromQuery(Name = "long")] string longitude,
@@ -218,7 +219,8 @@ namespace RealEstateAgency.Controllers.Estate
             bathRoomsTo, garagesFrom,
             garagesTo, garagesSizeFrom,
             garagesSizeTo, yearBuildFrom,
-            yearBuildTo, hasImage, city,
+            yearBuildTo, hasImage,
+            country, region, city,
             floorsFrom, floorsTo,
             latitude, longitude);
 
@@ -343,17 +345,23 @@ namespace RealEstateAgency.Controllers.Estate
             if (queryDto.FloorsTo != null)
                 properties = properties.Where(i => i.PropertyFloorPlan.Count <= queryDto.FloorsTo);
 
-            //if (queryDto.CityId != null)
-            //    properties = properties.Where(i => i.PropertyLocation.CityId == queryDto.GaragesSizeFrom);
+            if (queryDto.CountryId != null)
+                properties = properties.Where(i => i.PropertyLocation.CityNavigation.Region.CountryId == queryDto.CountryId);
 
-            //if (queryDto.CityId != null)
-            //    properties = properties.Where(i => i.PropertyLocation.CityId == queryDto.GaragesSizeFrom);
+            if (queryDto.RegionId != null)
+                properties = properties.Where(i => i.PropertyLocation.CityNavigation.RegionId == queryDto.RegionId);
+
+            if (queryDto.CityId != null)
+                properties = properties.Where(i => i.PropertyLocation.CityId == queryDto.CityId);
 
             if (!string.IsNullOrWhiteSpace(queryDto.Search))
                 properties = properties.Where(p => p.Title.Contains(queryDto.Search) ||
-                                                   p.PropertyLocation.AddressLine1.Contains(queryDto.Search) ||
-                                                   p.PropertyLocation.AddressLine2.Contains(queryDto.Search) ||
-                                                   p.PropertyLocation.ZipCode.Contains(queryDto.Search));
+                                                    p.PropertyLocation.CityNavigation.Region.Country.Name.Contains(queryDto.Search) ||
+                                                    p.PropertyLocation.CityNavigation.Region.Name.Contains(queryDto.Search) ||
+                                                    p.PropertyLocation.CityNavigation.Name.Contains(queryDto.Search) ||
+                                                    p.PropertyLocation.AddressLine1.Contains(queryDto.Search) ||
+                                                    p.PropertyLocation.AddressLine2.Contains(queryDto.Search) ||
+                                                    p.PropertyLocation.ZipCode.Contains(queryDto.Search));
 
             return properties;
         }
@@ -370,7 +378,9 @@ namespace RealEstateAgency.Controllers.Estate
             string bathRoomsTo, string garagesFrom,
             string garagesTo, string garagesSizeFrom,
             string garagesSizeTo, string yearBuildFrom,
-            string yearBuildTo, string hasImage, string city, string floorsFrom, string floorsTo,
+            string yearBuildTo, string hasImage, 
+            string country, string region, string city, 
+            string floorsFrom, string floorsTo,
             string latitude, string longitude) =>
             new AdvancedSearchDto
             {
@@ -381,8 +391,8 @@ namespace RealEstateAgency.Controllers.Estate
                 PageNumber = ConvertToIntOrDefault(pageNumber, 0).Value,
                 PageSize = ConvertToIntOrDefault(pageSize, 10).Value,
                 Search = search,
-                PriceFrom = ConvertToIntOrDefault(priceFrom),
-                PriceTo = ConvertToIntOrDefault(priceTo),
+                PriceFrom = ConvertToDecimalOrDefault(priceFrom),
+                PriceTo = ConvertToDecimalOrDefault(priceTo),
                 SizeFrom = ConvertToIntOrDefault(sizeFrom),
                 SizeTo = ConvertToIntOrDefault(sizeTo),
                 AreaFrom = ConvertToIntOrDefault(areaFrom),
@@ -399,6 +409,8 @@ namespace RealEstateAgency.Controllers.Estate
                 GaragesSizeTo = ConvertToIntOrDefault(garagesSizeTo),
                 YearBuildFrom = ConvertToIntOrDefault(yearBuildFrom),
                 YearBuildTo = ConvertToIntOrDefault(yearBuildTo),
+                CountryId = ConvertToIntOrDefault(country),
+                RegionId = ConvertToIntOrDefault(region),
                 CityId = ConvertToIntOrDefault(city),
                 FloorsFrom = ConvertToIntOrDefault(floorsFrom),
                 FloorsTo = ConvertToIntOrDefault(floorsTo),

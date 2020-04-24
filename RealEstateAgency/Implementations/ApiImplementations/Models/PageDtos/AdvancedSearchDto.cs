@@ -14,8 +14,8 @@ namespace RealEstateAgency.Implementations.ApiImplementations.PageDtos
         public List<int> PropertyStatusIds { get; set; }
         public List<int> PropertyLabelIds { get; set; }
         public List<int> PropertyFeatureIds { get; set; }
-        public int? PriceFrom { get; set; }
-        public int? PriceTo { get; set; }
+        public decimal? PriceFrom { get; set; }
+        public decimal? PriceTo { get; set; }
         public string Search { get; set; }
         public int? SizeFrom { get; set; }
         public int? SizeTo { get; set; }
@@ -35,6 +35,8 @@ namespace RealEstateAgency.Implementations.ApiImplementations.PageDtos
         public int? YearBuildTo { get; set; }
         public int? FloorsFrom { get; set; }
         public int? FloorsTo { get; set; }
+        public int? CountryId { get; set; }
+        public int? RegionId { get; set; }
         public int? CityId { get; set; }
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }

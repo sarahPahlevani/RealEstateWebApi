@@ -85,7 +85,7 @@ namespace RealEstateAgency.DAL.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=176.9.235.212,2134;Database=RealEstateDbTest;User Id=sa;Password=FarJef123!@#;MultipleActiveResultSets=true;");
+                optionsBuilder.UseSqlServer("Server=176.9.235.212,2134;Database=RealEstateDbTest;User Id=sa;Password=FarJef123!@#;");
             }
         }
 
@@ -921,6 +921,11 @@ namespace RealEstateAgency.DAL.Models
                 entity.Property(e => e.ZipCode)
                     .HasMaxLength(11)
                     .IsUnicode(false);
+
+                entity.HasOne(d => d.CityNavigation)
+                    .WithMany(p => p.PropertyLocation)
+                    .HasForeignKey(d => d.CityId)
+                    .HasConstraintName("FK_PropertyLocation_City");
 
                 entity.HasOne(d => d.IdNavigation)
                     .WithOne(p => p.PropertyLocation)
