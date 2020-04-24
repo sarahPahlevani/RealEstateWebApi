@@ -7,6 +7,10 @@ using RealEstateAgency.Implementations.Providers;
 using RealEstateAgency.Implementations.ApiImplementations.Services.Contracts;
 using RealEstateAgency.DAL.Models;
 using Microsoft.AspNetCore.Routing;
+using RealEstateAgency.Implementations.ApiImplementations.Services.Exceptions;
+using System.Net;
+using System;
+using Newtonsoft.Json;
 
 namespace RealEstateAgency.Implementations.Middleware
 {
@@ -22,21 +26,39 @@ namespace RealEstateAgency.Implementations.Middleware
         {
             userProvider.SetUser(httpContext.User, languageProvider.SelectedLanguage.Id);
 
-          
-         //   if (httpContext.User.Identity.IsAuthenticated)
-         //   {
-               
-          //      if (Authorize(httpContext)) { await _next(httpContext); } 
-          //      else await _next(null);
+            var controllerName = GetControllerName(httpContext.Request.Path.Value);
+            if (Check(httpContext, controllerName)) { await _next(httpContext); } 
+            
+            else if (httpContext.User.Identity.IsAuthenticated) { 
+        
 
-         //   }
-         //   else {
-                await _next(httpContext);
-        //    }
+                if (Authorize(httpContext, controllerName)) { await _next(httpContext); }
+                else await UnauthorizedExceptionAsync(httpContext, " Un Authorize  Access");
+
+            }
+          
+            else { await UnauthorizedExceptionAsync(httpContext, " Access Denay"); }
                        
            
         }
-        private bool Authorize(HttpContext httpContext)
+        private bool Check(HttpContext httpContext, string controllerName)
+        {
+            using (RealEstateDbContext _dbContext = new RealEstateDbContext())
+            {
+                var find =  _dbContext.Apicontroller.Where(item=>item.AllAccess==true).ToList();
+               
+                foreach (var item in find)
+                {
+                    if (item.ControllerName.ToLower() == controllerName.ToLower() )
+                    {
+                        return true;
+                    }
+                }
+            };
+
+            return false;
+        }
+        private bool Authorize(HttpContext httpContext,string controllerName)
         {
                      
                 var climerole = httpContext.User.Claims.Where(item => item.Type == ClaimTypes.Role).Select(i => i.Value).FirstOrDefault();
@@ -61,7 +83,6 @@ namespace RealEstateAgency.Implementations.Middleware
                                     UserGroupName = c.Name
 
                                 }).ToList();
-                var controllerName = GetControllerName(httpContext.Request.Path.Value);
                     foreach (var item in find)
                     {
                         if (item.ControllerName.ToLower() == controllerName.ToLower() &&
@@ -80,7 +101,7 @@ namespace RealEstateAgency.Implementations.Middleware
             var index = text1.IndexOf("/");
             return index==-1? text1 : text1.Substring(0, index);
         }
-            private bool checkPermmite(string MethodType, bool read, bool delete, bool update)
+        private bool checkPermmite(string MethodType, bool read, bool delete, bool update)
         {
             return hasReadPermmite(MethodType, read) || hasDeletePermmite(MethodType, delete) || hasUpdatePermmite(MethodType, update);
         }
@@ -96,6 +117,14 @@ namespace RealEstateAgency.Implementations.Middleware
         private bool hasUpdatePermmite(string MethodType, bool update)
         {
             return (MethodType == "POST" || MethodType == "PUT" )&& update == true;
+        }
+        private static Task UnauthorizedExceptionAsync(HttpContext context, string Message)
+        {
+            var code =  HttpStatusCode.Unauthorized;
+            var result = JsonConvert.SerializeObject(new { error = Message });
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)code;
+            return context.Response.WriteAsync(result);
         }
     }
 }

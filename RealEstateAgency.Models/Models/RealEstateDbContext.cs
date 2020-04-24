@@ -273,10 +273,12 @@ namespace RealEstateAgency.DAL.Models
 
             modelBuilder.Entity<ContentPageTranslate>(entity =>
             {
-                entity.HasKey(e => e.LanguageId);
+                
 
                 entity.ToTable("ContentPageTranslate", "RBAC");
-
+                entity.Property(e => e.Title)
+                   .IsRequired()
+                   .HasMaxLength(20);
                 entity.Property(e => e.LanguageId).ValueGeneratedNever();
 
                 entity.Property(e => e.ContentFooter).HasMaxLength(1000);
@@ -285,16 +287,18 @@ namespace RealEstateAgency.DAL.Models
 
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
-                entity.HasOne(d => d.ComtentPage)
-                    .WithMany(p => p.ContentPageTranslate)
-                    .HasForeignKey(d => d.ComtentPageId)
-                    .HasConstraintName("FK_ContentPageTranslate_ContentPage");
 
                 entity.HasOne(d => d.Language)
-                    .WithOne(p => p.ContentPageTranslate)
-                    .HasForeignKey<ContentPageTranslate>(d => d.LanguageId)
+                    .WithMany(p => p.ContentPageTranslate)
+                    .HasForeignKey(d => d.LanguageId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ContentPageTranslate_Language");
+
+              entity.HasOne(d => d.ContentPage)
+                    .WithMany(p => p.ContentPageTranslate)
+                    .HasForeignKey(d => d.ContentPageId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_ContentPageTranslate_ContentPage");
             });
 
             modelBuilder.Entity<Country>(entity =>
