@@ -11,6 +11,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using RealEstateAgency.Shared.Statics;
+using RealEstateAgency.Implementations.Providers;
+using RealEstateAgency.Implementations.Extensions;
 
 namespace RealEstateAgency.Controllers.RBAC
 {
@@ -19,12 +21,12 @@ namespace RealEstateAgency.Controllers.RBAC
     {
         
         private readonly IEntityService<RealEstate> _entityService;
-        
+        private readonly ILanguageProvider _languageProvider;
 
         public MenuController(IModelService<Menu, MenuDto> modelService,
-            IEntityService<RealEstate> entityService) : base(modelService)
+            IEntityService<RealEstate> entityService, ILanguageProvider languageProvider) : base(modelService)
         {
-           
+            _languageProvider = languageProvider;
             _entityService = entityService;
          }
 
@@ -134,5 +136,19 @@ namespace RealEstateAgency.Controllers.RBAC
                        }).ToList()
 
                    }).ToListAsync(cancellationToken);
+        
+        [HttpGet("[Action]/{language}")]
+        public async Task<ActionResult<IEnumerable<MenuDto>>> GetAllByLanguage(string language, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var lang = _languageProvider[language];
+                return await DtoConverter(ModelService.DbContext.Menu.Translate(lang.Id)).ToListAsync(cancellationToken);
+            }
+            catch (KeyNotFoundException)
+            {
+                return await base.GetAllAsync(cancellationToken);
+            }
+        }
     }
 }

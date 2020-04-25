@@ -1,6 +1,7 @@
 ﻿using RealEstateAgency.DAL.Contracts;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RealEstateAgency.DAL.Models
 {
@@ -8,7 +9,14 @@ namespace RealEstateAgency.DAL.Models
     {
         public Menu Translate(int languageId)
         {
-            throw new NotImplementedException();
+            return new Menu
+            {
+                Id = Id,
+                Name = MenuTranslate.Any(t => t.MenuId == Id && t.LanguageId == languageId)
+                    ? MenuTranslate.First().Name
+                    : Name
+                
+            };
         }
     }
 }
