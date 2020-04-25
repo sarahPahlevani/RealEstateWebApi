@@ -18,16 +18,15 @@ namespace RealEstateAgency.Implementations.Middleware
     {
         private readonly RequestDelegate _next;
         
-        public UserProviderMiddleware(RequestDelegate next//, IEntityService<RealEstate> entityService
-            ) { _next = next;// _entityService = entityService; 
-        }
+        public UserProviderMiddleware(RequestDelegate next) { _next = next;}
 
         public async Task Invoke(HttpContext httpContext, IUserProvider userProvider, ILanguageProvider languageProvider)
         {
             userProvider.SetUser(httpContext.User, languageProvider.SelectedLanguage.Id);
 
             var controllerName = GetControllerName(httpContext.Request.Path.Value);
-            if (Check(httpContext, controllerName)) { await _next(httpContext); } 
+           
+            if (Check(httpContext, controllerName, true)) { await _next(httpContext); } 
             
             else if (httpContext.User.Identity.IsAuthenticated) { 
         
@@ -37,15 +36,16 @@ namespace RealEstateAgency.Implementations.Middleware
 
             }
           
+            else if (controllerName=="Auth"&& GetActionName(httpContext.Request.Path.Value)=="Login") { await _next(httpContext); }
             else { await UnauthorizedExceptionAsync(httpContext, " Access Denay"); }
                        
            
         }
-        private bool Check(HttpContext httpContext, string controllerName)
+        private bool Check(HttpContext httpContext, string controllerName,bool AllAccess)
         {
             using (RealEstateDbContext _dbContext = new RealEstateDbContext())
             {
-                var find =  _dbContext.Apicontroller.Where(item=>item.AllAccess==true).ToList();
+                var find =  _dbContext.Apicontroller.Where(item=>item.AllAccess== AllAccess).ToList();
                
                 foreach (var item in find)
                 {
@@ -97,9 +97,28 @@ namespace RealEstateAgency.Implementations.Middleware
         }
         private string GetControllerName(string Path)
         {
-            var text1 = Path.Substring(5);
+            if (Path.StartsWith("/api"))
+            { 
+                var text1 = Path.Substring(5);
             var index = text1.IndexOf("/");
             return index==-1? text1 : text1.Substring(0, index);
+
+            }else if(Path.StartsWith("/swagger"))
+                {
+                var text1 = Path.Substring(1,7);
+                //var index = text1.IndexOf(".");
+                return text1;
+            }
+            return Path;
+           
+        }
+        
+        private string GetActionName(string Path)
+        {
+            var text1 = Path.Substring(5);
+            var index = text1.IndexOf('/'); 
+            
+            return index == -1 ? "" : text1.Substring(index+1);
         }
         private bool checkPermmite(string MethodType, bool read, bool delete, bool update)
         {
@@ -121,9 +140,10 @@ namespace RealEstateAgency.Implementations.Middleware
         private static Task UnauthorizedExceptionAsync(HttpContext context, string Message)
         {
             var code =  HttpStatusCode.Unauthorized;
-            var result = JsonConvert.SerializeObject(new { error = Message });
+            var result = JsonConvert.SerializeObject(new { Message = Message });
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;
+       
             return context.Response.WriteAsync(result);
         }
     }
