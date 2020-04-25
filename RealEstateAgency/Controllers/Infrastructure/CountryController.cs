@@ -5,14 +5,24 @@ using RealEstateAgency.Dtos.ModelDtos.Infrastructure;
 using System;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Threading;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 
 namespace RealEstateAgency.Controllers.Infrastructure
 {
     [AllowAnonymous]
     public class CountryController : ModelPagingController<Country, CountryDto, CountryDto>
     {
-        public CountryController(IModelService<Country, CountryDto> modelService) : base(modelService)
+        private readonly IEntityService<Property> _propertyService;
+
+
+        public CountryController(IModelService<Country, CountryDto> modelService
+            , IEntityService<Property> propertyService) : base(modelService)
         {
+            _propertyService = propertyService;
         }
 
         public override Func<IQueryable<Country>, IQueryable<CountryDto>> DtoConverter => _converter;
@@ -33,8 +43,33 @@ namespace RealEstateAgency.Controllers.Infrastructure
                 });
 
 
+        [HttpGet("[Action]")]
+        public async Task<IEnumerable<CountryDto>> GetUsed(CancellationToken cancellationToken)
+        {
+            var list = await _propertyService.Queryable
+                .Include(r => r.PropertyLocation)
+                .Include(r => r.PropertyLocation.CityNavigation)
+                .Include(r => r.PropertyLocation.CityNavigation.Region)
+                .Include(r => r.PropertyLocation.CityNavigation.Region.Country)
+                .Where(r => r.IsPublished && r.PropertyLocation.CityId.HasValue)
+                .GroupBy(r => r.PropertyLocation.CityNavigation.Region.CountryId)
+                .Select(r => r.Key).ToListAsync(cancellationToken);
 
+            return await ModelService.Queryable
+                .Where(r => list.Contains(r.Id))
+                .Select(r => new CountryDto
+                {
+                    Id = r.Id,
+                    CurrencyId = r.CurrencyId,
+                    Name = r.Name,
+                    Isolong = r.Isolong,
+                    Isoshort = r.Isoshort,
+                    Isocode = r.Isocode,
+                    OfficialLongForm = r.OfficialLongForm,
+                    OfficialShortForm = r.OfficialShortForm,
+                }).ToListAsync(cancellationToken);
 
+        }
 
 
     }
