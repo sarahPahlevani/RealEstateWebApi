@@ -18,10 +18,13 @@ namespace RealEstateAgency.Controllers.Infrastructure
     public class RegionController : ModelController<Region, RegionDto>
     {
         private readonly ILanguageProvider _languageProvider;
+        private readonly IEntityService<Property> _propertyService;
 
-        public RegionController(IModelService<Region, RegionDto> modelService,ILanguageProvider languageProvider) : base(modelService)
+        public RegionController(IModelService<Region, RegionDto> modelService,ILanguageProvider languageProvider
+            , IEntityService<Property> propertyService) : base(modelService)
         {
             _languageProvider = languageProvider;
+            _propertyService = propertyService;
         }
 
         public override Func<IQueryable<Region>, IQueryable<RegionDto>> DtoConverter
@@ -47,5 +50,29 @@ namespace RealEstateAgency.Controllers.Infrastructure
                 return await base.GetAllAsync(cancellationToken);
             }
         }
+
+
+        [HttpGet("[Action]")]
+        public async Task<IEnumerable<RegionDto>> GetUsed(CancellationToken cancellationToken)
+        {
+            var list = await _propertyService.Queryable
+                .Include(r => r.PropertyLocation)
+                .Include(r => r.PropertyLocation.CityNavigation)
+                .Include(r => r.PropertyLocation.CityNavigation.Region)
+                .Where(r => r.IsPublished && r.PropertyLocation.CityId.HasValue)
+                .GroupBy(r => r.PropertyLocation.CityNavigation.RegionId)
+                .Select(r => r.Key).ToListAsync(cancellationToken);
+
+            return await ModelService.Queryable
+                .Where(r => list.Contains(r.Id))
+                .Select(r => new RegionDto
+                {
+                    Id = r.Id,
+                    CountryId = r.CountryId,
+                    Name = r.Name,
+                }).ToListAsync(cancellationToken);
+        }
+
+
     }
 }
