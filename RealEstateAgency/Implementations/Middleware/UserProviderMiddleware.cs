@@ -26,37 +26,32 @@ namespace RealEstateAgency.Implementations.Middleware
 
             var controllerName = GetControllerName(httpContext.Request.Path.Value);
            
-            if (Check(httpContext, controllerName, true)) { await _next(httpContext); } 
-            
-            else if (httpContext.User.Identity.IsAuthenticated) { 
-        
+            if (GetAuthorizedController(controllerName)) {
 
-                if (Authorize(httpContext, controllerName)) { await _next(httpContext); }
-                else await UnauthorizedExceptionAsync(httpContext, " Un Authorize  Access");
+                if (httpContext.User.Identity.IsAuthenticated)
+                {
+                    if (Authorize(httpContext, controllerName)) { await _next(httpContext); }
+                    else await UnauthorizedExceptionAsync(httpContext, " Un Authorize  Access");
 
-            }
+                }
+            } else { await _next(httpContext); }
+
+           
           
-            else if (controllerName=="Auth"&& GetActionName(httpContext.Request.Path.Value)=="Login") { await _next(httpContext); }
-            else { await UnauthorizedExceptionAsync(httpContext, " Access Denay"); }
+            //else if (controllerName=="Auth"&& GetActionName(httpContext.Request.Path.Value)=="Login") { await _next(httpContext); }
+            //else { await UnauthorizedExceptionAsync(httpContext, " Access Denay"); }
                        
            
         }
-        private bool Check(HttpContext httpContext, string controllerName,bool AllAccess)
+        private bool GetAuthorizedController( string controllerName)
         {
             using (RealEstateDbContext _dbContext = new RealEstateDbContext())
             {
-                var find =  _dbContext.Apicontroller.Where(item=>item.AllAccess== AllAccess).ToList();
+                var find =  _dbContext.Apicontroller.Where(item=>item.ControllerName.Trim().ToLower() == controllerName.Trim().ToLower()).ToList();
                
-                foreach (var item in find)
-                {
-                    if (item.ControllerName.ToLower() == controllerName.ToLower() )
-                    {
-                        return true;
-                    }
-                }
+               return find.Count > 0?true:false;
+             
             };
-
-            return false;
         }
         private bool Authorize(HttpContext httpContext,string controllerName)
         {
@@ -103,23 +98,22 @@ namespace RealEstateAgency.Implementations.Middleware
             var index = text1.IndexOf("/");
             return index==-1? text1 : text1.Substring(0, index);
 
-            }else if(Path.StartsWith("/swagger"))
+            }else 
                 {
-                var text1 = Path.Substring(1,7);
-                //var index = text1.IndexOf(".");
-                return text1;
+               
+                return Path;
             }
-            return Path;
+           
            
         }
         
-        private string GetActionName(string Path)
-        {
-            var text1 = Path.Substring(5);
-            var index = text1.IndexOf('/'); 
+        //private string GetActionName(string Path)
+        //{
+        //    var text1 = Path.Substring(5);
+        //    var index = text1.IndexOf('/'); 
             
-            return index == -1 ? "" : text1.Substring(index+1);
-        }
+        //    return index == -1 ? "" : text1.Substring(index+1);
+        //}
         private bool checkPermmite(string MethodType, bool read, bool delete, bool update)
         {
             return hasReadPermmite(MethodType, read) || hasDeletePermmite(MethodType, delete) || hasUpdatePermmite(MethodType, update);
