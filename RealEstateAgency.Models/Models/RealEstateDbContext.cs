@@ -85,7 +85,7 @@ namespace RealEstateAgency.DAL.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=176.9.235.212,2134;Database=RealEstateDbTest;User Id=sa;Password=FarJef123!@#;");
+                optionsBuilder.UseSqlServer("Server=176.9.235.212,2134;Database=RealEstateDbTest;User Id=sa;Password=FarJef123!@#;MultipleActiveResultSets=true;");
             }
         }
 
@@ -160,7 +160,11 @@ namespace RealEstateAgency.DAL.Models
             {
                 entity.ToTable("APIController", "RBAC");
 
-                entity.Property(e => e.ControllerName).HasMaxLength(50);
+                entity.Property(e => e.ActionName).HasMaxLength(50);
+
+                entity.Property(e => e.ControllerName)
+                    .IsRequired()
+                    .HasMaxLength(50);
 
                 entity.HasOne(d => d.Menu)
                     .WithMany(p => p.Apicontroller)
@@ -273,32 +277,24 @@ namespace RealEstateAgency.DAL.Models
 
             modelBuilder.Entity<ContentPageTranslate>(entity =>
             {
-                
-
                 entity.ToTable("ContentPageTranslate", "RBAC");
-                entity.Property(e => e.Title)
-                   .IsRequired()
-                   .HasMaxLength(20);
-                entity.Property(e => e.LanguageId).ValueGeneratedNever();
 
                 entity.Property(e => e.ContentFooter).HasMaxLength(1000);
 
                 entity.Property(e => e.ContentHeader).HasMaxLength(1000);
 
-                entity.Property(e => e.Id).ValueGeneratedOnAdd();
+                entity.Property(e => e.Title).HasMaxLength(20);
 
+                entity.HasOne(d => d.ContentPage)
+                    .WithMany(p => p.ContentPageTranslate)
+                    .HasForeignKey(d => d.ContentPageId)
+                    .HasConstraintName("FK_ContentPageTranslate_ContentPage");
 
                 entity.HasOne(d => d.Language)
                     .WithMany(p => p.ContentPageTranslate)
                     .HasForeignKey(d => d.LanguageId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_ContentPageTranslate_Language");
-
-              entity.HasOne(d => d.ContentPage)
-                    .WithMany(p => p.ContentPageTranslate)
-                    .HasForeignKey(d => d.ContentPageId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ContentPageTranslate_ContentPage");
             });
 
             modelBuilder.Entity<Country>(entity =>

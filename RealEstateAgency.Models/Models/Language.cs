@@ -9,6 +9,7 @@ namespace RealEstateAgency.DAL.Models
         {
             ActionTypeTranslate = new HashSet<ActionTypeTranslate>();
             CityTranslate = new HashSet<CityTranslate>();
+            ContentPageTranslate = new HashSet<ContentPageTranslate>();
             CountryTranslate = new HashSet<CountryTranslate>();
             ImportantPlaceTypeTranslate = new HashSet<ImportantPlaceTypeTranslate>();
             MenuTranslate = new HashSet<MenuTranslate>();
@@ -21,7 +22,6 @@ namespace RealEstateAgency.DAL.Models
             RegionTranslate = new HashSet<RegionTranslate>();
             RequestTypeTranslate = new HashSet<RequestTypeTranslate>();
             UserGroupTranslate = new HashSet<UserGroupTranslate>();
-            ContentPageTranslate = new HashSet<ContentPageTranslate>();
         }
 
         public int Id { get; set; }
@@ -31,9 +31,9 @@ namespace RealEstateAgency.DAL.Models
         public string Flag { get; set; }
         public bool IsDefault { get; set; }
 
-        public virtual ICollection<ContentPageTranslate> ContentPageTranslate { get; set; }
         public virtual ICollection<ActionTypeTranslate> ActionTypeTranslate { get; set; }
         public virtual ICollection<CityTranslate> CityTranslate { get; set; }
+        public virtual ICollection<ContentPageTranslate> ContentPageTranslate { get; set; }
         public virtual ICollection<CountryTranslate> CountryTranslate { get; set; }
         public virtual ICollection<ImportantPlaceTypeTranslate> ImportantPlaceTypeTranslate { get; set; }
         public virtual ICollection<MenuTranslate> MenuTranslate { get; set; }
