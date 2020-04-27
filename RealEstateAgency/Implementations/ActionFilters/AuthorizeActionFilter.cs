@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace RealEstateAgency.Implementations.ActionFilters
 {
-    public class AuthorizeActionFilter : Attribute, IActionFilter//, IAsyncActionFilter, IFilterMetadata, IAsyncResultFilter, IOrderedFilter
+    public class AuthorizeActionFilter : Attribute, IActionFilter
     {
         public bool isValid ;
 
@@ -34,10 +34,9 @@ namespace RealEstateAgency.Implementations.ActionFilters
                         context.Result= new BadRequestObjectResult("Un Authorize  Access");
                         return;
                     }
-                    //else await UnauthorizedExceptionAsync(httpContext, " Un Authorize  Access");
 
                 }
-            }// else { await _next(httpContext); }
+            }
            
         }
         

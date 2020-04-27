@@ -11,7 +11,7 @@ using RealEstateAgency.Implementations.ApiImplementations.Services.Contracts;
 
 namespace RealEstateAgency.Controllers.Contracts
 {
-    [Route("api/[controller]"), ApiController, ServiceFilter(typeof(ExecutionActionFilter))]
+    [Route("api/[controller]"), ApiController, ServiceFilter(typeof(ExecutionActionFilter)), ServiceFilter(typeof(AuthorizeActionFilter))]
     public abstract class ModelController<TEntity, TDto> : BaseApiController
         where TEntity : class, IEntity
         where TDto : class, IModelDto<TEntity>, new()

@@ -13,7 +13,7 @@ using RealEstateAgency.Implementations.ApiImplementations.Services.Contracts;
 
 namespace RealEstateAgency.Controllers.Contracts
 {
-    [Route("api/[controller]"), ApiController, ServiceFilter(typeof(ExecutionActionFilter))]
+    [Route("api/[controller]"), ApiController, ServiceFilter(typeof(ExecutionActionFilter)), ServiceFilter(typeof(AuthorizeActionFilter))]
     public abstract class ModelPagingController<TEntity, TDto, TPaginationDto> : ModelController<TEntity, TDto>
         where TEntity : class, IEntity
         where TDto : class, IModelDto<TEntity>, new()

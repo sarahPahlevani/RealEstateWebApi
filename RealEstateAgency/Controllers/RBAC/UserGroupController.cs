@@ -6,11 +6,10 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using RealEstateAgency.Shared.Statics;
 using System.Collections.Generic;
 using System.Threading;
 using Microsoft.EntityFrameworkCore;
+using RealEstateAgency.Implementations.ActionFilters;
 
 namespace RealEstateAgency.Controllers.RBAC
 {
@@ -27,7 +26,8 @@ namespace RealEstateAgency.Controllers.RBAC
                 Name = i.Name,
                 StaticCode = i.StaticCode
             });
-       // [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+        // [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+       
         [HttpGet("[Action]")]
         public async Task<ActionResult<IEnumerable<UserGroupDto>>> GetRole(CancellationToken cancellationToken)
       => await ModelService.DbContext.UserGroup.Select(i => new UserGroupDto
