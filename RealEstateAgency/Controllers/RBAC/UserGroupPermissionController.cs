@@ -112,7 +112,7 @@ namespace RealEstateAgency.Controllers.RBAC
               requestDto, requestDto.Filter.ToObject<UserGroupPermissionListFilter>(),
               cancellationToken);
 
-        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         public override Task<ActionResult<PageResultDto<UserPermissionList>>>
             GetPageAsync(int pageSize, int pageNumber, CancellationToken cancellationToken)
             => base.GetPageAsync(pageSize, pageNumber, cancellationToken);

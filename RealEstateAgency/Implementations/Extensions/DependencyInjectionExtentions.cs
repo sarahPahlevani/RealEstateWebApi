@@ -115,6 +115,12 @@ namespace RealEstateAgency.Implementations.Extensions
             return services;
         }
 
+        public static IServiceCollection RegisterActionFilters1(this IServiceCollection services)
+        {
+            services.AddScoped<ExecutionActionFilter>();
+            return services;
+        }
+
         public static IServiceCollection RegisterSecondLevelDbCache(this IServiceCollection services)
         {
             // Add an in-memory cache service provider

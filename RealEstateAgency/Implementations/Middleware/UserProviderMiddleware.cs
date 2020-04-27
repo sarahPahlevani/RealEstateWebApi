@@ -24,20 +24,20 @@ namespace RealEstateAgency.Implementations.Middleware
         {
             userProvider.SetUser(httpContext.User, languageProvider.SelectedLanguage.Id);
 
-            var controllerName = GetControllerNamefromPath(httpContext.Request.Path.Value);
-            var ActionName = GetActionNamefromPath(httpContext.Request.Path.Value);
+            //var controllerName = GetControllerNamefromPath(httpContext.Request.Path.Value);
+            //var ActionName = GetActionNamefromPath(httpContext.Request.Path.Value);
 
-            if (GetAuthorizedController(controllerName,ActionName)) {
+            //if (GetAuthorizedController(controllerName,ActionName)) {
 
-                if (httpContext.User.Identity.IsAuthenticated)
-                {
-                    if (Authorize(httpContext, controllerName, ActionName)) { await _next(httpContext); }
-                    else await UnauthorizedExceptionAsync(httpContext, " Un Authorize  Access");
+            //    if (httpContext.User.Identity.IsAuthenticated)
+            //    {
+            //        if (Authorize(httpContext, controllerName, ActionName)) { await _next(httpContext); }
+            //        else await UnauthorizedExceptionAsync(httpContext, " Un Authorize  Access");
 
-                }
-            } else { await _next(httpContext); }
+            //    }
+            //} else { await _next(httpContext); }
 
-
+            await _next(httpContext);
 
             //else if (controllerName=="Auth"&& GetActionName(httpContext.Request.Path.Value)=="Login") { await _next(httpContext); }
             //else { await UnauthorizedExceptionAsync(httpContext, " Access Denay"); }
@@ -59,7 +59,7 @@ namespace RealEstateAgency.Implementations.Middleware
             //    }
             //}
 
-                       
+
         }
 
         //public string getControllerNameFromUrl()

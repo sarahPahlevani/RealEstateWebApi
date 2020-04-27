@@ -118,7 +118,7 @@ namespace RealEstateAgency.Controllers.RBAC
             GetPageAsync(int pageSize, int pageNumber, CancellationToken cancellationToken)
             => base.GetPageAsync(pageSize, pageNumber, cancellationToken);
 
-        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         [HttpPut("[Action]")]
         public async Task<ActionResult> SetUserActivation([FromBody] SetUserActivationDto dto, CancellationToken token)
         {
