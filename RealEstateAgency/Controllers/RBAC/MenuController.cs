@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using RealEstateAgency.Shared.Statics;
 using RealEstateAgency.Implementations.Providers;
 using RealEstateAgency.Implementations.Extensions;
+using RealEstateAgency.Implementations.ActionFilters;
 
 namespace RealEstateAgency.Controllers.RBAC
 {
@@ -56,6 +57,7 @@ namespace RealEstateAgency.Controllers.RBAC
 
        // [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
+        [AuthorizeActionFilter]
         public async Task<ActionResult<IEnumerable<MenuDto>>> GetAllPanelMenu(CancellationToken cancellationToken)
        => await ModelService.DbContext.Menu.Where(t => t.IsPanelPage == true).Select(i => new MenuDto
        {
@@ -69,7 +71,7 @@ namespace RealEstateAgency.Controllers.RBAC
 
 
         [HttpGet("[Action]")]
-       // [AllowAnonymous]
+        [AuthorizeActionFilter]
         public async Task<ActionResult<IEnumerable<MenuDto>>> GetMenuPermission12(CancellationToken cancellationToken)
             =>
             await ModelService.DbContext.Menu.Include(i => i.UserGroupPermission.Where(item => item.UserGroupId == 1))
@@ -84,8 +86,9 @@ namespace RealEstateAgency.Controllers.RBAC
                     IconName = i.IconName
                 }).ToListAsync(cancellationToken);
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
+        [AuthorizeActionFilter]
         public ActionResult<IEnumerable<Menu>> GetAllMenu(CancellationToken cancellationToken)
         {
           
@@ -98,6 +101,7 @@ namespace RealEstateAgency.Controllers.RBAC
 
        // [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
+        [AuthorizeActionFilter]
         public async Task<ActionResult<IEnumerable<MenuNameDto>>> GetMenu(CancellationToken cancellationToken)
         {
             var item1 = await ModelService.DbContext.Menu.Select(i => new MenuNameDto
@@ -111,10 +115,11 @@ namespace RealEstateAgency.Controllers.RBAC
         
 
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
-        [HttpGet("[Action]")]
-        public async Task<ActionResult<IEnumerable<ParentMenuDto>>> GetMenuPermission(CancellationToken cancellationToken) 
-            => await ModelService.DbContext.UserGroupPermission.Where(t => t.ReadPermission==true ||t.UpdatePermission==true || t.DeletePermission==true)
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+        [HttpGet("[Action]/{id}")]
+        [AuthorizeActionFilter]
+        public async Task<ActionResult<IEnumerable<ParentMenuDto>>> GetMenuPermission(CancellationToken cancellationToken,int id) 
+            => await ModelService.DbContext.UserGroupPermission.Where(t => t.UserGroupId==id)
                    .Include(i => i.Menu).Where(f=>f.Menu.IsPanelPage==true && f.Menu.ParentId==null && f.Menu.HasMenu)
             .Select ( g => new ParentMenuDto
                    {

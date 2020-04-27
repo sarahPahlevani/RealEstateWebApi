@@ -115,9 +115,9 @@ namespace RealEstateAgency.Implementations.Extensions
             return services;
         }
 
-        public static IServiceCollection RegisterActionFilters1(this IServiceCollection services)
+        public static IServiceCollection RegisterAuthActionFilters(this IServiceCollection services)
         {
-            services.AddScoped<ExecutionActionFilter>();
+            services.AddScoped<AuthorizeActionFilter>();
             return services;
         }
 

@@ -98,6 +98,7 @@ namespace RealEstateAgency
                 .RegisterAppConfigurationSections()
                 .RegisterDefaultDependencies()
                 .RegisterActionFilters()
+                .RegisterAuthActionFilters()
                 .RegisterServices().RegisterApiServices()
                 .RegisterSecondLevelDbCache();
         }
