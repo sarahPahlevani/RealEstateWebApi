@@ -106,19 +106,19 @@ namespace RealEstateAgency.Controllers.RBAC
                 //                   select te.PropertyNavigation.PropertyPrice.Price - (te.PropertyNavigation.PropertyPrice.Price * (te.Commission.GetValueOrDefault(0)) / 100)).FirstOrDefault(),
             });
 
-       // [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+       // //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         public override async Task<ActionResult<PageResultDto<UserAccountListDto>>> GetPageAsync(
             [FromBody] PageRequestFilterDto requestDto, CancellationToken cancellationToken) =>
             await GetPageResultAsync(ModelService.Queryable,
                 requestDto, requestDto.Filter.ToObject<UserAccountListFilter>(),
                 cancellationToken);
 
-       // [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+       // //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         public override Task<ActionResult<PageResultDto<UserAccountListDto>>>
             GetPageAsync(int pageSize, int pageNumber, CancellationToken cancellationToken)
             => base.GetPageAsync(pageSize, pageNumber, cancellationToken);
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         [HttpPut("[Action]")]
         public async Task<ActionResult> SetUserActivation([FromBody] SetUserActivationDto dto, CancellationToken token)
         {
@@ -167,7 +167,7 @@ namespace RealEstateAgency.Controllers.RBAC
         }
 
 
-       // [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+       // //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         public override async Task<ActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             var user = await ModelService.GetAsync(u => u.Id == id, cancellationToken);
@@ -184,7 +184,7 @@ namespace RealEstateAgency.Controllers.RBAC
             //return await base.Delete(id, cancellationToken);
         }
 
-        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        ////[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         public override async Task<ActionResult> UpdateAsync(UserAccountDto value, CancellationToken cancellationToken)
         {
             if (_userProvider.Id != value.Id && _userProvider.GroupId != _groupProvider[UserGroup.Administrator].Id && _userProvider.GroupId != _groupProvider[UserGroup.RealEstateAdministrator].Id)

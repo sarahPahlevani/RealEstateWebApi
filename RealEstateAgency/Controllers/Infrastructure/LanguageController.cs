@@ -41,7 +41,7 @@ namespace RealEstateAgency.Controllers.Infrastructure
         public override Task<ActionResult<IEnumerable<LanguageDto>>> GetAllAsync(CancellationToken cancellationToken)
             => base.GetAllAsync(cancellationToken);
 
-        //[Authorize(Roles = UserGroups.RealEstateAdministrator)]
+        ////[Authorize(Roles = UserGroups.RealEstateAdministrator)]
         [HttpPut("[Action]")]
         public ActionResult SetRealEstateLanguage([FromBody] LanguageDto languageDto, CancellationToken CancellationToken)
         {

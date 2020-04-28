@@ -55,7 +55,7 @@ namespace RealEstateAgency.Controllers.RBAC
             IconName = i.IconName
         });
 
-       // [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+       // //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
    
         public async Task<ActionResult<IEnumerable<MenuDto>>> GetAllPanelMenu(CancellationToken cancellationToken)
@@ -86,7 +86,7 @@ namespace RealEstateAgency.Controllers.RBAC
                     IconName = i.IconName
                 }).ToListAsync(cancellationToken);
 
-        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+        ////[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
        
         public ActionResult<IEnumerable<Menu>> GetAllMenu(CancellationToken cancellationToken)
@@ -99,7 +99,7 @@ namespace RealEstateAgency.Controllers.RBAC
 
         }
 
-       // [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+       // //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
        
         public async Task<ActionResult<IEnumerable<MenuNameDto>>> GetMenu(CancellationToken cancellationToken)

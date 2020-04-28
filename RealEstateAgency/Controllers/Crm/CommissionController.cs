@@ -90,7 +90,7 @@ namespace RealEstateAgency.Controllers.CRM
         }
 
         [AllowAnonymous]
-        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        ////[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         [HttpGet("[Action]/{currencyId}/{isPay}")]
         public async Task<ActionResult<List<CommissionListDto>>> GetDetails(int currencyId, bool? isPay)
         {
@@ -148,7 +148,7 @@ namespace RealEstateAgency.Controllers.CRM
         }
 
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         [HttpGet("[Action]")]
         public async Task<ActionResult<List<CommissionInfoDto>>> GetCommissionInfo()
         {
@@ -200,7 +200,7 @@ namespace RealEstateAgency.Controllers.CRM
 
 
 
-        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        ////[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         //[HttpPost("[Action]")]
         //public async Task<ActionResult<List<CommissionDto_old>>> NewGetUserCommission()
         //{

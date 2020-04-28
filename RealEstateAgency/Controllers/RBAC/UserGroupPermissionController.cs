@@ -63,7 +63,7 @@ namespace RealEstateAgency.Controllers.RBAC
             HasReadPermmite = i.ReadPermission
         });
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         [HttpPut("[Action]")]
         public async Task<ActionResult> UpdateUserGroupPermission([FromBody]UserGroupPermissionDto dto, CancellationToken cancellationToken)
         {
@@ -80,7 +80,7 @@ namespace RealEstateAgency.Controllers.RBAC
             return NoContent();
         }
         
-       // [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+       // //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
         public async Task<ActionResult<IEnumerable<UserGroupPermissionDto>>> GetAllUserGroupPermission(CancellationToken cancellationToken)
        => await ModelService.DbContext.UserGroupPermission.Select(i => new UserGroupPermissionDto
@@ -93,7 +93,7 @@ namespace RealEstateAgency.Controllers.RBAC
            ReadPermission = i.ReadPermission 
        }).ToListAsync(cancellationToken);
 
-      //  [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+      //  //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]/{id}")]
         public async Task<ActionResult<UserGroupPermissionDto>> GetById(int id, CancellationToken cancellationToken)
       => await ModelService.DbContext.UserGroupPermission.Where(item => item.Id == id).Select(i => new UserGroupPermissionDto
@@ -112,20 +112,20 @@ namespace RealEstateAgency.Controllers.RBAC
               requestDto, requestDto.Filter.ToObject<UserGroupPermissionListFilter>(),
               cancellationToken);
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         public override Task<ActionResult<PageResultDto<UserPermissionList>>>
             GetPageAsync(int pageSize, int pageNumber, CancellationToken cancellationToken)
             => base.GetPageAsync(pageSize, pageNumber, cancellationToken);
 
 
-       // [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+       // //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpDelete("[Action]/{id}")]
         public override async Task<ActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             return await base.Delete(id, cancellationToken);
         }
 
-      //  [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
+      //  //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator + "," + UserGroups.Agent)]
         [HttpGet("[Action]")]
         public async Task<ActionResult<IEnumerable<UserPermission>>> GetUserGroupPermission(CancellationToken cancellationToken)
        => await ModelService.DbContext.UserGroupPermission.Include(item=> item.Menu).Include(item=> item.UserGroup).Where(item=> item.Menu.ParentId!=null).Select(i => new UserPermission

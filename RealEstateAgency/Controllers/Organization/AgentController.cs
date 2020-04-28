@@ -74,7 +74,7 @@ namespace RealEstateAgency.Controllers.Organization
             UserAccount = i.UserAccount
         });
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.Agent + "," + UserGroups.RealEstateAdministrator)]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.Agent + "," + UserGroups.RealEstateAdministrator)]
         [HttpGet("[Action]")]
         public async Task<ActionResult<IEnumerable<UserAccountDto>>> GetAgents(CancellationToken cancellationToken)
         {
@@ -108,7 +108,7 @@ namespace RealEstateAgency.Controllers.Organization
             return agents;
         }
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         [HttpPost("[Action]")]
         public async Task<ActionResult<AgentAccountDto>> CreateAgent([FromBody]AgentAccountDto dto, CancellationToken cancellationToken)
         {
@@ -159,18 +159,18 @@ namespace RealEstateAgency.Controllers.Organization
             return CreatedAtAction(nameof(CreateAgent), dto);
         }
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         public override async Task<ActionResult<PageResultDto<AgentListDto>>> GetPageAsync(
             [FromBody] PageRequestFilterDto filterDto, CancellationToken cancellationToken) =>
             await GetPageResultAsync(ModelService.Queryable,
                 filterDto, filterDto.Filter.ToObject<AgentListFilter>(),
                 cancellationToken);
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         public override Task<ActionResult<PageResultDto<AgentListDto>>> GetPageAsync(int pageSize, int pageNumber, CancellationToken cancellationToken)
             => base.GetPageAsync(pageSize, pageNumber, cancellationToken);
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         [HttpPut("[Action]")]
         public async Task<ActionResult> UpdateAgent([FromBody]AgentAccountDto dto, CancellationToken cancellationToken)
         {
@@ -198,7 +198,7 @@ namespace RealEstateAgency.Controllers.Organization
             return NoContent();
         }
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         [HttpGet("[Action]/{userId}")]
         public async Task<ActionResult<AgentAccountDto>> GetAgentByUserId(int userId, CancellationToken cancellationToken)
         {
@@ -246,7 +246,7 @@ namespace RealEstateAgency.Controllers.Organization
             return item;
         }
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         [HttpGet("[Action]/{agentId}")]
         public async Task<ActionResult<AgentAccountDto>> GetAgentForUpdate(int agentId, CancellationToken cancellationToken)
         {
@@ -273,7 +273,7 @@ namespace RealEstateAgency.Controllers.Organization
             return user;
         }
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        //[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         public override async Task<ActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             //var user = await _userAccountService.GetAsync(u => u.AgentUserAccount.Any(a => a.Id == id), cancellationToken);

@@ -165,7 +165,7 @@ namespace RealEstateAgency.Controllers.Authentication
         }
 
 
-        [Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
+        ////[Authorize(Roles = UserGroups.Administrator + "," + UserGroups.RealEstateAdministrator)]
         [HttpPost("[Action]")]
         public async Task<ActionResult> AdminChangePassword(int id, string password)
         {
