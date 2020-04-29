@@ -98,14 +98,12 @@ namespace RealEstateAgency.Controllers.RBAC
             return await base.Delete(id, cancellationToken);
         }
         [HttpGet("[Action]")]
-        public async Task<ActionResult<IEnumerable<ContentPage2>>> GetPageContent(CancellationToken cancellationToken)
-     => await ModelService.DbContext.ContentPage.Select(i => new ContentPage2
+        public async Task<ActionResult<IEnumerable<ContentPageHeader>>> GetHeaderContent(CancellationToken cancellationToken)
+     => await ModelService.DbContext.ContentPage.Select(i => new ContentPageHeader
      {
          Id = i.Id,
-         ContentHeader = i.ContentHeader,
-         ContectDetail = i.ContectDetail,
-         ContentFooter = i.ContentFooter,
-         Title = i.Title,
+        
+         Title = i.Title
        
      }).ToListAsync(cancellationToken);
         [AllowAnonymous]

@@ -69,4 +69,13 @@ namespace RealEstateAgency.Dtos.ModelDtos.RBAC
         public string Title { get; set; }
 
     }
+
+    public class ContentPageHeader
+    {
+        public int Id { get; set; }
+        
+
+        public string Title { get; set; }
+
+    }
 }
