@@ -63,7 +63,7 @@ namespace RealEstateAgency.Implementations.ActionFilters
                             join b in _dbContext.UserGroupPermission on a.Id equals b.MenuId
                             join c in _dbContext.UserGroup on b.UserGroupId equals c.Id
                             join d in _dbContext.Apicontroller on a.Id equals d.MenuId
-                            where c.StaticCode == climerole && d.ControllerName.Trim().ToLower() == controllerName.Trim().ToLower()
+                            where c.StaticCode.Trim().ToLower() == climerole.Trim().ToLower() && d.ControllerName.Trim().ToLower() == controllerName.Trim().ToLower()
                                && d.ActionName.Trim().ToLower() == ActionName.Trim().ToLower()
                             select new
                             {
