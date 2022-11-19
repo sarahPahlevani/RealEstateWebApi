@@ -19,7 +19,7 @@
     "cookieparser": "^0.1.0",
     "core-util-is": "^1.0.2",
     "js-cookie": "^2.2.1",
-    "nuxt": "^2.0.0",
+    "nuxt": "^2.15.8",
     "vue-i18n": "^7.3.2",
     "vue-owl-carousel": "^2.0.3",
     "vue-slick": "^1.1.15",
